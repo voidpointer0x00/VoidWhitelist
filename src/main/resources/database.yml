@@ -1,0 +1,23 @@
+# available: h2, mysql, custom
+driver: h2
+
+h2:
+  database-file-path: 'h2/database.h2'
+
+mysql:
+  user: 'toor'
+  password: 'toor'
+  database: 'database'
+  host: 'localhost'
+  port: 3306
+
+postgres:
+  # general format:
+  # jdbc:[driver]://[user[:password]@][host][:port][/dbname][?param1=value1&...]
+  # the following configuration used for postgres, change anything you want
+  connecton-url: 'jdbc:postgresql://username:password@localhost:3306/database'
+  driver:
+    download-url: 'https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.12/postgresql-42.2.12.jar'
+    sha1-checksum: '1ed5b5f16a67f312a50d420e8bcb7d30b40b033d'
+    driver-classpath: 'org.postgresql.Driver'
+    connector-name: 'postgres'

@@ -1,0 +1,14 @@
+name: ${project.name}
+description: ${project.description}
+website: ${project.url}
+
+author: VoidPointer aka NyanGuyMF
+version: ${project.version}
+
+main: voidpointer.bukkit.whitelist.${project.name}Plugin
+
+depend: [VoidPointerFramework]
+
+commands:
+  whitelist:
+    description: 'Manage server whitelist'
