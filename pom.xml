@@ -51,7 +51,7 @@
         <dependency>
             <groupId>voidpointer.bukkit</groupId>
             <artifactId>framework</artifactId>
-            <version>0.8.1-SNAPSHOT</version>
+            <version>0.8.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
