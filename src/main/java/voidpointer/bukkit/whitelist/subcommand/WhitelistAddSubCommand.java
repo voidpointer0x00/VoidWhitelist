@@ -7,7 +7,7 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  */
@@ -27,9 +27,9 @@ import org.bukkit.event.Event;
 
 import lombok.NonNull;
 import voidpointer.bukkit.framework.command.CommandArgs;
-import voidpointer.bukkit.framework.command.MinArgsValidator;
-import voidpointer.bukkit.framework.command.PermissionValidator;
 import voidpointer.bukkit.framework.command.SimpleCommand;
+import voidpointer.bukkit.framework.command.validator.MinArgsValidator;
+import voidpointer.bukkit.framework.command.validator.PermissionValidator;
 import voidpointer.bukkit.framework.event.EventManager;
 import voidpointer.bukkit.framework.locale.Locale;
 import voidpointer.bukkit.framework.locale.LocalizedMessage;
