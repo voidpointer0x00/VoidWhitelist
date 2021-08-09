@@ -3,8 +3,8 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
@@ -44,12 +44,7 @@ public class RemoveCommand extends Command {
                 .set("player", nicknameToRemove)
                 .send(args.getSender());
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().equals(nicknameToRemove)) {
-                player.kickPlayer(locale.localizeColorized(WhitelistMessage.YOU_WERE_REMOVED).getRawMessage());
-                break;
-            }
-        }
+        Bukkit.getServer().getPluginManager().callEvent(new WhitelistRemovedEvent(nicknameToRemove));
     }
 
     @Override public List<String> tabComplete(final Args args) {

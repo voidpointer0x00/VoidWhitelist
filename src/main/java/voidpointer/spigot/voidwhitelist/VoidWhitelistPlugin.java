@@ -6,10 +6,7 @@ import voidpointer.spigot.voidwhitelist.command.WhitelistCommand;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
-import voidpointer.spigot.voidwhitelist.listener.LoginListener;
-import voidpointer.spigot.voidwhitelist.listener.QuitListener;
-import voidpointer.spigot.voidwhitelist.listener.WhitelistDisabledListener;
-import voidpointer.spigot.voidwhitelist.listener.WhitelistEnabledListener;
+import voidpointer.spigot.voidwhitelist.listener.*;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService;
@@ -49,6 +46,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         new LoginListener(this, whitelistService, locale, whitelistConfig, scheduledKickTasks).register(this);
         new WhitelistEnabledListener(this, locale, whitelistService, scheduledKickTasks).register(this);
         new WhitelistDisabledListener(scheduledKickTasks).register(this);
+        new WhitelistRemovedListener(whitelistConfig, locale).register(this);
         new QuitListener(scheduledKickTasks).register(this);
     }
 }
