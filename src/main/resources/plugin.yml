@@ -1,0 +1,11 @@
+name: VoidWhitelist
+version: ${project.version}
+main: voidpointer.spigot.voidwhitelist.VoidWhitelistPlugin
+api-version: 1.16
+authors: [ _voidpointer ]
+description: Nickname based temporal whitelist. Works with database and text-based storages.
+website: vk.me/voidpointer
+
+commands:
+  whitelist:
+    description: Main command which includes all the rest - add, remove etc.
