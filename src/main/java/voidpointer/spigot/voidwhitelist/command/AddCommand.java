@@ -48,8 +48,10 @@ public final class AddCommand extends Command {
         if (args.size() == 1) {
             String presumptiveName = args.get(0);
             return Arrays.asList(Bukkit.getOfflinePlayers()).stream()
-                .filter(offlinePlayer -> offlinePlayer.getName().startsWith(presumptiveName))
-                .map(OfflinePlayer::getName)
+                .filter(offlinePlayer -> {
+                    return (null != offlinePlayer.getName())
+                            && offlinePlayer.getName().startsWith(presumptiveName);
+                }).map(OfflinePlayer::getName)
                 .collect(Collectors.toList());
         } else if (args.size() > 1) {
             return Arrays.asList();
