@@ -1,2 +1,4 @@
+language: en
+
 whitelist:
   enabled: false

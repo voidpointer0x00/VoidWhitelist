@@ -1,7 +1,7 @@
 package voidpointer.spigot.voidwhitelist;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import voidpointer.spigot.framework.localemodule.config.LocaleFileConfiguration;
+import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFileConfiguration;
 import voidpointer.spigot.voidwhitelist.command.WhitelistCommand;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public final class VoidWhitelistPlugin extends JavaPlugin {
-    private LocaleFileConfiguration locale;
+    private TranslatedLocaleFileConfiguration locale;
     private WhitelistService whitelistService;
     private WhitelistConfig whitelistConfig;
 
     @Override public void onLoad() {
         this.whitelistConfig = new WhitelistConfig(this);
 
-        locale = new LocaleFileConfiguration(this);
+        locale = new TranslatedLocaleFileConfiguration(this, whitelistConfig.getLanguage());
         locale.addDefaults(WhitelistMessage.values());
         locale.save();
     }

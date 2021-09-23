@@ -1,0 +1,21 @@
+messages:
+  added: '&eИгрок &6«&c{player}&6» &eдобавлен в whitelist.'
+  added-temp: '&eИгрок &6«&c{player}&6» &eдобавлен до &6«&c{time}&6»&e.'
+  add-help: '&eИспользуйте &6/whitelist add &cnickname'
+  console-whitelisted: '&eКонсоль не может быть в whitelist, введите ник игрока для
+    проверки.'
+  disabled: '&eWhitelist &cвыключен&e.'
+  enabled: '&eWhitelist &aвключен&e.'
+  info-not-whitelisted: '&eИгрок &6«&c{player}&6» &cотсутствует &eв whitelist.'
+  info-whitelisted: '&eИгрок &6«&c{player}&6» &aесть &eв whitelist.'
+  info-whitelisted-temp: '&eИгрок &6«&c{player}&6» &aесть &eв whitelist, истекает
+    &d{time}&e.'
+  login-disallowed: '&cВас нет в whitelist.'
+  no-permission: '&cУ Вас недостаточно прав.'
+  removed: '&eИгрок &6«&c{player}&6» &eудален из whitelist.'
+  remove-help: '&eИспользуйте &6/whitelist remove &cnickname'
+  remove-not-whitelisted: '&eИгрока &6«&c{player}&6» &eнет в whitelist.'
+  whitelist-help: '&eИспользуйте &6/whitelist &cadd&6|&cremove&6|&cinfo&6|&con&6|&coff'
+  wrong-date-format: '&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут:
+    &a1d15h45m'
+  you-were-removed: '&cВас исключили из whitelist.'

@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 public class WhitelistConfig {
+    public static final String DEFAULT_LANGUAGE = "en";
     private static final String WHITELIST_ENABLED_PATH = "whitelist.enabled";
 
     @NonNull private final JavaPlugin plugin;
@@ -17,6 +18,10 @@ public class WhitelistConfig {
 
     public boolean isWhitelistEnabled() {
         return plugin.getConfig().getBoolean(WHITELIST_ENABLED_PATH, false);
+    }
+
+    public String getLanguage() {
+        return plugin.getConfig().getString("language", DEFAULT_LANGUAGE);
     }
 
     public void enableWhitelist() {

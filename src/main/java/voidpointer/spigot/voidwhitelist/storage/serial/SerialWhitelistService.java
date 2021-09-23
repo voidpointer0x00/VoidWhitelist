@@ -35,8 +35,7 @@ public final class SerialWhitelistService implements WhitelistService {
 
     @Override public Date getExpiresAt(final String nickname) throws NotWhitelistedException {
         if (!whitelist.containsKey(nickname)) {
-            throw new NotWhitelistedException(
-                    "Trying to getExpiresAt() of a not whitelisted player \"" + nickname + "\"");
+            throw new NotWhitelistedException("Trying to getExpiresAt() of a not whitelisted player \"" + nickname + "\"");
         }
         return whitelist.get(nickname);
     }
@@ -44,7 +43,7 @@ public final class SerialWhitelistService implements WhitelistService {
     @Override public List<String> getWhitelistedNicknames() {
         Date currentDate = Date.from(Instant.now());
         return whitelist.entrySet().stream()
-                .filter(entry -> (entry.getValue() == NEVER_EXPIRES) || entry.getValue().after(currentDate))
+                .filter(entry -> (NEVER_EXPIRES == entry.getValue()) || entry.getValue().after(currentDate))
                 .map(entry -> entry.getKey())
                 .collect(Collectors.toList());
     }
