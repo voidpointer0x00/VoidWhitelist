@@ -8,6 +8,7 @@ import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
 import voidpointer.spigot.voidwhitelist.listener.*;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
+import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
@@ -29,7 +30,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     @Override public void onEnable() {
-        whitelistService = new SerialWhitelistService(getDataFolder());
+        whitelistService = new StorageFactory(getDataFolder()).loadStorage(whitelistConfig.getStorageMethod());
         new WhitelistCommand(locale, whitelistService, whitelistConfig).register(this);
         registerListeners();
 

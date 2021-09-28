@@ -1,4 +1,6 @@
 language: en
 
+storage-method: json
+
 whitelist:
   enabled: false
