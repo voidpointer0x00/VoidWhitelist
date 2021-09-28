@@ -11,8 +11,6 @@ import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public final class StorageFactory {
-    public static final StorageMethod DEFAULT_METHOD = StorageMethod.JSON;
-
     @NonNull private final File dataFolder;
 
     public WhitelistService loadStorage(final Logger log, final StorageMethod storageMethod) {
