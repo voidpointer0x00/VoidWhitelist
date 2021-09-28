@@ -30,7 +30,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     @Override public void onEnable() {
-        whitelistService = new StorageFactory(getDataFolder()).loadStorage(whitelistConfig.getStorageMethod());
+        whitelistService = new StorageFactory(getDataFolder())
+                .loadStorage(getLogger(), whitelistConfig.getStorageMethod());
         new WhitelistCommand(locale, whitelistService, whitelistConfig).register(this);
         registerListeners();
 

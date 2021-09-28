@@ -10,15 +10,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class SerialWhitelistService implements WhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
 
     private Map<String, Date> whitelist = new TreeMap<>();
+    @NonNull private final Logger log;
     @NonNull private final File dataFolder;
 
-    public SerialWhitelistService(final File dataFolder) {
+    public SerialWhitelistService(final Logger log, final File dataFolder) {
+        this.log = log;
         this.dataFolder = dataFolder;
         load();
     }
@@ -75,7 +78,7 @@ public final class SerialWhitelistService implements WhitelistService {
                 throw new ClassCastException("Deserialized object isn't whitelist map.");
             whitelist = (Map<String, Date>) deserializedObject;
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
-            System.err.println("Cannot deserialize whitelist storage object from file.");
+            log.severe("Cannot deserialize whitelist storage object from file.");
             deserializationException.printStackTrace();
         }
     }
@@ -86,7 +89,7 @@ public final class SerialWhitelistService implements WhitelistService {
             try {
                 whitelistFile.createNewFile();
             } catch (IOException ioException) {
-                System.err.println("Cannot save whitelist.");
+                log.severe("Cannot save whitelist.");
                 ioException.printStackTrace();
                 return;
             }
@@ -95,7 +98,7 @@ public final class SerialWhitelistService implements WhitelistService {
         try (ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile))) {
             objOut.writeObject(whitelist);
         } catch (IOException ioException) {
-            System.err.println("Cannot save whitelist.");
+            log.severe("Cannot save whitelist.");
             ioException.printStackTrace();
         }
     }

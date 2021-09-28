@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class JsonWhitelistService implements WhitelistService {
@@ -28,10 +29,12 @@ public final class JsonWhitelistService implements WhitelistService {
             .serializeNulls()
             .create();
 
+    private final Logger log;
     private final File whitelistFile;
     private Map<String, Date> whitelist;
 
-    public JsonWhitelistService(final File dataFolder) {
+    public JsonWhitelistService(final Logger log, final File dataFolder) {
+        this.log = log;
         whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
         load();
     }
@@ -85,14 +88,14 @@ public final class JsonWhitelistService implements WhitelistService {
         try {
             whitelistFileContents = Files.toString(whitelistFile, Charset.defaultCharset());
         } catch (IOException ioException) {
-            System.err.println("An exception occurred while reading whitelist file contents: " + ioException.getMessage());
+            log.severe("An exception occurred while reading whitelist file contents: " + ioException.getMessage());
             whitelist = new TreeMap<>();
             return;
         }
         try {
             whitelist = gson.fromJson(whitelistFileContents, whitelistType);
         } catch (final JsonSyntaxException jsonSyntaxException) {
-            System.err.println("Invalid json syntax in whitelist file: " + jsonSyntaxException.getMessage());
+            log.severe("Invalid json syntax in whitelist file: " + jsonSyntaxException.getMessage());
             whitelist = new TreeMap<>();
             return;
         }
@@ -103,7 +106,7 @@ public final class JsonWhitelistService implements WhitelistService {
         try {
             Files.write(whitelistInJson, whitelistFile, Charset.defaultCharset());
         } catch (IOException ioException) {
-            System.err.println("An exception occurred while trying to save the whitelist: " + ioException.getMessage());
+            log.severe("An exception occurred while trying to save the whitelist: " + ioException.getMessage());
         }
     }
 }
