@@ -3,11 +3,15 @@ package voidpointer.spigot.voidwhitelist.listener;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.voidwhitelist.VwPlayer;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.NotWhitelistedException;
@@ -25,28 +29,38 @@ public final class LoginListener implements Listener {
     @NonNull private final WhitelistConfig whitelistConfig;
     @NonNull private final Map<String, KickTask> scheduledKickTaskMap;
 
-    @EventHandler public void onLogin(final PlayerLoginEvent event) {
+    @EventHandler public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        final String nickname = event.getPlayer().getName();
-        final String kickReason = locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
+        String nickname = event.getName();
+        VwPlayer vwPlayer = whitelistService.findVwPlayer(nickname).join();
 
-        if (!whitelistService.isWhitelisted(nickname)) {
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, kickReason);
+        if ((null == vwPlayer) || !vwPlayer.isAllowedToJoin())
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, getKickReason());
+    }
+
+    @EventHandler(priority=EventPriority.MONITOR)
+    public void onJoin(final PlayerJoinEvent event) {
+        if (!whitelistConfig.isWhitelistEnabled())
             return;
-        }
 
-        try {
-            final Date whitelistExpiresAt = whitelistService.getExpiresAt(nickname);
-            if (WhitelistService.NEVER_EXPIRES == whitelistExpiresAt)
+        whitelistService.findVwPlayer(event.getPlayer().getName()).thenAcceptAsync(vwPlayer -> {
+            if ((null == vwPlayer) || !vwPlayer.isExpirable())
                 return;
-            KickTask task = new KickTask(event.getPlayer(), kickReason);
-            scheduledKickTaskMap.put(nickname, task.scheduleKick(plugin, whitelistExpiresAt));
-        } catch (final NotWhitelistedException ignored) {}
+
+            KickTask kickTask = new KickTask(event.getPlayer(), getKickReason());
+            kickTask.scheduleKick(plugin, vwPlayer.getExpiresAt());
+            scheduledKickTaskMap.put(vwPlayer.getName(), kickTask);
+        });
     }
 
     public void register(final JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
+
+    private String getKickReason() {
+        return locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
+    }
+
 }

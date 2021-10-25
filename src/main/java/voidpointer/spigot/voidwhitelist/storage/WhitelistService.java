@@ -1,20 +1,22 @@
 package voidpointer.spigot.voidwhitelist.storage;
 
+import com.sun.org.apache.xerces.internal.dom.CoreDOMImplementationImpl;
+import voidpointer.spigot.voidwhitelist.VwPlayer;
+
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public interface WhitelistService {
-    Date NEVER_EXPIRES = null;
+    CompletableFuture<VwPlayer> findVwPlayer(final String name);
 
-    boolean addToWhitelist(final String nickname);
+    CompletableFuture<List<String>> getAllWhitelistedNicknames();
 
-    boolean addToWhitelist(final String nickname, Date expiresAt);
+    CompletableFuture<VwPlayer> addToWhitelist(final String name);
 
-    boolean isWhitelisted(final String nickname);
+    CompletableFuture<VwPlayer> addToWhitelist(final String name, final Date expiresAt);
 
-    Date getExpiresAt(final String nickname) throws NotWhitelistedException;
-
-    List<String> getWhitelistedNicknames();
-
-    boolean removeFromWhitelist(final String nickname);
+    CompletableFuture<Boolean> removeFromWhitelist(final VwPlayer vwPlayer);
 }

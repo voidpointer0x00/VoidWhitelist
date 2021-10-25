@@ -9,7 +9,6 @@ import org.bukkit.event.HandlerList;
 import java.util.Date;
 
 @Getter
-@RequiredArgsConstructor
 public final class WhitelistAddedEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
@@ -18,6 +17,12 @@ public final class WhitelistAddedEvent extends Event {
 
     public static final HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public WhitelistAddedEvent(final String nickname, final Date expiresAt) {
+        super(true);
+        this.nickname = nickname;
+        this.expiresAt = expiresAt;
     }
 
     @Override public HandlerList getHandlers() {

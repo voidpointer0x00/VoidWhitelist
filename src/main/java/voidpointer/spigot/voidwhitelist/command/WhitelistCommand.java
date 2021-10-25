@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
+import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
@@ -18,15 +19,15 @@ public final class WhitelistCommand extends Command {
     @NonNull private final WhitelistService whitelistService;
 
     public WhitelistCommand(@NonNull final Locale locale, @NonNull final WhitelistService whitelistService,
-                            @NonNull final WhitelistConfig whitelistConfig) {
+                            @NonNull final WhitelistConfig whitelistConfig, final EventManager eventManager) {
         super(NAME);
         this.locale = locale;
         this.whitelistService = whitelistService;
 
-        whitelistCommands.addCommand(new AddCommand(whitelistService, locale));
-        whitelistCommands.addCommand(new RemoveCommand(whitelistService, locale));
-        whitelistCommands.addCommand(new EnableCommand(whitelistConfig, locale));
-        whitelistCommands.addCommand(new DisableCommand(whitelistConfig, locale));
+        whitelistCommands.addCommand(new AddCommand(whitelistService, locale, eventManager));
+        whitelistCommands.addCommand(new RemoveCommand(whitelistService, locale, eventManager));
+        whitelistCommands.addCommand(new EnableCommand(whitelistConfig, locale, eventManager));
+        whitelistCommands.addCommand(new DisableCommand(whitelistConfig, locale, eventManager));
         whitelistCommands.addCommand(new IsWhitelistedCommand(whitelistService, locale));
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }

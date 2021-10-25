@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.voidwhitelist.VwPlayer;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
@@ -27,33 +28,21 @@ public final class IsWhitelistedCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        /* the code below can be improved if you use one (0 == args.size()) if
-        * comparison less, but it will entail nesting, increase overall complexity,
-        * and as a result reduce readability. (i've no clue why u're even reading this honesty) */
         if (!args.isPlayer() && (0 == args.size())) {
             locale.localizeColorized(WhitelistMessage.CONSOLE_WHITELISTED).send(args.getSender());
             return;
         }
 
         final String nicknameToCheck = (0 == args.size()) ? args.getSender().getName() : args.get(0);
-        if (!whitelistService.isWhitelisted(nicknameToCheck)) {
-            locale.localizeColorized(WhitelistMessage.INFO_NOT_WHITELISTED)
-                .set("player", nicknameToCheck)
-                .send(args.getSender());
-            return;
-        }
-
-        final Date expiresAt = whitelistService.getExpiresAt(nicknameToCheck);
-        if (null != expiresAt) {
-            locale.localizeColorized(WhitelistMessage.INFO_WHITELISTED_TEMP)
-                    .set("player", nicknameToCheck)
-                    .set("time", expiresAt.toString())
-                    .send(args.getSender());
-        } else {
-            locale.localizeColorized(WhitelistMessage.INFO_WHITELISTED)
-                    .set("player", nicknameToCheck)
-                    .send(args.getSender());
-        }
+        whitelistService.findVwPlayer(nicknameToCheck).thenAcceptAsync(vwPlayer -> {
+            if ((null == vwPlayer) || !vwPlayer.isAllowedToJoin()) {
+                tellNotWhitelisted(args.getSender(), nicknameToCheck);
+            } else if (vwPlayer.isExpirable()) {
+                tellWhitelistedTemporarily(args.getSender(), nicknameToCheck, vwPlayer.getExpiresAt());
+            } else {
+                tellWhitelisted(args.getSender(), nicknameToCheck);
+            }
+        });
     }
 
     @Override public List<String> getAliases() {
@@ -62,5 +51,25 @@ public final class IsWhitelistedCommand extends Command {
 
     @Override protected void onNoPermission(final CommandSender sender) {
         locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
+    }
+
+    private void tellNotWhitelisted(final CommandSender sender, final String playerName) {
+        locale.localizeColorized(WhitelistMessage.INFO_NOT_WHITELISTED)
+                .set("player", playerName)
+                .send(sender);
+    }
+
+    private void tellWhitelistedTemporarily(final CommandSender sender, final String playerName,
+                                            final Date expiresAt) {
+        locale.localizeColorized(WhitelistMessage.INFO_WHITELISTED_TEMP)
+                .set("player", playerName)
+                .set("time", expiresAt.toString())
+                .send(sender);
+    }
+
+    private void tellWhitelisted(final CommandSender sender, final String playerName) {
+        locale.localizeColorized(WhitelistMessage.INFO_WHITELISTED)
+                .set("player", playerName)
+                .send(sender);
     }
 }

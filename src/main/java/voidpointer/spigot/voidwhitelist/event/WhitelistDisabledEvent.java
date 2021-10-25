@@ -10,6 +10,10 @@ public final class WhitelistDisabledEvent extends Event {
         return handlers;
     }
 
+    public WhitelistDisabledEvent() {
+        super(true);
+    }
+
     @Override public HandlerList getHandlers() {
         return handlers;
     }

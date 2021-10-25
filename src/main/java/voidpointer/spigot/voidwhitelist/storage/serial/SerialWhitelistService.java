@@ -1,22 +1,22 @@
 package voidpointer.spigot.voidwhitelist.storage.serial;
 
 import lombok.NonNull;
+import voidpointer.spigot.voidwhitelist.VwPlayer;
 import voidpointer.spigot.voidwhitelist.storage.NotWhitelistedException;
+import voidpointer.spigot.voidwhitelist.storage.SimpleVwPlayer;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.io.*;
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class SerialWhitelistService implements WhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
 
-    private Map<String, Date> whitelist = new TreeMap<>();
+    private Map<String, VwPlayer> whitelist = new TreeMap<>();
     @NonNull private final Logger log;
     @NonNull private final File dataFolder;
 
@@ -26,45 +26,37 @@ public final class SerialWhitelistService implements WhitelistService {
         load();
     }
 
-    @Override public boolean isWhitelisted(final String nickname) {
-        if (!whitelist.containsKey(nickname))
-            return false;
-
-        Date expiresAt = whitelist.get(nickname);
-        if (NEVER_EXPIRES == expiresAt)
-            return true;
-        return whitelist.get(nickname).after(Date.from(Instant.now()));
+    @Override
+    public CompletableFuture<VwPlayer> findVwPlayer(final String name) {
+        return CompletableFuture.supplyAsync(() -> whitelist.get(name));
     }
 
-    @Override public Date getExpiresAt(final String nickname) throws NotWhitelistedException {
-        if (!whitelist.containsKey(nickname)) {
-            throw new NotWhitelistedException("Trying to getExpiresAt() of a not whitelisted player \"" + nickname + "\"");
-        }
-        return whitelist.get(nickname);
-    }
-
-    @Override public List<String> getWhitelistedNicknames() {
-        Date currentDate = Date.from(Instant.now());
-        return whitelist.entrySet().stream()
-                .filter(entry -> (NEVER_EXPIRES == entry.getValue()) || entry.getValue().after(currentDate))
+    @Override public CompletableFuture<List<String>> getAllWhitelistedNicknames() {
+        return CompletableFuture.supplyAsync(() -> whitelist.entrySet().stream()
+                .filter(entry -> entry.getValue().isAllowedToJoin())
                 .map(entry -> entry.getKey())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
-    @Override public boolean addToWhitelist(final String nickname) {
-        return addToWhitelist(nickname, NEVER_EXPIRES);
+    @Override public CompletableFuture<VwPlayer> addToWhitelist(final String nickname) {
+        return addToWhitelist(nickname, VwPlayer.NEVER_EXPIRES);
     }
 
-    @Override public boolean addToWhitelist(final String nickname, final Date expiresAt) {
-        whitelist.put(nickname, expiresAt);
-        saveWhitelist();
-        return true;
+    @Override public CompletableFuture<VwPlayer> addToWhitelist(final String nickname, final Date expiresAt) {
+        return CompletableFuture.supplyAsync(() -> {
+            VwPlayer vwPlayer = new SimpleVwPlayer(nickname, expiresAt);
+            whitelist.put(nickname, vwPlayer);
+            saveWhitelist();
+            return vwPlayer;
+        });
     }
 
-    @Override public boolean removeFromWhitelist(final String nickname) {
-        whitelist.remove(nickname);
-        saveWhitelist();
-        return true;
+    @Override
+    public CompletableFuture<Boolean> removeFromWhitelist(final VwPlayer vwPlayer) {
+        return CompletableFuture.supplyAsync(() -> {
+            whitelist.remove(vwPlayer.getName());
+            return true;
+        });
     }
 
     private void load() {
@@ -72,15 +64,19 @@ public final class SerialWhitelistService implements WhitelistService {
         if (!whitelistFile.exists())
             return; // nothing to load
 
+        Collection<VwPlayer> whitelistPlayers;
         try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(whitelistFile))) {
             Object deserializedObject = oin.readObject();
             if (!(deserializedObject instanceof Map<?, ?>))
                 throw new ClassCastException("Deserialized object isn't whitelist map.");
-            whitelist = (Map<String, Date>) deserializedObject;
+            whitelistPlayers = (Collection<VwPlayer>) deserializedObject;
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
             log.severe("Cannot deserialize whitelist storage object from file.");
             deserializationException.printStackTrace();
+            return;
         }
+
+        whitelistPlayers.forEach(vwPlayer -> whitelist.put(vwPlayer.getName(), vwPlayer));
     }
 
     private void saveWhitelist() {
@@ -96,7 +92,7 @@ public final class SerialWhitelistService implements WhitelistService {
         }
 
         try (ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile))) {
-            objOut.writeObject(whitelist);
+            objOut.writeObject(whitelist.values());
         } catch (IOException ioException) {
             log.severe("Cannot save whitelist.");
             ioException.printStackTrace();

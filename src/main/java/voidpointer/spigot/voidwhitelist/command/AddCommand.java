@@ -5,7 +5,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.voidwhitelist.VwPlayer;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
+import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
@@ -22,14 +24,17 @@ public final class AddCommand extends Command {
 
     @NonNull private final WhitelistService whitelistService;
     @NonNull private final Locale locale;
+    @NonNull private final EventManager eventManager;
 
-    public AddCommand(final WhitelistService whitelistService, final Locale locale) {
+    public AddCommand(final WhitelistService whitelistService, final Locale locale,
+                      final EventManager eventManager) {
         super(NAME);
         this.locale = locale;
-
-        this.whitelistService = whitelistService;
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
         super.setPermission(PERMISSION);
+
+        this.whitelistService = whitelistService;
+        this.eventManager = eventManager;
     }
 
     @Override public void execute(final Args args) {
@@ -41,18 +46,17 @@ public final class AddCommand extends Command {
         }
 
         if (null != addedEvent)
-            Bukkit.getServer().getPluginManager().callEvent(addedEvent);
+            eventManager.callAsyncEvent(addedEvent);
     }
 
     @Override public List<String> tabComplete(final Args args) {
         if (args.size() == 1) {
             String presumptiveName = args.get(0);
             return Arrays.asList(Bukkit.getOfflinePlayers()).stream()
-                .filter(offlinePlayer -> {
-                    return (null != offlinePlayer.getName())
-                            && offlinePlayer.getName().startsWith(presumptiveName);
-                }).map(OfflinePlayer::getName)
-                .collect(Collectors.toList());
+                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                            && offlinePlayer.getName().startsWith(presumptiveName))
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
         } else if (args.size() > 1) {
             return Arrays.asList();
         }
@@ -76,7 +80,7 @@ public final class AddCommand extends Command {
                 .set("player", nickname)
                 .send(args.getSender());
 
-        return new WhitelistAddedEvent(nickname, whitelistService.NEVER_EXPIRES);
+        return new WhitelistAddedEvent(nickname, VwPlayer.NEVER_EXPIRES);
     }
 
     private WhitelistAddedEvent addTemporarily(final Args args) {

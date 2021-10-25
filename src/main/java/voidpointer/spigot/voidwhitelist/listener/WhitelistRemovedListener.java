@@ -17,6 +17,9 @@ public final class WhitelistRemovedListener implements Listener {
     @NonNull private final WhitelistConfig whitelistConfig;
     @NonNull private final Locale locale;
 
+    /**
+     * Kick the removed player it they're online.
+     */
     @EventHandler public void onRemoved(final WhitelistRemovedEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
             return;

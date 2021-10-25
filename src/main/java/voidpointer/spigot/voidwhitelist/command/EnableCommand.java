@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
+import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
@@ -18,20 +19,22 @@ public final class EnableCommand extends Command {
 
     @NonNull private final WhitelistConfig whitelistConfig;
     @NonNull private final Locale locale;
+    @NonNull private final EventManager eventManager;
 
-    public EnableCommand(@NonNull final WhitelistConfig whitelistConfig, @NonNull final Locale locale) {
+    public EnableCommand(@NonNull final WhitelistConfig whitelistConfig, @NonNull final Locale locale,
+                         final EventManager eventManager) {
         super(NAME);
         super.setPermission(PERMISSION);
 
         this.whitelistConfig = whitelistConfig;
         this.locale = locale;
+        this.eventManager = eventManager;
     }
 
     @Override public void execute(final Args args) {
         whitelistConfig.enableWhitelist();
         locale.localizeColorized(WhitelistMessage.ENABLED).send(args.getSender());
-
-        Bukkit.getServer().getPluginManager().callEvent(new WhitelistEnabledEvent());
+        eventManager.callAsyncEvent(new WhitelistEnabledEvent());
     }
 
     @Override public List<String> getAliases() {
