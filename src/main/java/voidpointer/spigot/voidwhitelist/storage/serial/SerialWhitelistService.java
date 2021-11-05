@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public final class SerialWhitelistService implements WhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
 
-    private Map<String, VwPlayer> whitelist = new TreeMap<>();
+    private final Map<String, VwPlayer> whitelist = new TreeMap<>();
     @NonNull private final Logger log;
     @NonNull private final File dataFolder;
 
