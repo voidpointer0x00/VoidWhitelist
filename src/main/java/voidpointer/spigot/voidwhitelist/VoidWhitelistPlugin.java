@@ -44,10 +44,6 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
     }
 
-    @Override public void onDisable() {
-        eventManager.callAsyncEvent(new WhitelistDisabledEvent());
-    }
-
     private void registerListeners() {
         Map<String, KickTask> scheduledKickTasks = new ConcurrentHashMap<>();
         new LoginListener(this, whitelistService, locale, whitelistConfig, scheduledKickTasks).register(this);
