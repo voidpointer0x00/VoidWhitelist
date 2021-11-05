@@ -71,6 +71,7 @@ public final class JsonWhitelistService implements WhitelistService {
     public CompletableFuture<Boolean> removeFromWhitelist(final VwPlayer vwPlayer) {
         return CompletableFuture.supplyAsync(() -> {
             whitelist.remove(vwPlayer.getName());
+            save();
             return true;
         });
     }
