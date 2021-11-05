@@ -55,6 +55,7 @@ public final class SerialWhitelistService implements WhitelistService {
     public CompletableFuture<Boolean> removeFromWhitelist(final VwPlayer vwPlayer) {
         return CompletableFuture.supplyAsync(() -> {
             whitelist.remove(vwPlayer.getName());
+            saveWhitelist();
             return true;
         });
     }
