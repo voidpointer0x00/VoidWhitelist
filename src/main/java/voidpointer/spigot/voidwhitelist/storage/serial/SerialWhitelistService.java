@@ -2,12 +2,10 @@ package voidpointer.spigot.voidwhitelist.storage.serial;
 
 import lombok.NonNull;
 import voidpointer.spigot.voidwhitelist.VwPlayer;
-import voidpointer.spigot.voidwhitelist.storage.NotWhitelistedException;
 import voidpointer.spigot.voidwhitelist.storage.SimpleVwPlayer;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.io.*;
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
@@ -70,6 +68,7 @@ public final class SerialWhitelistService implements WhitelistService {
             Object deserializedObject = oin.readObject();
             if (!(deserializedObject instanceof Collection<?>))
                 throw new ClassCastException("Deserialized object isn't whitelist map.");
+            //noinspection unchecked: actually checked, but IDEA doesn't understand catch (ClassCastException) :^(
             whitelistPlayers = (Collection<VwPlayer>) deserializedObject;
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
             log.severe("Cannot deserialize whitelist storage object from file.");
@@ -84,6 +83,7 @@ public final class SerialWhitelistService implements WhitelistService {
         File whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
         if (!whitelistFile.exists()) {
             try {
+                //noinspection ResultOfMethodCallIgnored: doesn't matter if file already exists
                 whitelistFile.createNewFile();
             } catch (IOException ioException) {
                 log.severe("Cannot save whitelist.");
