@@ -34,7 +34,7 @@ public final class SerialWhitelistService implements WhitelistService {
     @Override public CompletableFuture<List<String>> getAllWhitelistedNicknames() {
         return CompletableFuture.supplyAsync(() -> whitelist.entrySet().stream()
                 .filter(entry -> entry.getValue().isAllowedToJoin())
-                .map(entry -> entry.getKey())
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList()));
     }
 
@@ -68,7 +68,7 @@ public final class SerialWhitelistService implements WhitelistService {
         Collection<VwPlayer> whitelistPlayers;
         try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(whitelistFile))) {
             Object deserializedObject = oin.readObject();
-            if (!(deserializedObject instanceof Map<?, ?>))
+            if (!(deserializedObject instanceof Collection<?>))
                 throw new ClassCastException("Deserialized object isn't whitelist map.");
             whitelistPlayers = (Collection<VwPlayer>) deserializedObject;
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
