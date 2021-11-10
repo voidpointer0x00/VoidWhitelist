@@ -73,8 +73,12 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     }
 
     public final void register(final JavaPlugin plugin) {
-        plugin.getCommand(name).setExecutor(this);
-        plugin.getCommand(name).setTabCompleter(this);
+        try {
+            plugin.getCommand(name).setExecutor(this);
+            plugin.getCommand(name).setTabCompleter(this);
+        } catch (NullPointerException npe) {
+            throw new UnsupportedOperationException("Plugin doesn't define command: " + name);
+        }
     }
 
     protected final boolean isValidForExecution(final Args args) {
