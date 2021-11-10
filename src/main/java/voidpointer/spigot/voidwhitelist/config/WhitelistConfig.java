@@ -11,6 +11,7 @@ public class WhitelistConfig {
     public static final StorageMethod DEFAULT_STORAGE_METHOD = StorageMethod.JSON;
     private static final String WHITELIST_ENABLED_PATH = "whitelist.enabled";
     private static final String STORAGE_METHOD_PATH = "storage-method";
+    private static final String STORAGE_VERSION_PATH = "storage-version";
 
     @NonNull private final JavaPlugin plugin;
 
@@ -34,6 +35,25 @@ public class WhitelistConfig {
             plugin.getConfig().set(STORAGE_METHOD_PATH, DEFAULT_STORAGE_METHOD.toString().toLowerCase());
         }
         return DEFAULT_STORAGE_METHOD;
+    }
+
+    public StorageVersion getStorageVersion() {
+        if (!plugin.getConfig().isSet(STORAGE_VERSION_PATH)) {
+            /* config was saved without version -> it's likely old version or a configuration mistake */
+            setStorageVersion(StorageVersion.UNDEFINED);
+        } else {
+            String storageVersionName = plugin.getConfig().getString(STORAGE_VERSION_PATH);
+            for (StorageVersion storageVersion : StorageVersion.values()) {
+                if (storageVersionName.equalsIgnoreCase(storageVersion.toString()))
+                    return storageVersion;
+            }
+        }
+        return StorageVersion.UNDEFINED;
+    }
+
+    public void setStorageVersion(final StorageVersion storageVersion) {
+        plugin.getConfig().set(STORAGE_VERSION_PATH, storageVersion.toString().toLowerCase());
+        plugin.saveConfig();
     }
 
     public String getLanguage() {
