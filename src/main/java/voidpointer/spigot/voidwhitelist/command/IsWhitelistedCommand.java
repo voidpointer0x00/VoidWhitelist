@@ -6,13 +6,13 @@ import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 public final class IsWhitelistedCommand extends Command {
     public static final String NAME = "iswhitelisted";
-    public static final List<String> ALIASES = Arrays.asList("is-whitelisted");
+    public static final List<String> ALIASES = Collections.singletonList("is-whitelisted");
     public static final String PERMISSION = "whitelist.iswhitelisted";
 
     @NonNull private final Locale locale;

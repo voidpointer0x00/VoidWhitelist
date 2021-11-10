@@ -13,13 +13,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public final class JsonWhitelistService implements WhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
@@ -64,7 +64,7 @@ public final class JsonWhitelistService implements WhitelistService {
 
     @Override
     public CompletableFuture<List<String>> getAllWhitelistedNicknames() {
-        return CompletableFuture.supplyAsync(() -> whitelist.keySet().stream().collect(Collectors.toList()));
+        return CompletableFuture.supplyAsync(() -> new ArrayList<>(whitelist.keySet()));
     }
 
     @Override

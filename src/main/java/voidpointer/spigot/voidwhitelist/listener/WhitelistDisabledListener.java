@@ -16,7 +16,7 @@ public final class WhitelistDisabledListener implements Listener {
     @NonNull private final Map<String, KickTask> scheduledKickTasks;
 
     @EventHandler public void onDisabled(final WhitelistDisabledEvent event) {
-        scheduledKickTasks.values().stream().forEach(BukkitRunnable::cancel);
+        scheduledKickTasks.values().forEach(BukkitRunnable::cancel);
         scheduledKickTasks.clear();
     }
 

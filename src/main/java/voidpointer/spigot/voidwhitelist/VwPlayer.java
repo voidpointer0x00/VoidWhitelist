@@ -40,7 +40,7 @@ import java.util.Date;
  * join the server.</p>
  */
 public interface VwPlayer {
-    public static final Date NEVER_EXPIRES = null;
+    Date NEVER_EXPIRES = null;
 
     /** Get the name of a Minecraft player associated with the entity. */
     String getName();

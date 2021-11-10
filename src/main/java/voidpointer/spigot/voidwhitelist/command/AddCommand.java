@@ -53,16 +53,16 @@ public final class AddCommand extends Command {
     @Override public List<String> tabComplete(final Args args) {
         if (args.size() == 1) {
             String presumptiveName = args.get(0);
-            return Arrays.asList(Bukkit.getOfflinePlayers()).stream()
+            return Arrays.stream(Bukkit.getOfflinePlayers())
                     .filter(offlinePlayer -> (null != offlinePlayer.getName())
                             && offlinePlayer.getName().startsWith(presumptiveName))
                     .map(OfflinePlayer::getName)
                     .collect(Collectors.toList());
         } else if (args.size() > 1) {
-            return Arrays.asList();
+            return Collections.emptyList();
         }
-        return Arrays.asList(Bukkit.getOfflinePlayers()).stream()
-                .map(player -> player.getName())
+        return Arrays.stream(Bukkit.getOfflinePlayers())
+                .map(OfflinePlayer::getName)
                 .collect(Collectors.toList());
     }
 

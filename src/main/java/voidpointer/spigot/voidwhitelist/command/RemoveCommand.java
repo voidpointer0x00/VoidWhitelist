@@ -8,7 +8,7 @@ import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +59,7 @@ public class RemoveCommand extends Command {
                     .filter(whitelistedNickname -> whitelistedNickname.startsWith(presumptiveName))
                     .collect(Collectors.toList());
         } else if (args.size() > 1) {
-            return Arrays.asList();
+            return Collections.emptyList();
         }
         return whitelistService.getAllWhitelistedNicknames().join();
     }

@@ -8,12 +8,12 @@ import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public final class DisableCommand extends Command {
     public static final String NAME = "disable";
-    public static final List<String> ALIASES = Arrays.asList("off");
+    public static final List<String> ALIASES = Collections.singletonList("off");
     public static final String PERMISSION = "whitelist.disable";
 
     @NonNull private final WhitelistConfig whitelistConfig;

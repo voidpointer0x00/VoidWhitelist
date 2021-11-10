@@ -14,7 +14,7 @@ public final class WhitelistAddedEvent extends Event {
     @NonNull private final String nickname;
     private final Date expiresAt;
 
-    public static final HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

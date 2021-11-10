@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 public final class WhitelistEnabledEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    public static final HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

@@ -6,15 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class CommandManager {
     private final Map<String, Command> commands = new HashMap<>();
-
-    public Set<String> getCommandsNames() {
-        return commands.keySet();
-    }
 
     public void addCommand(final Command command) {
         final String commandName = command.getName();
@@ -32,10 +27,6 @@ public final class CommandManager {
             }
             commands.put(alias, command);
         }
-    }
-
-    public boolean hasCommand(final String commandName) {
-        return commands.containsKey(commandName);
     }
 
     public void executeCommand(final String commandName, final Args args) throws IllegalArgumentException {

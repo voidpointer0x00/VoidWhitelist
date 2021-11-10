@@ -11,7 +11,7 @@ public final class WhitelistRemovedEvent extends Event {
 
     @NonNull private final String nickname;
 
-    public static final HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
