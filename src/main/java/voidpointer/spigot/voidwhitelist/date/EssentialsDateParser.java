@@ -24,7 +24,7 @@ public final class EssentialsDateParser {
          * Just formatted copy-paste from Essentials DateUtil class
          *
          * Now method returns only Unix-time or -1 if not found
-         *      instread of Exception throwing.
+         *      instead of Exception throwing.
          * * in this case we don't need past time so..
          */
         Matcher m = DATE_PATTERN.matcher(date);
