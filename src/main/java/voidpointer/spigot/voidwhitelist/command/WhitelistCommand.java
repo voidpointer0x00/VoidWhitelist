@@ -16,13 +16,11 @@ public final class WhitelistCommand extends Command {
 
     @NonNull private final CommandManager whitelistCommands = new CommandManager();
     @NonNull private final Locale locale;
-    @NonNull private final WhitelistService whitelistService;
 
     public WhitelistCommand(@NonNull final Locale locale, @NonNull final WhitelistService whitelistService,
                             @NonNull final WhitelistConfig whitelistConfig, final EventManager eventManager) {
         super(NAME);
         this.locale = locale;
-        this.whitelistService = whitelistService;
 
         whitelistCommands.addCommand(new AddCommand(whitelistService, locale, eventManager));
         whitelistCommands.addCommand(new RemoveCommand(whitelistService, locale, eventManager));
