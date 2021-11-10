@@ -1,7 +1,6 @@
 package voidpointer.spigot.voidwhitelist.command;
 
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;

@@ -5,8 +5,17 @@ import voidpointer.spigot.voidwhitelist.VwPlayer;
 import voidpointer.spigot.voidwhitelist.storage.SimpleVwPlayer;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -68,7 +77,6 @@ public final class SerialWhitelistService implements WhitelistService {
             Object deserializedObject = oin.readObject();
             if (!(deserializedObject instanceof Collection<?>))
                 throw new ClassCastException("Deserialized object isn't whitelist map.");
-            //noinspection unchecked: actually checked, but IDEA doesn't understand catch (ClassCastException) :^(
             whitelistPlayers = (Collection<VwPlayer>) deserializedObject;
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
             log.severe("Cannot deserialize whitelist storage object from file.");
@@ -83,7 +91,6 @@ public final class SerialWhitelistService implements WhitelistService {
         File whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
         if (!whitelistFile.exists()) {
             try {
-                //noinspection ResultOfMethodCallIgnored: doesn't matter if file already exists
                 whitelistFile.createNewFile();
             } catch (IOException ioException) {
                 log.severe("Cannot save whitelist.");

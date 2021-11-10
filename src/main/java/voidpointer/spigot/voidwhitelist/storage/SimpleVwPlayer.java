@@ -1,7 +1,11 @@
 package voidpointer.spigot.voidwhitelist.storage;
 
-import lombok.*;
-import voidpointer.spigot.voidwhitelist.VwPlayer;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 

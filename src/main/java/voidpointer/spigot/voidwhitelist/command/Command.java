@@ -1,6 +1,10 @@
 package voidpointer.spigot.voidwhitelist.command;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

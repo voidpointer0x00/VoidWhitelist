@@ -1,6 +1,10 @@
 package voidpointer.spigot.voidwhitelist.storage.json;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import voidpointer.spigot.voidwhitelist.VwPlayer;
 
 import java.lang.reflect.Type;

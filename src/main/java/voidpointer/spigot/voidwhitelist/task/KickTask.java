@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import voidpointer.spigot.voidwhitelist.VwPlayer;
-import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
