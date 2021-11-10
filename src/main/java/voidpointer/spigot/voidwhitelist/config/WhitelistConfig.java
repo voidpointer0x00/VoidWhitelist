@@ -41,12 +41,13 @@ public class WhitelistConfig {
         if (!plugin.getConfig().isSet(STORAGE_VERSION_PATH)) {
             /* config was saved without version -> it's likely old version or a configuration mistake */
             setStorageVersion(StorageVersion.UNDEFINED);
-        } else {
-            String storageVersionName = plugin.getConfig().getString(STORAGE_VERSION_PATH);
-            for (StorageVersion storageVersion : StorageVersion.values()) {
-                if (storageVersionName.equalsIgnoreCase(storageVersion.toString()))
-                    return storageVersion;
-            }
+            return StorageVersion.UNDEFINED;
+        }
+        String storageVersionName = plugin.getConfig().getString(STORAGE_VERSION_PATH,
+                                                                StorageVersion.UNDEFINED.toString());
+        for (StorageVersion storageVersion : StorageVersion.values()) {
+            if (storageVersionName.equalsIgnoreCase(storageVersion.toString()))
+                return storageVersion;
         }
         return StorageVersion.UNDEFINED;
     }
