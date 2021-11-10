@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public final class EssentialsDateParser {
     public static final long WRONG_DATE_FORMAT = -1;
 
-    private static Pattern DATE_PATTERN = Pattern.compile(
+    private static final Pattern DATE_PATTERN = Pattern.compile(
             "(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?"
                     + "(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?"
                     + "(?:([0-9]+)\\s*w[a-z]*[,\\s]*)?"
