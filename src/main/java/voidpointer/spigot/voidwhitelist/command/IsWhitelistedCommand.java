@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.voidwhitelist.VwPlayer;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
@@ -33,15 +34,14 @@ public final class IsWhitelistedCommand extends Command {
         }
 
         final String nicknameToCheck = (0 == args.size()) ? args.getSender().getName() : args.get(0);
-        whitelistService.findVwPlayer(nicknameToCheck).thenAcceptAsync(vwPlayer -> {
-            if ((null == vwPlayer) || !vwPlayer.isAllowedToJoin()) {
-                tellNotWhitelisted(args.getSender(), nicknameToCheck);
-            } else if (vwPlayer.isExpirable()) {
-                tellWhitelistedTemporarily(args.getSender(), nicknameToCheck, vwPlayer.getExpiresAt());
-            } else {
-                tellWhitelisted(args.getSender(), nicknameToCheck);
-            }
-        });
+        final VwPlayer vwPlayer = whitelistService.findVwPlayer(nicknameToCheck).join();
+        if ((null == vwPlayer) || !vwPlayer.isAllowedToJoin()) {
+            tellNotWhitelisted(args.getSender(), nicknameToCheck);
+        } else if (vwPlayer.isExpirable()) {
+            tellWhitelistedTemporarily(args.getSender(), nicknameToCheck, vwPlayer.getExpiresAt());
+        } else {
+            tellWhitelisted(args.getSender(), nicknameToCheck);
+        }
     }
 
     @Override public List<String> getAliases() {

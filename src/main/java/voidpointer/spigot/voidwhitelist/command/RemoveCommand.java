@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.voidwhitelist.VwPlayer;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -35,21 +36,18 @@ public class RemoveCommand extends Command {
     @Override public void execute(final Args args) {
         final String nicknameToRemove = args.get(0);
 
-        // TODO: try async
-        whitelistService.findVwPlayer(nicknameToRemove).thenAccept((vwPlayer) -> {
-            if ((null == vwPlayer) || !vwPlayer.isAllowedToJoin()) {
-                locale.localizeColorized(WhitelistMessage.REMOVE_NOT_WHITELISTED)
-                        .set("player", nicknameToRemove)
-                        .send(args.getSender());
-            } else {
-                whitelistService.removeFromWhitelist(vwPlayer);
-                locale.localizeColorized(WhitelistMessage.REMOVED)
-                        .set("player", nicknameToRemove)
-                        .send(args.getSender());
-            }
-            eventManager.callAsyncEvent(new WhitelistRemovedEvent(nicknameToRemove));
-        });
-
+        final VwPlayer removedPlayer = whitelistService.findVwPlayer(nicknameToRemove).join();
+        if ((null == removedPlayer) || !removedPlayer.isAllowedToJoin()) {
+            locale.localizeColorized(WhitelistMessage.REMOVE_NOT_WHITELISTED)
+                    .set("player", nicknameToRemove)
+                    .send(args.getSender());
+        } else {
+            whitelistService.removeFromWhitelist(removedPlayer);
+            locale.localizeColorized(WhitelistMessage.REMOVED)
+                    .set("player", nicknameToRemove)
+                    .send(args.getSender());
+        }
+        eventManager.callAsyncEvent(new WhitelistRemovedEvent(nicknameToRemove));
     }
 
     @Override public List<String> tabComplete(final Args args) {
