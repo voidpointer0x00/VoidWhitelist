@@ -4,24 +4,21 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.Date;
+import voidpointer.spigot.voidwhitelist.WhitelistableName;
 
 @Getter
 public final class WhitelistAddedEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    @NonNull private final String nickname;
-    private final Date expiresAt;
+    @NonNull private final WhitelistableName whitelistableName;
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public WhitelistAddedEvent(final String nickname, final Date expiresAt) {
+    public WhitelistAddedEvent(final WhitelistableName whitelistableName) {
         super(true);
-        this.nickname = nickname;
-        this.expiresAt = expiresAt;
+        this.whitelistableName = whitelistableName;
     }
 
     @Override public HandlerList getHandlers() {

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import voidpointer.spigot.voidwhitelist.VwPlayer;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -31,8 +31,8 @@ public final class KickTask extends BukkitRunnable {
     }
 
     public KickTask scheduleKick(final Plugin plugin, final Date expiresAt) {
-        if (VwPlayer.NEVER_EXPIRES == expiresAt)
-            throw new IllegalStateException("Cannot schedule kick task for player with expiresAt == NEVER_EXPIRES");
+        if (!Whitelistable.isDateExpirable(expiresAt))
+            throw new IllegalStateException("Cannot schedule kick task for a player without expirable date");
 
         long delay = expiresAt.getTime() - System.currentTimeMillis();
         if (delay < 0)

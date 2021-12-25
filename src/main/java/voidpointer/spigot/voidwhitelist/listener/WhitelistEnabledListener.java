@@ -22,7 +22,7 @@ public final class WhitelistEnabledListener implements Listener {
     @NonNull private final Plugin plugin;
     @NonNull private final Locale locale;
     @NonNull private final WhitelistService whitelistService;
-    @NonNull private final Map<String, KickTask> scheduledKickTasks;
+    @NonNull private final Map<Player, KickTask> scheduledKickTasks;
 
     /**
      * Kick all non whitelisted online players and schedule kick tasks
@@ -32,13 +32,13 @@ public final class WhitelistEnabledListener implements Listener {
     public void onEnabled(final WhitelistEnabledEvent event) {
         String kickReason = locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            whitelistService.findVwPlayer(onlinePlayer.getName()).thenAccept(vwPlayer -> {
+            whitelistService.findNick(onlinePlayer.getName()).thenAccept(vwPlayer -> {
                 if ((null == vwPlayer) || !vwPlayer.isAllowedToJoin()) {
                     plugin.getServer().getScheduler().runTask(plugin, () -> onlinePlayer.kickPlayer(kickReason));
                 } else if (vwPlayer.isExpirable()) {
                     KickTask task = new KickTask(onlinePlayer, kickReason);
                     task.scheduleKick(plugin, vwPlayer.getExpiresAt());
-                    scheduledKickTasks.put(onlinePlayer.getName(), task);
+                    scheduledKickTasks.put(onlinePlayer, task);
                 }
             });
         }

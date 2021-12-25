@@ -1,5 +1,6 @@
 package voidpointer.spigot.voidwhitelist;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFileConfiguration;
 import voidpointer.spigot.voidwhitelist.command.WhitelistCommand;
@@ -18,7 +19,7 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 public final class VoidWhitelistPlugin extends JavaPlugin {
     private TranslatedLocaleFileConfiguration locale;
@@ -45,7 +46,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Map<String, KickTask> scheduledKickTasks = new ConcurrentHashMap<>();
+        Map<Player, KickTask> scheduledKickTasks = new WeakHashMap<>();
         new LoginListener(this, whitelistService, locale, whitelistConfig, scheduledKickTasks).register(this);
         new WhitelistEnabledListener(this, locale, whitelistService, scheduledKickTasks).register(this);
         new WhitelistDisabledListener(scheduledKickTasks).register(this);

@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
-import voidpointer.spigot.voidwhitelist.VwPlayer;
+import voidpointer.spigot.voidwhitelist.WhitelistableName;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
@@ -39,15 +39,10 @@ public final class AddCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        WhitelistAddedEvent addedEvent;
-        if (!hasExpiresAtArgument(args.size())) {
-            addedEvent = addForever(args);
-        } else {
-            addedEvent = addTemporarily(args);
-        }
-
-        if (null != addedEvent)
-            eventManager.callAsyncEvent(addedEvent);
+        if (!hasExpiresAtArgument(args.size()))
+            addForever(args);
+        else
+            addTemporarily(args);
     }
 
     @Override public List<String> tabComplete(final Args args) {
@@ -74,33 +69,33 @@ public final class AddCommand extends Command {
         locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 
-    private WhitelistAddedEvent addForever(final Args args) {
+    private void addForever(final Args args) {
         final String nickname = args.get(0);
-        whitelistService.addToWhitelist(nickname);
+        whitelistService.addToWhitelist(nickname).thenAcceptAsync(this::callWhitelistAddedEvent);
         locale.localizeColorized(WhitelistMessage.ADDED)
                 .set("player", nickname)
                 .send(args.getSender());
-
-        return new WhitelistAddedEvent(nickname, VwPlayer.NEVER_EXPIRES);
     }
 
-    private WhitelistAddedEvent addTemporarily(final Args args) {
+    private void addTemporarily(final Args args) {
         final String nickname = args.get(0);
         final long whitelistTimePeriod = EssentialsDateParser.parseDate(args.get(1));
 
         if (EssentialsDateParser.WRONG_DATE_FORMAT == whitelistTimePeriod) {
             locale.localizeColorized(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
-            return null;
+            return;
         }
 
         final Date expiresAt = new Date(whitelistTimePeriod);
-        whitelistService.addToWhitelist(nickname, expiresAt);
+        whitelistService.addToWhitelist(nickname, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
         locale.localizeColorized(WhitelistMessage.ADDED_TEMP)
                 .set("player", nickname)
                 .set("time", expiresAt.toString())
                 .send(args.getSender());
+    }
 
-        return new WhitelistAddedEvent(nickname, expiresAt);
+    private void callWhitelistAddedEvent(final WhitelistableName whitelistableName) {
+        eventManager.callAsyncEvent(new WhitelistAddedEvent(whitelistableName));
     }
 
     private boolean hasExpiresAtArgument(int argsNumber) {

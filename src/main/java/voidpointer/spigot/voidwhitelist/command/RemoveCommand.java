@@ -3,7 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
-import voidpointer.spigot.voidwhitelist.VwPlayer;
+import voidpointer.spigot.voidwhitelist.WhitelistableName;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -36,7 +36,7 @@ public class RemoveCommand extends Command {
     @Override public void execute(final Args args) {
         final String nicknameToRemove = args.get(0);
 
-        final VwPlayer removedPlayer = whitelistService.findVwPlayer(nicknameToRemove).join();
+        final WhitelistableName removedPlayer = whitelistService.findNick(nicknameToRemove).join();
         if ((null == removedPlayer) || !removedPlayer.isAllowedToJoin()) {
             locale.localizeColorized(WhitelistMessage.REMOVE_NOT_WHITELISTED)
                     .set("player", nicknameToRemove)

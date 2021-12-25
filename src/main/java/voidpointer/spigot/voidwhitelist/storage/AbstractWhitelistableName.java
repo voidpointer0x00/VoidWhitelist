@@ -1,10 +1,11 @@
 package voidpointer.spigot.voidwhitelist.storage;
 
-import voidpointer.spigot.voidwhitelist.VwPlayer;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.WhitelistableName;
 
 import java.util.Date;
 
-public abstract class AbstractVwPlayer implements VwPlayer {
+public abstract class AbstractWhitelistableName implements WhitelistableName {
     @Override public boolean isAllowedToJoin() {
         if (!isExpirable())
             return true;
@@ -12,10 +13,16 @@ public abstract class AbstractVwPlayer implements VwPlayer {
     }
 
     @Override public boolean isExpirable() {
-        return VwPlayer.NEVER_EXPIRES != getExpiresAt();
+        return Whitelistable.NEVER_EXPIRES != getExpiresAt();
     }
 
     public abstract Date getExpiresAt();
 
     public abstract void setExpiresAt(final Date date);
+
+    public abstract String getName();
+
+    @Override public final String toString() {
+        return getName();
+    }
 }

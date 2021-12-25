@@ -2,6 +2,7 @@ package voidpointer.spigot.voidwhitelist.listener;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public final class QuitListener implements Listener {
-    @NonNull private final Map<String, KickTask> scheduledKickTasks;
+    @NonNull private final Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler public void onQuit(final PlayerQuitEvent event) {
         final String nickname = event.getPlayer().getName();

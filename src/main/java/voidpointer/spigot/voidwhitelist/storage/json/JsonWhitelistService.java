@@ -5,8 +5,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import voidpointer.spigot.voidwhitelist.VwPlayer;
-import voidpointer.spigot.voidwhitelist.storage.SimpleVwPlayer;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.WhitelistableName;
+import voidpointer.spigot.voidwhitelist.storage.SimpleWhitelistableName;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.io.File;
@@ -27,15 +28,15 @@ public final class JsonWhitelistService implements WhitelistService {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class, new DateJsonSerializer())
             .registerTypeAdapter(Date.class, new DateJsonDeserializer())
-            .registerTypeAdapter(VwPlayer.class, new VwPlayerInstanceCreator())
-            .registerTypeAdapter(VwPlayer.class, new VwPlayerJsonSerializer())
-            .registerTypeAdapter(VwPlayer.class, new VwPlayerJsonDeserializer())
+            .registerTypeAdapter(WhitelistableName.class, new VwPlayerInstanceCreator())
+            .registerTypeAdapter(WhitelistableName.class, new VwPlayerJsonSerializer())
+            .registerTypeAdapter(WhitelistableName.class, new VwPlayerJsonDeserializer())
             .serializeNulls()
             .create();
 
     private final Logger log;
     private final File whitelistFile;
-    private Map<String, VwPlayer> whitelist;
+    private Map<String, WhitelistableName> whitelist;
 
     public JsonWhitelistService(final Logger log, final File dataFolder) {
         this.log = log;
@@ -43,19 +44,19 @@ public final class JsonWhitelistService implements WhitelistService {
         load();
     }
 
-    @Override public CompletableFuture<VwPlayer> findVwPlayer(final String name) {
+    @Override public CompletableFuture<WhitelistableName> findNick(final String name) {
         return CompletableFuture.supplyAsync(() -> whitelist.get(name));
     }
 
     @Override
-    public CompletableFuture<VwPlayer> addToWhitelist(final String name) {
-        return addToWhitelist(name, VwPlayer.NEVER_EXPIRES);
+    public CompletableFuture<WhitelistableName> addToWhitelist(final String name) {
+        return addToWhitelist(name, Whitelistable.NEVER_EXPIRES);
     }
 
     @Override
-    public CompletableFuture<VwPlayer> addToWhitelist(final String name, final Date expiresAt) {
+    public CompletableFuture<WhitelistableName> addToWhitelist(final String name, final Date expiresAt) {
         return CompletableFuture.supplyAsync(() -> {
-            SimpleVwPlayer vwPlayer = new SimpleVwPlayer(name, expiresAt);
+            SimpleWhitelistableName vwPlayer = new SimpleWhitelistableName(name, expiresAt);
             whitelist.put(name, vwPlayer);
             save();
             return vwPlayer;
@@ -68,9 +69,9 @@ public final class JsonWhitelistService implements WhitelistService {
     }
 
     @Override
-    public CompletableFuture<Boolean> removeFromWhitelist(final VwPlayer vwPlayer) {
+    public CompletableFuture<Boolean> removeFromWhitelist(final WhitelistableName whitelistableName) {
         return CompletableFuture.supplyAsync(() -> {
-            whitelist.remove(vwPlayer.getName());
+            whitelist.remove(whitelistableName.toString());
             save();
             return true;
         });
@@ -83,10 +84,10 @@ public final class JsonWhitelistService implements WhitelistService {
             return;
         }
 
-        List<VwPlayer> whitelistedPlayers = readAndParseWhitelistFileContents(whitelistFile);
+        List<WhitelistableName> whitelistedPlayers = readAndParseWhitelistFileContents(whitelistFile);
         if (null != whitelistedPlayers)
-            for (VwPlayer whitelistedPlayer : whitelistedPlayers)
-                whitelist.put(whitelistedPlayer.getName(), whitelistedPlayer);
+            for (WhitelistableName whitelistedPlayer : whitelistedPlayers)
+                whitelist.put(whitelistedPlayer.toString(), whitelistedPlayer);
     }
 
     private void save() {
@@ -98,13 +99,13 @@ public final class JsonWhitelistService implements WhitelistService {
         }
     }
 
-    private List<VwPlayer> readAndParseWhitelistFileContents(final File whitelistFile) {
+    private List<WhitelistableName> readAndParseWhitelistFileContents(final File whitelistFile) {
         String whitelistFileContents = readWhitelistFileContents(whitelistFile);
         if (null == whitelistFileContents)
             return null;
 
         try {
-            Type whitelistType = new TypeToken<List<VwPlayer>>() {}.getType();
+            Type whitelistType = new TypeToken<List<WhitelistableName>>() {}.getType();
             return gson.fromJson(whitelistFileContents, whitelistType);
         } catch (final JsonSyntaxException jsonSyntaxException) {
             log.severe("Invalid json syntax in whitelist file: " + jsonSyntaxException.getMessage());
