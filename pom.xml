@@ -6,7 +6,7 @@
 
     <groupId>voidpointer.spigot</groupId>
     <artifactId>voidwhitelist</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>VoidWhitelist</name>
@@ -18,6 +18,13 @@
     </properties>
     <url>vk.me/voidpointer</url>
 
+    <scm>
+        <connection>scm:svn:http://127.0.0.1/dummy</connection>
+        <developerConnection>scm:svn:https://127.0.0.1/dummy</developerConnection>
+        <tag>HEAD</tag>
+        <url>http://127.0.0.1/dummy</url>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
@@ -27,6 +34,28 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,number}</format>
+                    <items>
+                        <item>buildNumber</item>
+                    </items>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>unknownbuild</revisionOnScmFailure>
                 </configuration>
             </plugin>
             <plugin>
@@ -58,7 +87,7 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <finalName>${project.name}-${project.version}</finalName>
+        <finalName>${project.name}-${project.version}_${buildNumber}</finalName>
     </build>
 
     <repositories>
