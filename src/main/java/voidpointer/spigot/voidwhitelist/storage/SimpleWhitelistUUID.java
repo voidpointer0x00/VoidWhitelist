@@ -23,11 +23,11 @@ public final class SimpleWhitelistUUID extends AbstractWhitelistable implements 
     private UUID uniqueId;
     private Date expiresAt;
 
-    @Override public UUID getUniqueId() {
-        return uniqueId;
-    }
-
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);
+    }
+
+    @Override public String toString() {
+        return uniqueId.toString();
     }
 }
