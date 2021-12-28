@@ -11,9 +11,9 @@ public interface WhitelistService {
 
     CompletableFuture<List<String>> getAllWhitelistedNicknames();
 
-    CompletableFuture<WhitelistableName> addToWhitelist(final String name);
+    CompletableFuture<WhitelistableName> addNickToWhitelist(final String name);
 
-    CompletableFuture<WhitelistableName> addToWhitelist(final String name, final Date expiresAt);
+    CompletableFuture<WhitelistableName> addNickToWhitelist(final String name, final Date expiresAt);
 
     CompletableFuture<Boolean> removeFromWhitelist(final WhitelistableName whitelistableName);
 }

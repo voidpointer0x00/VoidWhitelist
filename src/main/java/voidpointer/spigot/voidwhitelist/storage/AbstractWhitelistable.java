@@ -1,11 +1,10 @@
 package voidpointer.spigot.voidwhitelist.storage;
 
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.WhitelistableName;
 
 import java.util.Date;
 
-public abstract class AbstractWhitelistableName implements WhitelistableName {
+public abstract class AbstractWhitelistable implements Whitelistable {
     @Override public boolean isAllowedToJoin() {
         if (!isExpirable())
             return true;
@@ -19,10 +18,4 @@ public abstract class AbstractWhitelistableName implements WhitelistableName {
     public abstract Date getExpiresAt();
 
     public abstract void setExpiresAt(final Date date);
-
-    public abstract String getName();
-
-    @Override public final String toString() {
-        return getName();
-    }
 }

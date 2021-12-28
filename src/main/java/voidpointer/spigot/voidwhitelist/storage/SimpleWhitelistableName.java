@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import voidpointer.spigot.voidwhitelist.WhitelistableName;
 
 import java.util.Date;
 import java.util.Optional;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
-public final class SimpleWhitelistableName extends AbstractWhitelistableName {
+public final class SimpleWhitelistableName extends AbstractWhitelistable implements WhitelistableName {
     @NonNull
     @EqualsAndHashCode.Include
     private final String name;
@@ -28,5 +29,9 @@ public final class SimpleWhitelistableName extends AbstractWhitelistableName {
                 .filter(player -> player.getName().equals(name))
                 .map(player -> (Player) player)
                 .findFirst();
+    }
+
+    @Override public String toString() {
+        return name;
     }
 }

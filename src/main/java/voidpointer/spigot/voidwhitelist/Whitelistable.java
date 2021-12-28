@@ -1,9 +1,15 @@
 package voidpointer.spigot.voidwhitelist;
 
+import org.bukkit.entity.Player;
+
 import java.util.Date;
+import java.util.Optional;
 
 public interface Whitelistable {
     Date NEVER_EXPIRES = null;
+
+    /** Returns online player associated with this whitelistable entity if one exists. */
+    Optional<Player> findAssociatedOnlinePlayer();
 
     /** Returns {@code true} if the entity has an "expires at" date
      * and {@code false} otherwise. */

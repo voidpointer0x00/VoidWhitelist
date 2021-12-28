@@ -49,12 +49,12 @@ public final class JsonWhitelistService implements WhitelistService {
     }
 
     @Override
-    public CompletableFuture<WhitelistableName> addToWhitelist(final String name) {
-        return addToWhitelist(name, Whitelistable.NEVER_EXPIRES);
+    public CompletableFuture<WhitelistableName> addNickToWhitelist(final String name) {
+        return addNickToWhitelist(name, Whitelistable.NEVER_EXPIRES);
     }
 
     @Override
-    public CompletableFuture<WhitelistableName> addToWhitelist(final String name, final Date expiresAt) {
+    public CompletableFuture<WhitelistableName> addNickToWhitelist(final String name, final Date expiresAt) {
         return CompletableFuture.supplyAsync(() -> {
             SimpleWhitelistableName vwPlayer = new SimpleWhitelistableName(name, expiresAt);
             whitelist.put(name, vwPlayer);
