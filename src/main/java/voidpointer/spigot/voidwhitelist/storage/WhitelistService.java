@@ -1,19 +1,21 @@
 package voidpointer.spigot.voidwhitelist.storage;
 
-import voidpointer.spigot.voidwhitelist.WhitelistableName;
+import org.bukkit.entity.Player;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public interface WhitelistService {
-    CompletableFuture<WhitelistableName> findByName(final String name);
+    CompletableFuture<Optional<Whitelistable>> find(final Player player);
 
     CompletableFuture<List<String>> getAllWhitelistedNames();
 
-    CompletableFuture<WhitelistableName> addName(final String name);
+    CompletableFuture<Whitelistable> add(final Player player);
 
-    CompletableFuture<WhitelistableName> addName(final String name, final Date expiresAt);
+    CompletableFuture<Whitelistable> add(final Player player, final Date expiresAt);
 
-    CompletableFuture<Boolean> removeName(final WhitelistableName whitelistableName);
+    CompletableFuture<Boolean> remove(final Whitelistable whitelistable);
 }

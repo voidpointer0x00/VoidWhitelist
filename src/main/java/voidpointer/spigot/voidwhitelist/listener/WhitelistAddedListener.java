@@ -23,17 +23,16 @@ public final class WhitelistAddedListener implements Listener {
 
     @EventHandler(priority=EventPriority.MONITOR)
     public void onAdded(final WhitelistAddedEvent event) {
-        if (scheduledKickTasks.containsKey(event.getWhitelistableName()))
-            scheduledKickTasks.remove(event.getWhitelistableName()).cancel();
-
-        Optional<Player> player = event.getWhitelistableName().findAssociatedOnlinePlayer();
+        Optional<Player> player = event.getWhitelistable().findAssociatedOnlinePlayer();
         if (!player.isPresent())
             return;
 
-        if (event.getWhitelistableName().isExpirable()) {
+        scheduledKickTasks.remove(player.get());
+
+        if (event.getWhitelistable().isExpirable()) {
             String kickMessage = locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
             KickTask kickTask = new KickTask(player.get(), kickMessage);
-            kickTask.scheduleKick(plugin, event.getWhitelistableName().getExpiresAt());
+            kickTask.scheduleKick(plugin, event.getWhitelistable().getExpiresAt());
             scheduledKickTasks.put(player.get(), kickTask);
         }
     }

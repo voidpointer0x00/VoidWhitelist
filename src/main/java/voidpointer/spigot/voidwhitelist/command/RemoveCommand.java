@@ -3,7 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
-import voidpointer.spigot.voidwhitelist.WhitelistableName;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -36,18 +36,18 @@ public class RemoveCommand extends Command {
     @Override public void execute(final Args args) {
         final String nicknameToRemove = args.get(0);
 
-        final WhitelistableName removedPlayer = whitelistService.findByName(nicknameToRemove).join();
-        if ((null == removedPlayer) || !removedPlayer.isAllowedToJoin()) {
+        final Whitelistable whitelistable = whitelistService.find(nicknameToRemove).join();
+        if ((null == whitelistable) || !whitelistable.isAllowedToJoin()) {
             locale.localizeColorized(WhitelistMessage.REMOVE_NOT_WHITELISTED)
                     .set("player", nicknameToRemove)
                     .send(args.getSender());
         } else {
-            whitelistService.removeFromWhitelist(removedPlayer);
+            whitelistService.remove(whitelistable);
             locale.localizeColorized(WhitelistMessage.REMOVED)
                     .set("player", nicknameToRemove)
                     .send(args.getSender());
         }
-        eventManager.callAsyncEvent(new WhitelistRemovedEvent(nicknameToRemove));
+        eventManager.callAsyncEvent(new WhitelistRemovedEvent(whitelistable));
     }
 
     @Override public List<String> tabComplete(final Args args) {

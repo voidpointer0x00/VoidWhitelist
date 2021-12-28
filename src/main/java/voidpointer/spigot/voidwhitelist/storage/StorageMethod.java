@@ -1,10 +1,12 @@
 package voidpointer.spigot.voidwhitelist.storage;
 
+import voidpointer.spigot.voidwhitelist.storage.serial.SerialNameWhitelistService;
+
 public enum StorageMethod {
     /**
      * Based on standard Java serialization.
      *
-     * @see voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService
+     * @see SerialNameWhitelistService
      */
     SERIAL,
     /**

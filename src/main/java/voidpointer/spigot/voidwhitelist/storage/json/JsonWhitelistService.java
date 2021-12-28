@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.bukkit.entity.Player;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.WhitelistableName;
 import voidpointer.spigot.voidwhitelist.storage.SimpleWhitelistableName;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
@@ -44,23 +46,8 @@ public final class JsonWhitelistService implements WhitelistService {
         load();
     }
 
-    @Override public CompletableFuture<WhitelistableName> findByName(final String name) {
-        return CompletableFuture.supplyAsync(() -> whitelist.get(name));
-    }
-
-    @Override
-    public CompletableFuture<WhitelistableName> addName(final String name) {
-        return addName(name, Whitelistable.NEVER_EXPIRES);
-    }
-
-    @Override
-    public CompletableFuture<WhitelistableName> addName(final String name, final Date expiresAt) {
-        return CompletableFuture.supplyAsync(() -> {
-            SimpleWhitelistableName vwPlayer = new SimpleWhitelistableName(name, expiresAt);
-            whitelist.put(name, vwPlayer);
-            save();
-            return vwPlayer;
-        });
+    @Override public CompletableFuture<Optional<Whitelistable>> find(final Player player) {
+        return CompletableFuture.supplyAsync(() -> Optional.of(whitelist.get(player.getName())));
     }
 
     @Override
@@ -69,9 +56,27 @@ public final class JsonWhitelistService implements WhitelistService {
     }
 
     @Override
-    public CompletableFuture<Boolean> removeFromWhitelist(final WhitelistableName whitelistableName) {
+    public CompletableFuture<Whitelistable> add(final Player player) {
+        return add(player, Whitelistable.NEVER_EXPIRES);
+    }
+
+    @Override
+    public CompletableFuture<Whitelistable> add(final Player player, final Date expiresAt) {
         return CompletableFuture.supplyAsync(() -> {
-            whitelist.remove(whitelistableName.toString());
+            WhitelistableName whitelistableName = new SimpleWhitelistableName(player.getName(), expiresAt);
+            whitelist.put(player.getName(), whitelistableName);
+            save();
+            return whitelistableName;
+        });
+    }
+=
+    @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
+        if (!(whitelistable instanceof WhitelistableName))
+            throw new IllegalArgumentException("Expected WhitelistableName, but given "
+                    + whitelistable.getClass().getSimpleName());
+
+        return CompletableFuture.supplyAsync(() -> {
+            whitelist.remove(((WhitelistableName) whitelistable).getName());
             save();
             return true;
         });

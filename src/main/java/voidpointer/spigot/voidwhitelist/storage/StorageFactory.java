@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import voidpointer.spigot.voidwhitelist.config.StorageVersion;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
-import voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.serial.SerialNameWhitelistService;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,10 +28,10 @@ public final class StorageFactory {
             }
             case SERIAL: {
                 if (whitelistConfig.getStorageVersion() != StorageVersion.CURRENT) {
-                    makeOldStorageBackup(log, SerialWhitelistService.WHITELIST_FILE_NAME);
+                    makeOldStorageBackup(log, SerialNameWhitelistService.WHITELIST_FILE_NAME);
                     whitelistConfig.setStorageVersion(StorageVersion.CURRENT);
                 }
-                return new SerialWhitelistService(log, dataFolder);
+                return new SerialNameWhitelistService(log, dataFolder);
             }
             default:
                 throw new UnsupportedOperationException("Unknown storage method: "

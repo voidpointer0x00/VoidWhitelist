@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
-import voidpointer.spigot.voidwhitelist.WhitelistableName;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
@@ -71,7 +71,7 @@ public final class AddCommand extends Command {
 
     private void addForever(final Args args) {
         final String nickname = args.get(0);
-        whitelistService.addName(nickname).thenAcceptAsync(this::callWhitelistAddedEvent);
+        whitelistService.add(nickname).thenAcceptAsync(this::callWhitelistAddedEvent);
         locale.localizeColorized(WhitelistMessage.ADDED)
                 .set("player", nickname)
                 .send(args.getSender());
@@ -87,15 +87,15 @@ public final class AddCommand extends Command {
         }
 
         final Date expiresAt = new Date(whitelistTimePeriod);
-        whitelistService.addName(nickname, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
+        whitelistService.add(nickname, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
         locale.localizeColorized(WhitelistMessage.ADDED_TEMP)
                 .set("player", nickname)
                 .set("time", expiresAt.toString())
                 .send(args.getSender());
     }
 
-    private void callWhitelistAddedEvent(final WhitelistableName whitelistableName) {
-        eventManager.callAsyncEvent(new WhitelistAddedEvent(whitelistableName));
+    private void callWhitelistAddedEvent(final Whitelistable whitelistable) {
+        eventManager.callAsyncEvent(new WhitelistAddedEvent(whitelistable));
     }
 
     private boolean hasExpiresAtArgument(int argsNumber) {
