@@ -1,5 +1,6 @@
 package voidpointer.spigot.voidwhitelist.storage;
 
+import voidpointer.spigot.voidwhitelist.storage.json.JsonNameWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.serial.SerialNameWhitelistService;
 
 public enum StorageMethod {
@@ -13,7 +14,7 @@ public enum StorageMethod {
      * Based on JSON serialization libraries. Considered to be more
      *  human-friendly than serialization and fast enough.
      *
-     * @see voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService
+     * @see JsonNameWhitelistService
      */
     JSON,
     /* TODO: SQL database. */

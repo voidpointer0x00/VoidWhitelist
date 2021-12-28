@@ -24,7 +24,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
-public final class JsonWhitelistService implements WhitelistService {
+public final class JsonNameWhitelistService implements WhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
 
     private static final Gson gson = new GsonBuilder()
@@ -40,7 +40,7 @@ public final class JsonWhitelistService implements WhitelistService {
     private final File whitelistFile;
     private Map<String, WhitelistableName> whitelist;
 
-    public JsonWhitelistService(final Logger log, final File dataFolder) {
+    public JsonNameWhitelistService(final Logger log, final File dataFolder) {
         this.log = log;
         whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
         load();

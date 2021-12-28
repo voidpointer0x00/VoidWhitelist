@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import voidpointer.spigot.voidwhitelist.config.StorageVersion;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
-import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.json.JsonNameWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.serial.SerialNameWhitelistService;
 
 import java.io.File;
@@ -21,10 +21,10 @@ public final class StorageFactory {
         switch (whitelistConfig.getStorageMethod()) {
             case JSON: {
                 if (whitelistConfig.getStorageVersion() != StorageVersion.CURRENT) {
-                    makeOldStorageBackup(log, JsonWhitelistService.WHITELIST_FILE_NAME);
+                    makeOldStorageBackup(log, JsonNameWhitelistService.WHITELIST_FILE_NAME);
                     whitelistConfig.setStorageVersion(StorageVersion.CURRENT);
                 }
-                return new JsonWhitelistService(log, dataFolder);
+                return new JsonNameWhitelistService(log, dataFolder);
             }
             case SERIAL: {
                 if (whitelistConfig.getStorageVersion() != StorageVersion.CURRENT) {
