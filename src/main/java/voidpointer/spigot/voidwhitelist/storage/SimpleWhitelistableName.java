@@ -6,12 +6,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import voidpointer.spigot.voidwhitelist.WhitelistableName;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -24,11 +22,8 @@ public final class SimpleWhitelistableName extends AbstractWhitelistable impleme
     private final String name;
     private Date expiresAt;
 
-    @Override public Optional<Player> findAssociatedOnlinePlayer() {
-        return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> player.getName().equals(name))
-                .map(player -> (Player) player)
-                .findFirst();
+    @Override public boolean isAssociatedWith(final Player player) {
+        return player.getName().equals(name);
     }
 
     @Override public String toString() {
