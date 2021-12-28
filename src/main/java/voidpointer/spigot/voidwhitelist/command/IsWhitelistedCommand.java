@@ -34,7 +34,7 @@ public final class IsWhitelistedCommand extends Command {
         }
 
         final String nicknameToCheck = (0 == args.size()) ? args.getSender().getName() : args.get(0);
-        final WhitelistableName whitelistableName = whitelistService.findNick(nicknameToCheck).join();
+        final WhitelistableName whitelistableName = whitelistService.findByName(nicknameToCheck).join();
         if ((null == whitelistableName) || !whitelistableName.isAllowedToJoin()) {
             tellNotWhitelisted(args.getSender(), nicknameToCheck);
         } else if (whitelistableName.isExpirable()) {

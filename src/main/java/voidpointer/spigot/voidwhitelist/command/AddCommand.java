@@ -71,7 +71,7 @@ public final class AddCommand extends Command {
 
     private void addForever(final Args args) {
         final String nickname = args.get(0);
-        whitelistService.addNickToWhitelist(nickname).thenAcceptAsync(this::callWhitelistAddedEvent);
+        whitelistService.addName(nickname).thenAcceptAsync(this::callWhitelistAddedEvent);
         locale.localizeColorized(WhitelistMessage.ADDED)
                 .set("player", nickname)
                 .send(args.getSender());
@@ -87,7 +87,7 @@ public final class AddCommand extends Command {
         }
 
         final Date expiresAt = new Date(whitelistTimePeriod);
-        whitelistService.addNickToWhitelist(nickname, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
+        whitelistService.addName(nickname, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
         locale.localizeColorized(WhitelistMessage.ADDED_TEMP)
                 .set("player", nickname)
                 .set("time", expiresAt.toString())

@@ -32,7 +32,7 @@ public final class LoginListener implements Listener {
             return;
 
         String nickname = event.getName();
-        WhitelistableName whitelistableName = whitelistService.findNick(nickname).join();
+        WhitelistableName whitelistableName = whitelistService.findByName(nickname).join();
 
         if ((null == whitelistableName) || !whitelistableName.isAllowedToJoin())
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, getKickReason());
@@ -43,7 +43,7 @@ public final class LoginListener implements Listener {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        whitelistService.findNick(event.getPlayer().getName()).thenAcceptAsync(vwPlayer -> {
+        whitelistService.findByName(event.getPlayer().getName()).thenAcceptAsync(vwPlayer -> {
             if ((null == vwPlayer) || !vwPlayer.isExpirable())
                 return;
 

@@ -36,7 +36,7 @@ public class RemoveCommand extends Command {
     @Override public void execute(final Args args) {
         final String nicknameToRemove = args.get(0);
 
-        final WhitelistableName removedPlayer = whitelistService.findNick(nicknameToRemove).join();
+        final WhitelistableName removedPlayer = whitelistService.findByName(nicknameToRemove).join();
         if ((null == removedPlayer) || !removedPlayer.isAllowedToJoin()) {
             locale.localizeColorized(WhitelistMessage.REMOVE_NOT_WHITELISTED)
                     .set("player", nicknameToRemove)
@@ -53,13 +53,13 @@ public class RemoveCommand extends Command {
     @Override public List<String> tabComplete(final Args args) {
         if (args.size() == 1) {
             String presumptiveName = args.get(0);
-            return whitelistService.getAllWhitelistedNicknames().join().stream()
+            return whitelistService.getAllWhitelistedNames().join().stream()
                     .filter(whitelistedNickname -> whitelistedNickname.startsWith(presumptiveName))
                     .collect(Collectors.toList());
         } else if (args.size() > 1) {
             return Collections.emptyList();
         }
-        return whitelistService.getAllWhitelistedNicknames().join();
+        return whitelistService.getAllWhitelistedNames().join();
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

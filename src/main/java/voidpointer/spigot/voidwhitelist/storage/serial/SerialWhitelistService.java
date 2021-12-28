@@ -35,22 +35,22 @@ public final class SerialWhitelistService implements WhitelistService {
     }
 
     @Override
-    public CompletableFuture<WhitelistableName> findNick(final String name) {
+    public CompletableFuture<WhitelistableName> findByName(final String name) {
         return CompletableFuture.supplyAsync(() -> whitelistNames.get(name));
     }
 
-    @Override public CompletableFuture<List<String>> getAllWhitelistedNicknames() {
+    @Override public CompletableFuture<List<String>> getAllWhitelistedNames() {
         return CompletableFuture.supplyAsync(() -> whitelistNames.entrySet().stream()
                 .filter(entry -> entry.getValue().isAllowedToJoin())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList()));
     }
 
-    @Override public CompletableFuture<WhitelistableName> addNickToWhitelist(final String name) {
-        return addNickToWhitelist(name, Whitelistable.NEVER_EXPIRES);
+    @Override public CompletableFuture<WhitelistableName> addName(final String name) {
+        return addName(name, Whitelistable.NEVER_EXPIRES);
     }
 
-    @Override public CompletableFuture<WhitelistableName> addNickToWhitelist(final String name, final Date expiresAt) {
+    @Override public CompletableFuture<WhitelistableName> addName(final String name, final Date expiresAt) {
         return CompletableFuture.supplyAsync(() -> {
             WhitelistableName whitelistableName = new SimpleWhitelistableName(name, expiresAt);
             whitelistNames.put(name, whitelistableName);

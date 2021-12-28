@@ -44,17 +44,17 @@ public final class JsonWhitelistService implements WhitelistService {
         load();
     }
 
-    @Override public CompletableFuture<WhitelistableName> findNick(final String name) {
+    @Override public CompletableFuture<WhitelistableName> findByName(final String name) {
         return CompletableFuture.supplyAsync(() -> whitelist.get(name));
     }
 
     @Override
-    public CompletableFuture<WhitelistableName> addNickToWhitelist(final String name) {
-        return addNickToWhitelist(name, Whitelistable.NEVER_EXPIRES);
+    public CompletableFuture<WhitelistableName> addName(final String name) {
+        return addName(name, Whitelistable.NEVER_EXPIRES);
     }
 
     @Override
-    public CompletableFuture<WhitelistableName> addNickToWhitelist(final String name, final Date expiresAt) {
+    public CompletableFuture<WhitelistableName> addName(final String name, final Date expiresAt) {
         return CompletableFuture.supplyAsync(() -> {
             SimpleWhitelistableName vwPlayer = new SimpleWhitelistableName(name, expiresAt);
             whitelist.put(name, vwPlayer);
@@ -64,7 +64,7 @@ public final class JsonWhitelistService implements WhitelistService {
     }
 
     @Override
-    public CompletableFuture<List<String>> getAllWhitelistedNicknames() {
+    public CompletableFuture<List<String>> getAllWhitelistedNames() {
         return CompletableFuture.supplyAsync(() -> new ArrayList<>(whitelist.keySet()));
     }
 
