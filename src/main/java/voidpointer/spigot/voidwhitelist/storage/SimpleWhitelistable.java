@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.entity.Player;
-import voidpointer.spigot.voidwhitelist.WhitelistableUUID;
 
 import java.util.Date;
 import java.util.UUID;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
-public final class SimpleWhitelistUUID extends AbstractWhitelistable implements WhitelistableUUID {
+public final class SimpleWhitelistable extends AbstractWhitelistable {
     @NonNull
     @EqualsAndHashCode.Include
     private UUID uniqueId;

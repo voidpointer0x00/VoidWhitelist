@@ -11,11 +11,14 @@ import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class AddCommand extends Command {
@@ -39,10 +42,47 @@ public final class AddCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        if (!hasExpiresAtArgument(args.size()))
-            addForever(args);
+        Date expiresAt = Whitelistable.NEVER_EXPIRES;
+        if (hasExpiresAtArgument(args.size())) {
+            final long whitelistTimePeriod = EssentialsDateParser.parseDate(args.get(1));
+            if (EssentialsDateParser.WRONG_DATE_FORMAT == whitelistTimePeriod) {
+                locale.localizeColorized(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
+                return;
+            }
+            expiresAt = new Date(whitelistTimePeriod);
+        }
+
+        final UUID uniqueId;
+        try {
+            uniqueId = UUIDFetcher.getUUID(args.getArgs().get(0));
+        } catch (IOException ioException) {
+            /* TODO: implement direct uuid add command */
+            /* TODO: implement IllegalArgumentException handling */
+            locale.localizeColorized(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+                    .set("player", args.get(0))
+                    .send(args.getSender());
+            ioException.printStackTrace();
+            return;
+        }
+        whitelistService.add(uniqueId, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
+
+        if (expiresAt != Whitelistable.NEVER_EXPIRES)
+            notifyAddedForever(args, expiresAt);
         else
-            addTemporarily(args);
+            notifyAdded(args);
+    }
+
+    private void notifyAddedForever(final Args args, final Date expiresAt) {
+        locale.localizeColorized(WhitelistMessage.ADDED_TEMP)
+                .set("player", args.get(0))
+                .set("date", expiresAt.toString())
+                .send(args.getSender());
+    }
+
+    private void notifyAdded(final Args args) {
+        locale.localizeColorized(WhitelistMessage.ADDED)
+                .set("player", args.get(0))
+                .send(args.getSender());
     }
 
     @Override public List<String> tabComplete(final Args args) {
@@ -67,31 +107,6 @@ public final class AddCommand extends Command {
 
     @Override protected void onNoPermission(final CommandSender sender) {
         locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
-    }
-
-    private void addForever(final Args args) {
-        final String nickname = args.get(0);
-        whitelistService.add(nickname).thenAcceptAsync(this::callWhitelistAddedEvent);
-        locale.localizeColorized(WhitelistMessage.ADDED)
-                .set("player", nickname)
-                .send(args.getSender());
-    }
-
-    private void addTemporarily(final Args args) {
-        final String nickname = args.get(0);
-        final long whitelistTimePeriod = EssentialsDateParser.parseDate(args.get(1));
-
-        if (EssentialsDateParser.WRONG_DATE_FORMAT == whitelistTimePeriod) {
-            locale.localizeColorized(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
-            return;
-        }
-
-        final Date expiresAt = new Date(whitelistTimePeriod);
-        whitelistService.add(nickname, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
-        locale.localizeColorized(WhitelistMessage.ADDED_TEMP)
-                .set("player", nickname)
-                .set("time", expiresAt.toString())
-                .send(args.getSender());
     }
 
     private void callWhitelistAddedEvent(final Whitelistable whitelistable) {

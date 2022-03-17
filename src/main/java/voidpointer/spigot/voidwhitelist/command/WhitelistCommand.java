@@ -26,7 +26,7 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new RemoveCommand(whitelistService, locale, eventManager));
         whitelistCommands.addCommand(new EnableCommand(whitelistConfig, locale, eventManager));
         whitelistCommands.addCommand(new DisableCommand(whitelistConfig, locale, eventManager));
-        whitelistCommands.addCommand(new IsWhitelistedCommand(whitelistService, locale));
+        whitelistCommands.addCommand(new InfoCommand(whitelistService, locale));
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 

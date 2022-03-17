@@ -32,12 +32,12 @@ public final class WhitelistEnabledListener implements Listener {
     public void onEnabled(final WhitelistEnabledEvent event) {
         String kickReason = locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            whitelistService.findByName(onlinePlayer.getName()).thenAccept(vwPlayer -> {
-                if ((null == vwPlayer) || !vwPlayer.isAllowedToJoin()) {
+            whitelistService.find(onlinePlayer.getUniqueId()).thenAccept(whitelistable -> {
+                if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
                     plugin.getServer().getScheduler().runTask(plugin, () -> onlinePlayer.kickPlayer(kickReason));
-                } else if (vwPlayer.isExpirable()) {
+                } else if (whitelistable.get().isExpirable()) {
                     KickTask task = new KickTask(onlinePlayer, kickReason);
-                    task.scheduleKick(plugin, vwPlayer.getExpiresAt());
+                    task.scheduleKick(plugin, whitelistable.get().getExpiresAt());
                     scheduledKickTasks.put(onlinePlayer, task);
                 }
             });

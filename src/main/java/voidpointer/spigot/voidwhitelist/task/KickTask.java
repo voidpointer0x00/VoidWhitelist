@@ -27,6 +27,7 @@ public final class KickTask extends BukkitRunnable {
             return;
         }
 
+        assert player.isOnline();
         player.kickPlayer(kickReason);
     }
 

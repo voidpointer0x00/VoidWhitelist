@@ -20,6 +20,9 @@ public enum WhitelistMessage implements Message {
     REMOVED("&eИгрок &6«&c{player}&6» &eудален из whitelist."),
     REMOVE_HELP("&eИспользуйте &6/whitelist remove &cnickname"),
     REMOVE_NOT_WHITELISTED("&eИгрока &6«&c{player}&6» &eнет в whitelist."),
+    /** that's quite big! <u>THAT'S WHAT SHE SAID</u> */
+    API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET("&cНе удалось запросить UUID &6{player}&c с Mojang API." +
+            " Offline mode пока не поддерживается, следите за обновлениями."),
     WHITELIST_HELP("&eИспользуйте &6/whitelist &cadd&6|&cremove&6|&cinfo&6|&con&6|&coff"),
     WRONG_DATE_FORMAT("&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут: &a1d15h45m"),
     YOU_WERE_REMOVED("&cВас исключили из whitelist."),

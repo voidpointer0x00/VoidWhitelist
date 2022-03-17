@@ -20,6 +20,8 @@ public interface Whitelistable {
      */
     Optional<Player> findAssociatedOnlinePlayer();
 
+    UUID getUniqueId();
+
     /**
      * Checks whether this entity is associated with provided player or not.
      *

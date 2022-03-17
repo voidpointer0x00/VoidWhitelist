@@ -6,7 +6,7 @@
 
     <groupId>voidpointer.spigot</groupId>
     <artifactId>voidwhitelist</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.5.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>VoidWhitelist</name>
@@ -87,7 +87,7 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <finalName>${project.name}-${project.version}_${buildNumber}</finalName>
+        <finalName>${project.name}-${project.version}_build${buildNumber}</finalName>
     </build>
 
     <repositories>

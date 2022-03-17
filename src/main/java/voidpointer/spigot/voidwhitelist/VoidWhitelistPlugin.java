@@ -43,6 +43,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
 
         if (whitelistConfig.isWhitelistEnabled())
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
+
+        // TODO online/offline mode UUID calculation
     }
 
     private void registerListeners() {

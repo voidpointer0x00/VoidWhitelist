@@ -24,13 +24,9 @@ public final class WhitelistRemovedListener implements Listener {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        final String nicknameToKick = event.getNickname();
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (onlinePlayer.getName().equals(nicknameToKick)) {
-                onlinePlayer.kickPlayer(locale.localizeColorized(WhitelistMessage.YOU_WERE_REMOVED).getRawMessage());
-                return;
-            }
-        }
+        Player player = Bukkit.getPlayer(event.getWhitelistable().getUniqueId());
+        if ((player != null) && player.isOnline())
+            player.kickPlayer(locale.localizeColorized(WhitelistMessage.YOU_WERE_REMOVED).getRawMessage());
     }
 
     public void register(final JavaPlugin plugin) {

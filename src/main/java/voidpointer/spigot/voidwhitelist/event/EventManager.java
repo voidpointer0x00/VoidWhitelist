@@ -9,6 +9,11 @@ import org.bukkit.plugin.Plugin;
 public final class EventManager {
     @NonNull private final Plugin plugin;
 
+    public void callEvent(final Event event) {
+        plugin.getServer().getScheduler().runTask(plugin, () ->
+                plugin.getServer().getPluginManager().callEvent(event));
+    }
+
     public void callAsyncEvent(final Event event) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
                 plugin.getServer().getPluginManager().callEvent(event));

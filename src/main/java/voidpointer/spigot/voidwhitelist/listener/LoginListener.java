@@ -11,13 +11,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.Locale;
-import voidpointer.spigot.voidwhitelist.WhitelistableName;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public final class LoginListener implements Listener {
@@ -31,10 +32,9 @@ public final class LoginListener implements Listener {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        String nickname = event.getName();
-        WhitelistableName whitelistableName = whitelistService.findByName(nickname).join();
+        Optional<Whitelistable> whitelistable = whitelistService.find(event.getUniqueId()).join();
 
-        if ((null == whitelistableName) || !whitelistableName.isAllowedToJoin())
+        if ((!whitelistable.isPresent()) || !whitelistable.get().isAllowedToJoin())
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, getKickReason());
     }
 
@@ -43,13 +43,13 @@ public final class LoginListener implements Listener {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        whitelistService.findByName(event.getPlayer().getName()).thenAcceptAsync(vwPlayer -> {
-            if ((null == vwPlayer) || !vwPlayer.isExpirable())
+        whitelistService.find(event.getPlayer().getUniqueId()).thenAcceptAsync(whitelistable -> {
+            if ((!whitelistable.isPresent()) || !whitelistable.get().isExpirable())
                 return;
 
             KickTask kickTask = new KickTask(event.getPlayer(), getKickReason());
-            kickTask.scheduleKick(plugin, vwPlayer.getExpiresAt());
-            scheduledKickTaskMap.put(vwPlayer.findAssociatedOnlinePlayer().get(), kickTask);
+            kickTask.scheduleKick(plugin, whitelistable.get().getExpiresAt());
+            scheduledKickTaskMap.put(event.getPlayer(), kickTask);
         });
     }
 
