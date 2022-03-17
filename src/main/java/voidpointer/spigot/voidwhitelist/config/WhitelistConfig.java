@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.config;
 import lombok.NonNull;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
+import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
 
 import java.io.File;
 

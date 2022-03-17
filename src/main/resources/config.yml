@@ -1,7 +1,6 @@
 language: en
 
 storage-method: json
-storage-version: v2
 
 whitelist:
   enabled: false

@@ -3,7 +3,6 @@ package voidpointer.spigot.voidwhitelist.storage;
 import com.google.common.io.Files;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import voidpointer.spigot.voidwhitelist.config.StorageVersion;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService;
