@@ -3,7 +3,6 @@ package voidpointer.spigot.voidwhitelist.config;
 import lombok.NonNull;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
-import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
 
 import java.io.File;
 
@@ -36,26 +35,6 @@ public class WhitelistConfig {
             plugin.getConfig().set(STORAGE_METHOD_PATH, DEFAULT_STORAGE_METHOD.toString().toLowerCase());
         }
         return DEFAULT_STORAGE_METHOD;
-    }
-
-    public StorageVersion getStorageVersion() {
-        if (!plugin.getConfig().isSet(STORAGE_VERSION_PATH)) {
-            /* config was saved without version -> it's likely old version or a configuration mistake */
-            setStorageVersion(StorageVersion.UNDEFINED);
-            return StorageVersion.UNDEFINED;
-        }
-        String storageVersionName = plugin.getConfig().getString(STORAGE_VERSION_PATH,
-                                                                StorageVersion.UNDEFINED.toString());
-        for (StorageVersion storageVersion : StorageVersion.values()) {
-            if (storageVersionName.equalsIgnoreCase(storageVersion.toString()))
-                return storageVersion;
-        }
-        return StorageVersion.UNDEFINED;
-    }
-
-    public void setStorageVersion(final StorageVersion storageVersion) {
-        plugin.getConfig().set(STORAGE_VERSION_PATH, storageVersion.toString().toLowerCase());
-        plugin.saveConfig();
     }
 
     public String getLanguage() {
