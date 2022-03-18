@@ -60,12 +60,11 @@ public final class JsonWhitelistService extends CachedWhitelistService {
     }
 
     @Override protected void saveWhitelist() {
-        JsonObject jsonWhitelistObject = new JsonObject();
-        jsonWhitelistObject.add(VERSION_PROPERTY, new JsonPrimitive(StorageVersion.CURRENT.toString()));
-        jsonWhitelistObject.add(WHITELIST_PROPERTY, gson.toJsonTree(getCachedWhitelist()));
-        String whitelistInJson = gson.toJson(this.getCachedWhitelist());
+        JsonObject whitelistObject = new JsonObject();
+        whitelistObject.add(VERSION_PROPERTY, new JsonPrimitive(StorageVersion.CURRENT.toString()));
+        whitelistObject.add(WHITELIST_PROPERTY, gson.toJsonTree(getCachedWhitelist()));
         try {
-            Files.write(whitelistInJson, whitelistFile, Charset.defaultCharset());
+            Files.write(gson.toJson(whitelistObject), whitelistFile, Charset.defaultCharset());
         } catch (IOException ioException) {
             log.severe("An exception occurred while trying to save the whitelist: " + ioException.getMessage());
         }
