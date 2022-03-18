@@ -1,17 +1,18 @@
 package voidpointer.spigot.voidwhitelist.config;
 
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
 import java.io.File;
 
-public class WhitelistConfig {
+public final class WhitelistConfig {
     public static final String DEFAULT_LANGUAGE = "en";
     public static final StorageMethod DEFAULT_STORAGE_METHOD = StorageMethod.JSON;
     private static final String WHITELIST_ENABLED_PATH = "whitelist.enabled";
+    private static final String UUID_MODE_PATH = "whitelist.uuid-mode";
     private static final String STORAGE_METHOD_PATH = "storage-method";
-    private static final String STORAGE_VERSION_PATH = "storage-version";
 
     @NonNull private final JavaPlugin plugin;
 
@@ -24,6 +25,20 @@ public class WhitelistConfig {
         return plugin.getConfig().getBoolean(WHITELIST_ENABLED_PATH, false);
     }
 
+    public boolean isUUIDModeOnline() {
+        if (plugin.getConfig().isSet(UUID_MODE_PATH)) {
+            String uuidModeName = plugin.getConfig().getString(UUID_MODE_PATH);
+            for (UUIDMode uuidMode : UUIDMode.values()) {
+                if (uuidMode.toString().equalsIgnoreCase(uuidModeName))
+                    return isOnline(uuidMode);
+            }
+            reportUnknown(UUID_MODE_PATH, UUIDMode.AUTO.toString().toLowerCase());
+        } else {
+            plugin.getConfig().set(UUID_MODE_PATH, UUIDMode.AUTO.toString().toLowerCase());
+        }
+        return Bukkit.getOnlineMode();
+    }
+
     public StorageMethod getStorageMethod() {
         if (plugin.getConfig().isSet(STORAGE_METHOD_PATH)) {
             String storageMethodName = plugin.getConfig().getString(STORAGE_METHOD_PATH);
@@ -31,6 +46,7 @@ public class WhitelistConfig {
                 if (storageMethod.toString().equalsIgnoreCase(storageMethodName))
                     return storageMethod;
             }
+            reportUnknown(STORAGE_METHOD_PATH, DEFAULT_STORAGE_METHOD.toString().toLowerCase());
         } else {
             plugin.getConfig().set(STORAGE_METHOD_PATH, DEFAULT_STORAGE_METHOD.toString().toLowerCase());
         }
@@ -52,8 +68,24 @@ public class WhitelistConfig {
     }
 
     private void saveIfNotExists() {
-        if (!new File(plugin.getDataFolder(), "config.yml").exists()) {
-            plugin.saveDefaultConfig();
+        if (!new File(plugin.getDataFolder(), "config.yml").exists())
+            plugin.saveResource("config.yml", true);
+    }
+
+    private boolean isOnline(UUIDMode uuidMode) {
+        switch (uuidMode) {
+            case ONLINE:
+                return true;
+            case OFFLINE:
+                return false;
+            case AUTO:
+            default:
+                return Bukkit.getOnlineMode();
         }
+    }
+
+    private void reportUnknown(final String property, final String defaultValue) {
+        plugin.getLogger().warning("Unknown value for property: " + property);
+        plugin.getLogger().warning("Using default value: " + defaultValue);
     }
 }

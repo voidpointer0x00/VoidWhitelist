@@ -13,7 +13,6 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -29,9 +28,10 @@ public final class AddCommand extends Command {
     @NonNull private final WhitelistService whitelistService;
     @NonNull private final Locale locale;
     @NonNull private final EventManager eventManager;
+    @NonNull private final UUIDFetcher uniqueIdFetcher;
 
     public AddCommand(final WhitelistService whitelistService, final Locale locale,
-                      final EventManager eventManager) {
+                      final EventManager eventManager, UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         this.locale = locale;
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
@@ -39,6 +39,7 @@ public final class AddCommand extends Command {
 
         this.whitelistService = whitelistService;
         this.eventManager = eventManager;
+        this.uniqueIdFetcher = uniqueIdFetcher;
     }
 
     @Override public void execute(final Args args) {
@@ -51,17 +52,11 @@ public final class AddCommand extends Command {
             }
             expiresAt = new Date(whitelistTimePeriod);
         }
-
-        final UUID uniqueId;
-        try {
-            uniqueId = UUIDFetcher.getUUID(args.getArgs().get(0));
-        } catch (IOException ioException) {
-            /* TODO: implement direct uuid add command */
-            /* TODO: implement IllegalArgumentException handling */
+        final UUID uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
+        if (uniqueId == null) {
             locale.localizeColorized(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
                     .set("player", args.get(0))
                     .send(args.getSender());
-            ioException.printStackTrace();
             return;
         }
         whitelistService.add(uniqueId, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);

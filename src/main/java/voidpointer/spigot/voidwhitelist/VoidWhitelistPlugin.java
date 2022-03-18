@@ -17,6 +17,9 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
+import voidpointer.spigot.voidwhitelist.uuid.OfflineUUIDFetcher;
+import voidpointer.spigot.voidwhitelist.uuid.OnlineUUIDFetcher;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -26,10 +29,14 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     private WhitelistService whitelistService;
     private WhitelistConfig whitelistConfig;
     private EventManager eventManager;
+    private UUIDFetcher uniqueIdFetcher;
 
     @Override public void onLoad() {
         whitelistConfig = new WhitelistConfig(this);
         eventManager = new EventManager(this);
+        uniqueIdFetcher = whitelistConfig.isUUIDModeOnline()
+                ? new OnlineUUIDFetcher(getLogger())
+                : new OfflineUUIDFetcher();
 
         locale = new TranslatedLocaleFileConfiguration(this, whitelistConfig.getLanguage());
         locale.addDefaults(WhitelistMessage.values());
@@ -38,13 +45,12 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
 
     @Override public void onEnable() {
         whitelistService = new StorageFactory(getDataFolder()).loadStorage(getLogger(), whitelistConfig);
-        new WhitelistCommand(locale, whitelistService, whitelistConfig, eventManager).register(this);
+        new WhitelistCommand(locale, whitelistService, whitelistConfig, eventManager, uniqueIdFetcher)
+                .register(this);
         registerListeners();
 
         if (whitelistConfig.isWhitelistEnabled())
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
-
-        // TODO online/offline mode UUID calculation
     }
 
     private void registerListeners() {

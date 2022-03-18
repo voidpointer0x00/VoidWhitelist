@@ -10,7 +10,6 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,9 +21,12 @@ public class RemoveCommand extends Command {
     @NonNull private final WhitelistService whitelistService;
     @NonNull private final Locale locale;
     @NonNull private final EventManager eventManager;
+    @NonNull private final UUIDFetcher uniqueIdFetcher;
 
-    public RemoveCommand(@NonNull final WhitelistService whitelistService, @NonNull final Locale locale,
-                         final EventManager eventManager) {
+    public RemoveCommand(@NonNull final WhitelistService whitelistService,
+                         @NonNull final Locale locale,
+                         @NonNull final EventManager eventManager,
+                         @NonNull final UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         super.setPermission(PERMISSION);
         super.setRequiredArgsNumber(MIN_ARGS);
@@ -32,20 +34,16 @@ public class RemoveCommand extends Command {
         this.whitelistService = whitelistService;
         this.locale = locale;
         this.eventManager = eventManager;
+        this.uniqueIdFetcher = uniqueIdFetcher;
     }
 
     @Override public void execute(final Args args) {
         final String name = args.get(0);
-        final UUID uniqueId;
-        try {
-            uniqueId = UUIDFetcher.getUUID(name);
-        } catch (IOException ioException) {
-            /* TODO: implement direct uuid remove command */
-            /* TODO: implement IllegalArgumentException handling */
+        final UUID uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
+        if (uniqueId == null) {
             locale.localizeColorized(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
-                    .set("player", name)
+                    .set("player", args.get(0))
                     .send(args.getSender());
-            ioException.printStackTrace();
             return;
         }
 

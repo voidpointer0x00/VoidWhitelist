@@ -9,7 +9,6 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,13 +19,15 @@ public final class InfoCommand extends Command {
 
     @NonNull private final Locale locale;
     @NonNull private final WhitelistService whitelistService;
+    @NonNull private final UUIDFetcher uniqueIdFetcher;
 
-    public InfoCommand(WhitelistService whitelistService, Locale locale) {
+    public InfoCommand(WhitelistService whitelistService, Locale locale, final @NonNull UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         super.setPermission(PERMISSION);
 
         this.locale = locale;
         this.whitelistService = whitelistService;
+        this.uniqueIdFetcher = uniqueIdFetcher;
     }
 
     @Override public void execute(final Args args) {
@@ -37,22 +38,18 @@ public final class InfoCommand extends Command {
 
         final String name;
         final UUID uniqueId;
-        if (args.isEmpty()) {
-            name = args.getSender().getName();
-            uniqueId = ((Player) args.getSender()).getUniqueId();
-        } else {
+        if (!args.isEmpty()) {
             name = args.get(0);
-            try {
-                uniqueId = UUIDFetcher.getUUID(name);
-            } catch (IOException ioException) {
-                /* TODO: implement direct UUID info command */
-                /* TODO: implement IllegalArgumentException handling */
+            uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
+            if (uniqueId == null) {
                 locale.localizeColorized(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
-                        .set("player", name)
+                        .set("player", args.get(0))
                         .send(args.getSender());
-                ioException.printStackTrace();
                 return;
             }
+        } else {
+            name = args.getSender().getName();
+            uniqueId = ((Player) args.getSender()).getUniqueId();
         }
 
         final Optional<Whitelistable> whitelistable = whitelistService.find(uniqueId).join();

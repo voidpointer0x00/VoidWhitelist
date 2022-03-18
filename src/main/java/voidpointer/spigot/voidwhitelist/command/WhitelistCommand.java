@@ -7,6 +7,7 @@ import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
 import java.util.List;
 
@@ -17,16 +18,19 @@ public final class WhitelistCommand extends Command {
     @NonNull private final CommandManager whitelistCommands = new CommandManager();
     @NonNull private final Locale locale;
 
-    public WhitelistCommand(@NonNull final Locale locale, @NonNull final WhitelistService whitelistService,
-                            @NonNull final WhitelistConfig whitelistConfig, final EventManager eventManager) {
+    public WhitelistCommand(@NonNull final Locale locale,
+                            @NonNull final WhitelistService whitelistService,
+                            @NonNull final WhitelistConfig whitelistConfig,
+                            @NonNull final EventManager eventManager,
+                            @NonNull final UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         this.locale = locale;
 
-        whitelistCommands.addCommand(new AddCommand(whitelistService, locale, eventManager));
-        whitelistCommands.addCommand(new RemoveCommand(whitelistService, locale, eventManager));
+        whitelistCommands.addCommand(new AddCommand(whitelistService, locale, eventManager, uniqueIdFetcher));
+        whitelistCommands.addCommand(new RemoveCommand(whitelistService, locale, eventManager, uniqueIdFetcher));
         whitelistCommands.addCommand(new EnableCommand(whitelistConfig, locale, eventManager));
         whitelistCommands.addCommand(new DisableCommand(whitelistConfig, locale, eventManager));
-        whitelistCommands.addCommand(new InfoCommand(whitelistService, locale));
+        whitelistCommands.addCommand(new InfoCommand(whitelistService, locale, uniqueIdFetcher));
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 
