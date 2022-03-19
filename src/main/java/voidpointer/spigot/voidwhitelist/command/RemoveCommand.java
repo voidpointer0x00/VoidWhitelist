@@ -52,12 +52,12 @@ public class RemoveCommand extends Command {
             locale.localizeColorized(WhitelistMessage.REMOVE_NOT_WHITELISTED)
                     .set("player", name)
                     .send(args.getSender());
-        } else {
-            whitelistService.remove(whitelistable.get());
-            locale.localizeColorized(WhitelistMessage.REMOVED)
-                    .set("player", name)
-                    .send(args.getSender());
+            return;
         }
+        whitelistService.remove(whitelistable.get());
+        locale.localizeColorized(WhitelistMessage.REMOVED)
+                .set("player", name)
+                .send(args.getSender());
         eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
     }
 
