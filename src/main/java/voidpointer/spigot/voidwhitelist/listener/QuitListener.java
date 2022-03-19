@@ -16,10 +16,9 @@ public final class QuitListener implements Listener {
     @NonNull private final Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler public void onQuit(final PlayerQuitEvent event) {
-        final String nickname = event.getPlayer().getName();
-        if (scheduledKickTasks.containsKey(nickname)) {
-            scheduledKickTasks.get(nickname).cancel();
-            scheduledKickTasks.remove(nickname);
+        if (scheduledKickTasks.containsKey(event.getPlayer())) {
+            scheduledKickTasks.get(event.getPlayer()).cancel();
+            scheduledKickTasks.remove(event.getPlayer());
         }
     }
 
