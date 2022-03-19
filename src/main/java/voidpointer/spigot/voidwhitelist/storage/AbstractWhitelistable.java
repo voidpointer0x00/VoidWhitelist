@@ -32,9 +32,7 @@ public abstract class AbstractWhitelistable implements Whitelistable {
             return true;
         if (!(o instanceof Whitelistable))
             return false;
-        if (getUniqueId().equals(((Whitelistable) o).getUniqueId()))
-            return true;
-        return false;
+        return getUniqueId().equals(((Whitelistable) o).getUniqueId());
     }
 
     @Override public int hashCode() {
