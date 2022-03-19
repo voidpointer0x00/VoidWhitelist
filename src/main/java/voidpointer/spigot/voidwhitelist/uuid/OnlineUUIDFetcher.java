@@ -38,7 +38,7 @@ public final class OnlineUUIDFetcher implements UUIDFetcher {
             return null;
 
         String uniqueIdStr = readUniqueIdFromResponse(response);
-        uniqueId = UUID.fromString(uniqueIdStr.toString());
+        uniqueId = UUID.fromString(uniqueIdStr);
         uniqueIdCache.put(name, uniqueId);
         return uniqueId;
     }
