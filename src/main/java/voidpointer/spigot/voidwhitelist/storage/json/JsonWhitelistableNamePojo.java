@@ -2,7 +2,6 @@ package voidpointer.spigot.voidwhitelist.storage.json;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,9 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 final class JsonWhitelistableNamePojo extends AbstractWhitelistable {
-    @NonNull
-    @EqualsAndHashCode.Include
-    private UUID uniqueId;
+    @NonNull private UUID uniqueId;
     private Date expiresAt;
 
     @Override public Optional<Player> findAssociatedOnlinePlayer() {
