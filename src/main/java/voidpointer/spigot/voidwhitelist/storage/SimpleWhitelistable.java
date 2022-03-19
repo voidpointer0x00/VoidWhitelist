@@ -15,7 +15,6 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded=true)
 public final class SimpleWhitelistable extends AbstractWhitelistable {
     @NonNull
     @EqualsAndHashCode.Include

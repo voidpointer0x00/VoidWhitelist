@@ -25,6 +25,22 @@ public abstract class AbstractWhitelistable implements Whitelistable {
         return Whitelistable.NEVER_EXPIRES != getExpiresAt();
     }
 
+    @Override public boolean equals(final Object o) {
+        if (null == o)
+            return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Whitelistable))
+            return false;
+        if (getUniqueId().equals(((Whitelistable) o).getUniqueId()))
+            return true;
+        return false;
+    }
+
+    @Override public int hashCode() {
+        return getUniqueId().hashCode();
+    }
+
     public abstract Date getExpiresAt();
 
     public abstract void setExpiresAt(final Date date);

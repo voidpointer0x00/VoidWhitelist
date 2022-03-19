@@ -19,7 +19,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
