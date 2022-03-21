@@ -1,5 +1,6 @@
 package voidpointer.spigot.voidwhitelist.storage.serial;
 
+import com.google.common.cache.CacheBuilder;
 import lombok.NonNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.CachedWhitelistService;
@@ -25,6 +26,7 @@ public final class SerialWhitelistService extends CachedWhitelistService {
         this.log = log;
         this.dataFolder = dataFolder;
         load();
+        CacheBuilder.newBuilder().weakValues();
     }
 
     @Override protected void saveWhitelist() {
@@ -33,7 +35,7 @@ public final class SerialWhitelistService extends CachedWhitelistService {
             if (whitelistFile.createNewFile())
                 log.info("Created " + WHITELIST_FILE_NAME);
 
-            ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile))
+            ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile));
             objOut.writeObject(StorageVersion.CURRENT.toString());
             objOut.writeObject(this.getCachedWhitelist());
             objOut.close();
