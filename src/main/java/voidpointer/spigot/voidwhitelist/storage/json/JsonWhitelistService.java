@@ -66,7 +66,7 @@ public final class JsonWhitelistService extends CachedWhitelistService {
         try {
             Files.write(gson.toJson(whitelistObject), whitelistFile, Charset.defaultCharset());
         } catch (IOException ioException) {
-            log.severe("An exception occurred while trying to save the whitelist: " + ioException.getMessage());
+            log.severe("An exception occurred while saving the whitelist: " + ioException.getMessage());
         }
     }
 
