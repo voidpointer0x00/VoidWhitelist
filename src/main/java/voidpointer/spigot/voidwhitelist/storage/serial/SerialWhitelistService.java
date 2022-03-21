@@ -28,21 +28,15 @@ public final class SerialWhitelistService extends CachedWhitelistService {
     }
 
     @Override protected void saveWhitelist() {
-        File whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
-        if (!whitelistFile.exists()) {
-            try {
-                whitelistFile.createNewFile();
-            } catch (IOException ioException) {
-                log.severe("Cannot save whitelist.");
-                ioException.printStackTrace();
-                return;
-            }
-        }
+        try {
+            File whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
+            if (whitelistFile.createNewFile())
+                log.info("Created " + WHITELIST_FILE_NAME);
 
-        try (ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile))) {
+            ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile))
             objOut.writeObject(StorageVersion.CURRENT.toString());
             objOut.writeObject(this.getCachedWhitelist());
-            objOut.flush();
+            objOut.close();
         } catch (IOException ioException) {
             log.severe("Cannot save whitelist.");
             ioException.printStackTrace();
