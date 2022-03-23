@@ -47,14 +47,14 @@ public final class AddCommand extends Command {
         if (hasExpiresAtArgument(args.size())) {
             final long whitelistTimePeriod = EssentialsDateParser.parseDate(args.get(1));
             if (EssentialsDateParser.WRONG_DATE_FORMAT == whitelistTimePeriod) {
-                locale.localizeColorized(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
+                locale.localize(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
                 return;
             }
             expiresAt = new Date(whitelistTimePeriod);
         }
         final UUID uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
         if (uniqueId == null) {
-            locale.localizeColorized(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+            locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
                     .set("player", args.get(0))
                     .send(args.getSender());
             return;
@@ -68,14 +68,14 @@ public final class AddCommand extends Command {
     }
 
     private void notifyAddedForever(final Args args, final Date expiresAt) {
-        locale.localizeColorized(WhitelistMessage.ADDED_TEMP)
+        locale.localize(WhitelistMessage.ADDED_TEMP)
                 .set("player", args.get(0))
                 .set("date", expiresAt.toString())
                 .send(args.getSender());
     }
 
     private void notifyAdded(final Args args) {
-        locale.localizeColorized(WhitelistMessage.ADDED)
+        locale.localize(WhitelistMessage.ADDED)
                 .set("player", args.get(0))
                 .send(args.getSender());
     }
@@ -97,11 +97,11 @@ public final class AddCommand extends Command {
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
-        locale.localizeColorized(WhitelistMessage.ADD_HELP).send(sender);
+        locale.localize(WhitelistMessage.ADD_HELP).send(sender);
     }
 
     @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
+        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 
     private void callWhitelistAddedEvent(final Whitelistable whitelistable) {

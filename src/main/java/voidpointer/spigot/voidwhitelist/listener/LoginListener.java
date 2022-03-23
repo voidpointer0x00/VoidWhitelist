@@ -58,7 +58,7 @@ public final class LoginListener implements Listener {
     }
 
     private String getKickReason() {
-        return locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
+        return locale.localize(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
     }
 
 }

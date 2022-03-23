@@ -26,7 +26,7 @@ public final class WhitelistRemovedListener implements Listener {
 
         Player player = Bukkit.getPlayer(event.getWhitelistable().getUniqueId());
         if ((player != null) && player.isOnline())
-            player.kickPlayer(locale.localizeColorized(WhitelistMessage.YOU_WERE_REMOVED).getRawMessage());
+            player.kickPlayer(locale.localize(WhitelistMessage.YOU_WERE_REMOVED).getRawMessage());
     }
 
     public void register(final JavaPlugin plugin) {

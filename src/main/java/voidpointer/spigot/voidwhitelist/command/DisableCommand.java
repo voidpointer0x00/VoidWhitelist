@@ -32,7 +32,7 @@ public final class DisableCommand extends Command {
 
     @Override public void execute(final Args args) {
         whitelistConfig.disableWhitelist();
-        locale.localizeColorized(WhitelistMessage.DISABLED).send(args.getSender());
+        locale.localize(WhitelistMessage.DISABLED).send(args.getSender());
         eventManager.callAsyncEvent(new WhitelistDisabledEvent());
     }
 
@@ -41,6 +41,6 @@ public final class DisableCommand extends Command {
     }
 
     @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
+        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 }

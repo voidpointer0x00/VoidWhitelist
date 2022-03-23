@@ -32,7 +32,7 @@ public final class InfoCommand extends Command {
 
     @Override public void execute(final Args args) {
         if (isSelfConsole(args)) {
-            locale.localizeColorized(WhitelistMessage.CONSOLE_WHITELISTED).send(args.getSender());
+            locale.localize(WhitelistMessage.CONSOLE_WHITELISTED).send(args.getSender());
             return;
         }
 
@@ -42,7 +42,7 @@ public final class InfoCommand extends Command {
             name = args.get(0);
             uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
             if (uniqueId == null) {
-                locale.localizeColorized(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+                locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
                         .set("player", args.get(0))
                         .send(args.getSender());
                 return;
@@ -63,7 +63,7 @@ public final class InfoCommand extends Command {
     }
 
     @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
+        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 
     private boolean isSelfConsole(final Args args) {
@@ -71,21 +71,21 @@ public final class InfoCommand extends Command {
     }
 
     private void tellNotWhitelisted(final CommandSender sender, final String name) {
-        locale.localizeColorized(WhitelistMessage.INFO_NOT_WHITELISTED)
+        locale.localize(WhitelistMessage.INFO_NOT_WHITELISTED)
                 .set("player", name)
                 .send(sender);
     }
 
     private void tellWhitelistedTemporarily(final CommandSender sender, final String name,
                                             final Date expiresAt) {
-        locale.localizeColorized(WhitelistMessage.INFO_WHITELISTED_TEMP)
+        locale.localize(WhitelistMessage.INFO_WHITELISTED_TEMP)
                 .set("player", name)
                 .set("time", expiresAt.toString())
                 .send(sender);
     }
 
     private void tellWhitelisted(final CommandSender sender, final String name) {
-        locale.localizeColorized(WhitelistMessage.INFO_WHITELISTED)
+        locale.localize(WhitelistMessage.INFO_WHITELISTED)
                 .set("player", name)
                 .send(sender);
     }

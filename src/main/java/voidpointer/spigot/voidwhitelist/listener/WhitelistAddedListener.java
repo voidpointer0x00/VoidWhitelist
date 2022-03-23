@@ -30,7 +30,7 @@ public final class WhitelistAddedListener implements Listener {
         scheduledKickTasks.remove(player.get());
 
         if (event.getWhitelistable().isExpirable()) {
-            String kickMessage = locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
+            String kickMessage = locale.localize(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
             KickTask kickTask = new KickTask(player.get(), kickMessage);
             kickTask.scheduleKick(plugin, event.getWhitelistable().getExpiresAt());
             scheduledKickTasks.put(player.get(), kickTask);

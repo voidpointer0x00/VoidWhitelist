@@ -30,7 +30,7 @@ public final class WhitelistEnabledListener implements Listener {
      */
     @EventHandler(priority=EventPriority.HIGHEST)
     public void onEnabled(final WhitelistEnabledEvent event) {
-        String kickReason = locale.localizeColorized(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
+        String kickReason = locale.localize(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             whitelistService.find(onlinePlayer.getUniqueId()).thenAccept(whitelistable -> {
                 if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {

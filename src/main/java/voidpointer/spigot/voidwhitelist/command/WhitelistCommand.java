@@ -41,7 +41,7 @@ public final class WhitelistCommand extends Command {
         try {
             whitelistCommands.executeCommand(subCommandName, args);
         } catch (IllegalArgumentException illegalArgumentException) {
-            locale.localizeColorized(WhitelistMessage.WHITELIST_HELP).send(args.getSender());
+            locale.localize(WhitelistMessage.WHITELIST_HELP).send(args.getSender());
         }
     }
 
@@ -50,10 +50,10 @@ public final class WhitelistCommand extends Command {
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
-        locale.localizeColorized(WhitelistMessage.WHITELIST_HELP).send(sender);
+        locale.localize(WhitelistMessage.WHITELIST_HELP).send(sender);
     }
 
     @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
+        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 }

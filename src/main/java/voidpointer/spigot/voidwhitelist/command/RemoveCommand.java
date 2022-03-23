@@ -41,7 +41,7 @@ public class RemoveCommand extends Command {
         final String name = args.get(0);
         final UUID uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
         if (uniqueId == null) {
-            locale.localizeColorized(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+            locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
                     .set("player", args.get(0))
                     .send(args.getSender());
             return;
@@ -49,23 +49,23 @@ public class RemoveCommand extends Command {
 
         final Optional<Whitelistable> whitelistable = whitelistService.find(uniqueId).join();
         if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
-            locale.localizeColorized(WhitelistMessage.REMOVE_NOT_WHITELISTED)
+            locale.localize(WhitelistMessage.REMOVE_NOT_WHITELISTED)
                     .set("player", name)
                     .send(args.getSender());
             return;
         }
         whitelistService.remove(whitelistable.get());
-        locale.localizeColorized(WhitelistMessage.REMOVED)
+        locale.localize(WhitelistMessage.REMOVED)
                 .set("player", name)
                 .send(args.getSender());
         eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
-        locale.localizeColorized(WhitelistMessage.REMOVE_HELP).send(sender);
+        locale.localize(WhitelistMessage.REMOVE_HELP).send(sender);
     }
 
     @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localizeColorized(WhitelistMessage.NO_PERMISSION).send(sender);
+        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 }
