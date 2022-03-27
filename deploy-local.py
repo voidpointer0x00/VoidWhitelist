@@ -42,6 +42,7 @@ def getLatestBuild():
             nBuild = match.group('nBuild')
             if latest['nBuild'] < int(nBuild):
                 latest['file'] = file
+                latest['nBuild'] = int(nBuild)
     return latest
 
 latestBuild = getLatestBuild()
