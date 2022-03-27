@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
@@ -25,15 +26,14 @@ public final class AddCommand extends Command {
     public static final String PERMISSION = "whitelist.add";
     public static final int MIN_REQUIRED_ARGS = 1;
 
+    @AutowiredLocale private static Locale locale;
     @NonNull private final WhitelistService whitelistService;
-    @NonNull private final Locale locale;
     @NonNull private final EventManager eventManager;
     @NonNull private final UUIDFetcher uniqueIdFetcher;
 
-    public AddCommand(final WhitelistService whitelistService, final Locale locale,
-                      final EventManager eventManager, UUIDFetcher uniqueIdFetcher) {
+    public AddCommand(final WhitelistService whitelistService, final EventManager eventManager,
+                      final UUIDFetcher uniqueIdFetcher) {
         super(NAME);
-        this.locale = locale;
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
         super.setPermission(PERMISSION);
 

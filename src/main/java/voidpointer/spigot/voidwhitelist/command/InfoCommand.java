@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
@@ -17,15 +18,14 @@ public final class InfoCommand extends Command {
     public static final String NAME = "info";
     public static final String PERMISSION = "whitelist.info";
 
-    @NonNull private final Locale locale;
+    @AutowiredLocale private static Locale locale;
     @NonNull private final WhitelistService whitelistService;
     @NonNull private final UUIDFetcher uniqueIdFetcher;
 
-    public InfoCommand(WhitelistService whitelistService, Locale locale, final @NonNull UUIDFetcher uniqueIdFetcher) {
+    public InfoCommand(final WhitelistService whitelistService, final UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         super.setPermission(PERMISSION);
 
-        this.locale = locale;
         this.whitelistService = whitelistService;
         this.uniqueIdFetcher = uniqueIdFetcher;
     }

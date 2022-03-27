@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -22,9 +23,9 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public final class LoginListener implements Listener {
+    @AutowiredLocale private static Locale locale;
     @NonNull private final Plugin plugin;
     @NonNull private final WhitelistService whitelistService;
-    @NonNull private final Locale locale;
     @NonNull private final WhitelistConfig whitelistConfig;
     @NonNull private final Map<Player, KickTask> scheduledKickTaskMap;
 

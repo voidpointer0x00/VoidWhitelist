@@ -2,6 +2,8 @@ package voidpointer.spigot.voidwhitelist;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationResolver;
+import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFileConfiguration;
 import voidpointer.spigot.voidwhitelist.command.WhitelistCommand;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
@@ -25,7 +27,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public final class VoidWhitelistPlugin extends JavaPlugin {
-    private TranslatedLocaleFileConfiguration locale;
+    @PluginLocale(defaultMessages=WhitelistMessage.class, searchForInjection=true)
+    private static TranslatedLocaleFileConfiguration locale;
     private WhitelistService whitelistService;
     private WhitelistConfig whitelistConfig;
     private EventManager eventManager;
@@ -38,14 +41,12 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
                 ? new OnlineUUIDFetcher(getLogger())
                 : new OfflineUUIDFetcher();
 
-        locale = new TranslatedLocaleFileConfiguration(this, whitelistConfig.getLanguage());
-        locale.addDefaults(WhitelistMessage.values());
-        locale.save();
+        LocaleAnnotationResolver.resolve(this);
     }
 
     @Override public void onEnable() {
         whitelistService = new StorageFactory(getDataFolder()).loadStorage(getLogger(), whitelistConfig);
-        new WhitelistCommand(locale, whitelistService, whitelistConfig, eventManager, uniqueIdFetcher)
+        new WhitelistCommand(whitelistService, whitelistConfig, eventManager, uniqueIdFetcher)
                 .register(this);
         registerListeners();
 
@@ -55,11 +56,15 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
 
     private void registerListeners() {
         Map<Player, KickTask> scheduledKickTasks = new WeakHashMap<>();
-        new LoginListener(this, whitelistService, locale, whitelistConfig, scheduledKickTasks).register(this);
-        new WhitelistEnabledListener(this, locale, whitelistService, scheduledKickTasks).register(this);
+        new LoginListener(this, whitelistService, whitelistConfig, scheduledKickTasks).register(this);
+        new WhitelistEnabledListener(this, whitelistService, scheduledKickTasks).register(this);
         new WhitelistDisabledListener(scheduledKickTasks).register(this);
-        new WhitelistAddedListener(this, locale, scheduledKickTasks).register(this);
-        new WhitelistRemovedListener(whitelistConfig, locale).register(this);
+        new WhitelistAddedListener(this, scheduledKickTasks).register(this);
+        new WhitelistRemovedListener(whitelistConfig).register(this);
         new QuitListener(scheduledKickTasks).register(this);
+    }
+
+    private String getLanguage() {
+        return whitelistConfig.getLanguage();
     }
 }

@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
@@ -18,13 +19,12 @@ public class RemoveCommand extends Command {
     public static final String PERMISSION = "whitelist.remove";
     public static final Integer MIN_ARGS = 1;
 
+    @AutowiredLocale private static Locale locale;
     @NonNull private final WhitelistService whitelistService;
-    @NonNull private final Locale locale;
     @NonNull private final EventManager eventManager;
     @NonNull private final UUIDFetcher uniqueIdFetcher;
 
     public RemoveCommand(@NonNull final WhitelistService whitelistService,
-                         @NonNull final Locale locale,
                          @NonNull final EventManager eventManager,
                          @NonNull final UUIDFetcher uniqueIdFetcher) {
         super(NAME);
@@ -32,7 +32,6 @@ public class RemoveCommand extends Command {
         super.setRequiredArgsNumber(MIN_ARGS);
 
         this.whitelistService = whitelistService;
-        this.locale = locale;
         this.eventManager = eventManager;
         this.uniqueIdFetcher = uniqueIdFetcher;
     }

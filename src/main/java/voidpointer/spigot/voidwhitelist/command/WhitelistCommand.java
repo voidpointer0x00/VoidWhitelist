@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -15,22 +16,20 @@ public final class WhitelistCommand extends Command {
     public static final String NAME = "whitelist";
     public static final int MIN_REQUIRED_ARGS = 1;
 
+    @AutowiredLocale private static Locale locale;
     @NonNull private final CommandManager whitelistCommands = new CommandManager();
-    @NonNull private final Locale locale;
 
-    public WhitelistCommand(@NonNull final Locale locale,
-                            @NonNull final WhitelistService whitelistService,
+    public WhitelistCommand(@NonNull final WhitelistService whitelistService,
                             @NonNull final WhitelistConfig whitelistConfig,
                             @NonNull final EventManager eventManager,
                             @NonNull final UUIDFetcher uniqueIdFetcher) {
         super(NAME);
-        this.locale = locale;
 
-        whitelistCommands.addCommand(new AddCommand(whitelistService, locale, eventManager, uniqueIdFetcher));
-        whitelistCommands.addCommand(new RemoveCommand(whitelistService, locale, eventManager, uniqueIdFetcher));
-        whitelistCommands.addCommand(new EnableCommand(whitelistConfig, locale, eventManager));
-        whitelistCommands.addCommand(new DisableCommand(whitelistConfig, locale, eventManager));
-        whitelistCommands.addCommand(new InfoCommand(whitelistService, locale, uniqueIdFetcher));
+        whitelistCommands.addCommand(new AddCommand(whitelistService, eventManager, uniqueIdFetcher));
+        whitelistCommands.addCommand(new RemoveCommand(whitelistService, eventManager, uniqueIdFetcher));
+        whitelistCommands.addCommand(new EnableCommand(whitelistConfig, eventManager));
+        whitelistCommands.addCommand(new DisableCommand(whitelistConfig, eventManager));
+        whitelistCommands.addCommand(new InfoCommand(whitelistService, uniqueIdFetcher));
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 

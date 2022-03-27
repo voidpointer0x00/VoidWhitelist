@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
@@ -16,17 +17,15 @@ public final class EnableCommand extends Command {
     public static final List<String> ALIASES = Collections.singletonList("on");
     public static final String PERMISSION = "whitelist.enable";
 
+    @AutowiredLocale private static Locale locale;
     @NonNull private final WhitelistConfig whitelistConfig;
-    @NonNull private final Locale locale;
     @NonNull private final EventManager eventManager;
 
-    public EnableCommand(@NonNull final WhitelistConfig whitelistConfig, @NonNull final Locale locale,
-                         final EventManager eventManager) {
+    public EnableCommand(final WhitelistConfig whitelistConfig, final EventManager eventManager) {
         super(NAME);
         super.setPermission(PERMISSION);
 
         this.whitelistConfig = whitelistConfig;
-        this.locale = locale;
         this.eventManager = eventManager;
     }
 

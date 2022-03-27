@@ -8,14 +8,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 @RequiredArgsConstructor
 public final class WhitelistRemovedListener implements Listener {
+    @AutowiredLocale private static Locale locale;
     @NonNull private final WhitelistConfig whitelistConfig;
-    @NonNull private final Locale locale;
 
     /**
      * Kick the removed player it they're online.
