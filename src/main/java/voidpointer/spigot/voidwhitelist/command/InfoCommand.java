@@ -2,7 +2,6 @@ package voidpointer.spigot.voidwhitelist.command;
 
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -13,6 +12,7 @@ import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public final class InfoCommand extends Command {
     public static final String NAME = "info";
@@ -36,34 +36,34 @@ public final class InfoCommand extends Command {
             return;
         }
 
-        final String name;
-        final UUID uniqueId;
-        if (!args.isEmpty()) {
-            name = args.get(0);
-            uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
-            if (uniqueId == null) {
+        getUniqueId(args).thenAcceptAsync(uuidOptional -> {
+            final String name = args.get(0);
+            if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
-                        .set("player", args.get(0))
+                        .set("player", name)
                         .send(args.getSender());
-                return;
             }
-        } else {
-            name = args.getSender().getName();
-            uniqueId = ((Player) args.getSender()).getUniqueId();
-        }
-
-        final Optional<Whitelistable> whitelistable = whitelistService.find(uniqueId).join();
-        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
-            tellNotWhitelisted(args.getSender(), name);
-        } else if (whitelistable.get().isExpirable()) {
-            tellWhitelistedTemporarily(args.getSender(), name, whitelistable.get().getExpiresAt());
-        } else {
-            tellWhitelisted(args.getSender(), name);
-        }
+            final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
+            if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
+                tellNotWhitelisted(args.getSender(), name);
+            } else if (whitelistable.get().isExpirable()) {
+                tellWhitelistedTemporarily(args.getSender(), name, whitelistable.get().getExpiresAt());
+            } else {
+                tellWhitelisted(args.getSender(), name);
+            }
+        });
     }
 
     @Override protected void onNoPermission(final CommandSender sender) {
         locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
+    }
+
+    private CompletableFuture<Optional<UUID>> getUniqueId(final Args args) {
+        if (args.isEmpty()) {
+            return uniqueIdFetcher.getUUID(args.get(0));
+        } else {
+            return CompletableFuture.completedFuture(Optional.of(args.getPlayer().getUniqueId()));
+        }
     }
 
     private boolean isSelfConsole(final Args args) {

@@ -12,7 +12,6 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class RemoveCommand extends Command {
     public static final String NAME = "remove";
@@ -38,26 +37,27 @@ public class RemoveCommand extends Command {
 
     @Override public void execute(final Args args) {
         final String name = args.get(0);
-        final UUID uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
-        if (uniqueId == null) {
-            locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
-                    .set("player", args.get(0))
-                    .send(args.getSender());
-            return;
-        }
+        uniqueIdFetcher.getUUID(name).thenAcceptAsync(uuidOptional -> {
+            if (!uuidOptional.isPresent()) {
+                locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+                        .set("player", name)
+                        .send(args.getSender());
+                return;
+            }
 
-        final Optional<Whitelistable> whitelistable = whitelistService.find(uniqueId).join();
-        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
-            locale.localize(WhitelistMessage.REMOVE_NOT_WHITELISTED)
+            final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
+            if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
+                locale.localize(WhitelistMessage.REMOVE_NOT_WHITELISTED)
+                        .set("player", name)
+                        .send(args.getSender());
+                return;
+            }
+            whitelistService.remove(whitelistable.get());
+            locale.localize(WhitelistMessage.REMOVED)
                     .set("player", name)
                     .send(args.getSender());
-            return;
-        }
-        whitelistService.remove(whitelistable.get());
-        locale.localize(WhitelistMessage.REMOVED)
-                .set("player", name)
-                .send(args.getSender());
-        eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
+            eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
+        });
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

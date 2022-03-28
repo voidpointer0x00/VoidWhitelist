@@ -12,7 +12,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
@@ -29,19 +31,22 @@ public final class OnlineUUIDFetcher implements UUIDFetcher {
      * @param name The name of the player.
      * @return The UUID of the given player.
      */
-    public UUID getUUID(final String name) {
+    public CompletableFuture<Optional<UUID>> getUUID(final String name) {
         UUID uniqueId = uniqueIdCache.getIfPresent(name);
         if (uniqueId != null)
-            return uniqueId;
+            return CompletableFuture.completedFuture(Optional.of(uniqueId));
 
-        String response = callURL(UUID_URL + name);
-        if (response == null)
-            return null;
+        return CompletableFuture.supplyAsync(() -> {
+            String response = callURL(UUID_URL + name);
+            if (response == null)
+                return Optional.empty();
 
-        String uniqueIdStr = readUniqueIdFromResponse(response);
-        uniqueId = UUID.fromString(uniqueIdStr);
-        uniqueIdCache.put(name, uniqueId);
-        return uniqueId;
+            String uniqueIdStr = readUniqueIdFromResponse(response);
+            Optional<UUID> optionalUUID = Optional.of(UUID.fromString(uniqueIdStr));
+            if (optionalUUID.isPresent())
+                uniqueIdCache.put(name, optionalUUID.get());
+            return optionalUUID;
+        });
     }
 
     private String callURL(final String urlStr) {

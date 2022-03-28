@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class AddCommand extends Command {
@@ -43,7 +42,7 @@ public final class AddCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        Date expiresAt = Whitelistable.NEVER_EXPIRES;
+        final Date expiresAt;
         if (hasExpiresAtArgument(args.size())) {
             final long whitelistTimePeriod = EssentialsDateParser.parseDate(args.get(1));
             if (EssentialsDateParser.WRONG_DATE_FORMAT == whitelistTimePeriod) {
@@ -51,20 +50,23 @@ public final class AddCommand extends Command {
                 return;
             }
             expiresAt = new Date(whitelistTimePeriod);
+        } else {
+            expiresAt = Whitelistable.NEVER_EXPIRES;
         }
-        final UUID uniqueId = uniqueIdFetcher.getUUID(args.getArgs().get(0));
-        if (uniqueId == null) {
-            locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
-                    .set("player", args.get(0))
-                    .send(args.getSender());
-            return;
-        }
-        whitelistService.add(uniqueId, expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
+        uniqueIdFetcher.getUUID(args.getArgs().get(0)).thenAcceptAsync(uuidOptional -> {
+            if (!uuidOptional.isPresent()) {
+                locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+                        .set("player", args.get(0))
+                        .send(args.getSender());
+                return;
+            }
+            whitelistService.add(uuidOptional.get(), expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
 
-        if (expiresAt != Whitelistable.NEVER_EXPIRES)
-            notifyAddedForever(args, expiresAt);
-        else
-            notifyAdded(args);
+            if (expiresAt != Whitelistable.NEVER_EXPIRES)
+                notifyAddedForever(args, expiresAt);
+            else
+                notifyAdded(args);
+        });
     }
 
     private void notifyAddedForever(final Args args, final Date expiresAt) {

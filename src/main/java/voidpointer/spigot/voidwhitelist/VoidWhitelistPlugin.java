@@ -23,6 +23,7 @@ import voidpointer.spigot.voidwhitelist.uuid.OfflineUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.uuid.OnlineUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -55,7 +56,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Map<Player, KickTask> scheduledKickTasks = new WeakHashMap<>();
+        Map<Player, KickTask> scheduledKickTasks = Collections.synchronizedMap(new WeakHashMap<>());
         new LoginListener(this, whitelistService, whitelistConfig, scheduledKickTasks).register();
         new WhitelistEnabledListener(this, whitelistService, scheduledKickTasks).register();
         new WhitelistDisabledListener(scheduledKickTasks).register(this);
