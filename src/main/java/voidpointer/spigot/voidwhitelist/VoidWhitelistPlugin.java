@@ -38,7 +38,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         whitelistConfig = new WhitelistConfig(this);
         eventManager = new EventManager(this);
         uniqueIdFetcher = whitelistConfig.isUUIDModeOnline()
-                ? new OnlineUUIDFetcher(getLogger())
+                ? new OnlineUUIDFetcher()
                 : new OfflineUUIDFetcher();
 
         LocaleAnnotationResolver.resolve(this);

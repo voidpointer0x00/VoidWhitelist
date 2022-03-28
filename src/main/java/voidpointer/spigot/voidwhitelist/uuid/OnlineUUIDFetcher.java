@@ -56,7 +56,7 @@ public final class OnlineUUIDFetcher implements UUIDFetcher {
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException ioException) {
-            log.severe("Couldn't open HTTP connection: " + ioException.getMessage());
+            log.severe("Couldn't open HTTP connection: ",  ioException);
             return null;
         }
         try {
