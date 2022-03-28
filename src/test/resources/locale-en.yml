@@ -1,0 +1,21 @@
+messages:
+  added: '&6«&c{player}&6» &eis now whitelisted.'
+  added-temp: '&6«&c{player}&6» &eis now whitelisted until &6«&c{time}&6»&e.'
+  add-help: '&eUse &6/whitelist add &cnickname'
+  console-whitelisted: '&eConsole cannot be whitelisted, enter a player''s nickname.'
+  disabled: '&eWhitelist &eis now &cdisabled&e.'
+  enabled: '&eWhitelist &eis now &aenabled&e.'
+  info-not-whitelisted: '&6«&c{player}&6» &eis &cnot whitelisted&e.'
+  info-whitelisted: '&6«&c{player}&6» &eis &awhitelisted&e.'
+  info-whitelisted-temp: '&e&6«&c{player}&6» &eis &awhitelisted&e, expires on
+
+    &d{time}&e.'
+  login-disallowed: '&cYou are not whitelisted on this server.'
+  no-permission: '&cYou''ve no permission.'
+  removed: '&6«&c{player}&6» &ehas been removed from the whitelist.'
+  remove-help: '&eUse &6/whitelist remove &cnickname'
+  remove-not-whitelisted: '&6«&c{player}&6» &eis not on the whitelist.'
+  whitelist-help: '&eUse &6/whitelist &cadd&6|&cremove&6|&cinfo&6|&con&6|&coff'
+  wrong-date-format: '&cInvalid date-time format. A valid example for 1 day, 15 hours and 45 minutes:
+    &a1d15h45m'
+    you-were-removed: '&cYou''ve been removed from a whitelist.'

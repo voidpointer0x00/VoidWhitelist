@@ -1,0 +1,38 @@
+# language:
+#   Changes plugin's locale. (generally affects all end-user seen messages)
+#   Out-of-the-box translations:
+#   en — ENGLISH
+#   ru — RUSSIAN (Русский)
+#   Also it is possible to change the language to whatever language you need as long
+#       as you create an alternative locale-{language}.yml file with the translation
+#       inside.
+language: en
+
+# storage-method:
+#   Changes the method of storing your whitelist.
+#   Possible values:
+#   json — Simple JSON-based whitelist file. All whitelistable players are
+#       once loaded and then cached. Saves on each update.
+#   serial — NOT RECOMMENDED serialization-based storage. All whitelistable
+#         players are once loaded and then cached. Saves on each update.
+#         Does NOT support cross-version automatic upgrades.
+#   database — NOT IMPLEMENTED YET
+storage-method: json
+
+whitelist:
+  enabled: false
+  # uuid-mode:
+  #   Changes the algorithm of fetching user's UUID in a several commands.
+  #       If you need to add, remove etc. a specific UUID you'll find a special
+  #       version of each command for this purpose.
+  #   Possible values:
+  #   auto — RECOMMENDED checks whether the server is in online or offline mode
+  #       and automatically chooses between online and offline uuid-mode's
+  #   online — requests Mojang for player's UUID
+  #       (server.properties online-mode: true behaviour)
+  #   offline — calculates offline UUID
+  #       (server.properties online-mode: false behaviour)
+  #
+  # WARNING: the plugin DOES NOT convert your offline UUIDs to online and vice-versa.
+  #           You should either stick to one or another, or alternatively .
+  uuid-mode: online

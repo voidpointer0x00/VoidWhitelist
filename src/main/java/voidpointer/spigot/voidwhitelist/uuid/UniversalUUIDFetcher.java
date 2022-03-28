@@ -2,7 +2,6 @@ package voidpointer.spigot.voidwhitelist.uuid;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import lombok.RequiredArgsConstructor;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
@@ -16,23 +15,41 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
-@RequiredArgsConstructor
-public final class OnlineUUIDFetcher implements UUIDFetcher {
+public final class UniversalUUIDFetcher implements UUIDFetcher {
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/";
     @AutowiredLocale private static LocaleLog log;
-    private final Cache<String, UUID> uniqueIdCache = CacheBuilder.newBuilder()
+    private final Cache<String, UUID> onlineUuidCache = CacheBuilder.newBuilder()
             .expireAfterAccess(6L, TimeUnit.HOURS)
             .build();
+    private final Cache<String, UUID> offlineUuidCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(6, TimeUnit.HOURS)
+            .build();
 
-    /**
-     * Returns the UUID of the searched player.
-     *
-     * @param name The name of the player.
-     * @return The UUID of the given player.
-     */
-    public CompletableFuture<Optional<UUID>> getUUID(final String name) {
-        UUID uniqueId = uniqueIdCache.getIfPresent(name);
+    private final Function<String, CompletableFuture<Optional<UUID>>> defaultMethod;
+
+    public UniversalUUIDFetcher(final boolean isOnlineMode) {
+        this.defaultMethod = isOnlineMode
+                ? this::getOnlineUUID
+                : (name) -> CompletableFuture.completedFuture(Optional.of(getOfflineUUID(name)));
+    }
+
+    @Override public CompletableFuture<Optional<UUID>> getUUID(final String name) {
+        return defaultMethod.apply(name);
+    }
+
+    @Override public UUID getOfflineUUID(final String name) {
+        UUID uniqueId = offlineUuidCache.getIfPresent(name);
+        if (uniqueId != null)
+            return uniqueId;
+        uniqueId = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes());
+        offlineUuidCache.put(name, uniqueId);
+        return uniqueId;
+    }
+
+    @Override public CompletableFuture<Optional<UUID>> getOnlineUUID(final String name) {
+        UUID uniqueId = onlineUuidCache.getIfPresent(name);
         if (uniqueId != null)
             return CompletableFuture.completedFuture(Optional.of(uniqueId));
 
@@ -44,7 +61,7 @@ public final class OnlineUUIDFetcher implements UUIDFetcher {
             String uniqueIdStr = readUniqueIdFromResponse(response);
             Optional<UUID> optionalUUID = Optional.of(UUID.fromString(uniqueIdStr));
             if (optionalUUID.isPresent())
-                uniqueIdCache.put(name, optionalUUID.get());
+                onlineUuidCache.put(name, optionalUUID.get());
             return optionalUUID;
         });
     }

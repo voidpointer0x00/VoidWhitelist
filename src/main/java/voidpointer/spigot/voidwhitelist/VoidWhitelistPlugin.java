@@ -1,7 +1,10 @@
 package voidpointer.spigot.voidwhitelist;
 
+import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationResolver;
 import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
@@ -19,14 +22,15 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
-import voidpointer.spigot.voidwhitelist.uuid.OfflineUUIDFetcher;
-import voidpointer.spigot.voidwhitelist.uuid.OnlineUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
+import voidpointer.spigot.voidwhitelist.uuid.UniversalUUIDFetcher;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+@NoArgsConstructor
 public final class VoidWhitelistPlugin extends JavaPlugin {
     @PluginLocale(defaultMessages=WhitelistMessage.class)
     private static TranslatedLocaleFile locale;
@@ -35,12 +39,15 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     private EventManager eventManager;
     private UUIDFetcher uniqueIdFetcher;
 
+    // for tests
+    protected VoidWhitelistPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
+        super(loader, description, dataFolder, file);
+    }
+
     @Override public void onLoad() {
         whitelistConfig = new WhitelistConfig(this);
         eventManager = new EventManager(this);
-        uniqueIdFetcher = whitelistConfig.isUUIDModeOnline()
-                ? new OnlineUUIDFetcher()
-                : new OfflineUUIDFetcher();
+        uniqueIdFetcher = new UniversalUUIDFetcher(whitelistConfig.isUUIDModeOnline());
 
         LocaleAnnotationResolver.resolve(this);
     }
