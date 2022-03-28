@@ -38,7 +38,7 @@ public final class WhitelistAddedListener implements Listener {
         }
     }
 
-    public void register(final Plugin plugin) {
+    public void register() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 }

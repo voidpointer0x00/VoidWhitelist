@@ -9,6 +9,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.CachedWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
@@ -20,7 +22,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 public final class JsonWhitelistService extends CachedWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
@@ -38,11 +39,10 @@ public final class JsonWhitelistService extends CachedWhitelistService {
             .create();
     private static final JsonParser parser = new JsonParser();
 
-    private final Logger log;
+    @AutowiredLocale private static LocaleLog log;
     private final File whitelistFile;
 
-    public JsonWhitelistService(final Logger log, final File dataFolder) {
-        this.log = log;
+    public JsonWhitelistService(final File dataFolder) {
         whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
         load();
     }
@@ -66,7 +66,7 @@ public final class JsonWhitelistService extends CachedWhitelistService {
         try {
             Files.write(gson.toJson(whitelistObject), whitelistFile, Charset.defaultCharset());
         } catch (IOException ioException) {
-            log.severe("An exception occurred while saving the whitelist: " + ioException.getMessage());
+            log.severe("An exception occurred while saving the whitelist", ioException);
         }
     }
 
@@ -85,7 +85,7 @@ public final class JsonWhitelistService extends CachedWhitelistService {
             Type whitelistType = new TypeToken<List<Whitelistable>>() {}.getType();
             return gson.fromJson(root.getAsJsonObject().get(WHITELIST_PROPERTY), whitelistType);
         } catch (final JsonSyntaxException jsonSyntaxException) {
-            log.severe("Invalid json syntax in whitelist file: " + jsonSyntaxException.getMessage());
+            log.severe("Invalid json syntax in whitelist file", jsonSyntaxException);
             return null;
         } catch (UnknownVersionException unknownVersionException) {
             log.severe("Unknown storage version");
@@ -105,7 +105,7 @@ public final class JsonWhitelistService extends CachedWhitelistService {
         try {
             return Files.toString(whitelistFile, Charset.defaultCharset());
         } catch (IOException ioException) {
-            log.severe("An exception occurred while reading whitelist file contents: " + ioException.getMessage());
+            log.severe("An exception occurred while reading whitelist file contents ", ioException);
             return null;
         }
     }

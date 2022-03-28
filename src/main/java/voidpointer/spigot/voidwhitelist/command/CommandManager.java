@@ -1,6 +1,7 @@
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.Bukkit;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,20 +10,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class CommandManager {
+    @AutowiredLocale private static LocaleLog log;
     private final Map<String, Command> commands = new HashMap<>();
 
     public void addCommand(final Command command) {
         final String commandName = command.getName();
         if (commands.containsKey(commandName)) {
-            Bukkit.getLogger().severe("Cannot add \""+commandName+"\" command, duplicate found.");
-            Bukkit.getLogger().severe("Command \""+commandName+"\" not added.");
+            log.severe("Cannot add \"{0}\" command, duplicate found.", commandName);
             return;
         }
 
         this.commands.put(commandName, command);
         for (final String alias : command.getAliases()) {
             if (commands.containsKey(alias)) {
-                Bukkit.getLogger().warning("Cannot add \""+alias+"\" alias, duplicate found.");
+                log.warn("Cannot add \"{0}\" alias, duplicate found.", commandName);
                 continue;
             }
             commands.put(alias, command);

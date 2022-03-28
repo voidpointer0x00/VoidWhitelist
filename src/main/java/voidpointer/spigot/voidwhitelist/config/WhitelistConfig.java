@@ -3,6 +3,8 @@ package voidpointer.spigot.voidwhitelist.config;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
 import java.io.File;
@@ -14,6 +16,7 @@ public final class WhitelistConfig {
     private static final String UUID_MODE_PATH = "whitelist.uuid-mode";
     private static final String STORAGE_METHOD_PATH = "storage-method";
 
+    @AutowiredLocale private static LocaleLog log;
     @NonNull private final JavaPlugin plugin;
 
     public WhitelistConfig(@NonNull final JavaPlugin plugin) {
@@ -85,7 +88,6 @@ public final class WhitelistConfig {
     }
 
     private void reportUnknown(final String property, final String defaultValue) {
-        plugin.getLogger().warning("Unknown value for property: " + property);
-        plugin.getLogger().warning("Using default value: " + defaultValue);
+        log.warn("Property «{0}» is not set; using default value «{1}» instead", property, defaultValue);
     }
 }

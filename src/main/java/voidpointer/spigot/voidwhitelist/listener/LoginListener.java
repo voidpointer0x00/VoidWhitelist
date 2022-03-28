@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -54,7 +53,7 @@ public final class LoginListener implements Listener {
         });
     }
 
-    public void register(final JavaPlugin plugin) {
+    public void register() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 

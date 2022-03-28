@@ -2,6 +2,8 @@ package voidpointer.spigot.voidwhitelist.storage.serial;
 
 import com.google.common.cache.CacheBuilder;
 import lombok.NonNull;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.CachedWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
@@ -14,16 +16,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public final class SerialWhitelistService extends CachedWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
 
-    @NonNull private final Logger log;
+    @AutowiredLocale private static LocaleLog log;
     @NonNull private final File dataFolder;
 
-    public SerialWhitelistService(final Logger log, final File dataFolder) {
-        this.log = log;
+    public SerialWhitelistService(final File dataFolder) {
         this.dataFolder = dataFolder;
         load();
         CacheBuilder.newBuilder().weakValues();
@@ -33,7 +33,7 @@ public final class SerialWhitelistService extends CachedWhitelistService {
         try {
             File whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
             if (whitelistFile.createNewFile())
-                log.info("Created " + WHITELIST_FILE_NAME);
+                log.info("Created {0}", WHITELIST_FILE_NAME);
 
             ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile));
             objOut.writeObject(StorageVersion.CURRENT.toString());
@@ -57,8 +57,7 @@ public final class SerialWhitelistService extends CachedWhitelistService {
             }
             getCachedWhitelist().addAll(deserializeWhitelist(oin.readObject()));
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
-            log.severe("Cannot deserialize whitelist object from file.");
-            deserializationException.printStackTrace();
+            log.severe("Cannot deserialize whitelist object from file.", deserializationException);
             return;
         }
     }

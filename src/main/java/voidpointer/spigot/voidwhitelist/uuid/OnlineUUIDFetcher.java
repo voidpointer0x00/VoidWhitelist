@@ -3,6 +3,8 @@ package voidpointer.spigot.voidwhitelist.uuid;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.RequiredArgsConstructor;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,12 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public final class OnlineUUIDFetcher implements UUIDFetcher {
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/";
-    private final Logger log;
+    @AutowiredLocale private static LocaleLog log;
     private final Cache<String, UUID> uniqueIdCache = CacheBuilder.newBuilder()
             .expireAfterAccess(6L, TimeUnit.HOURS)
             .build();
@@ -48,7 +49,7 @@ public final class OnlineUUIDFetcher implements UUIDFetcher {
         try {
             url = new URL(urlStr);
         } catch (MalformedURLException malformedURLException) {
-            log.severe("Invalid URL: " + urlStr);
+            log.severe("Invalid URL: {0}", urlStr);
             return null;
         }
         HttpURLConnection connection;
@@ -60,7 +61,7 @@ public final class OnlineUUIDFetcher implements UUIDFetcher {
         }
         try {
             if (connection.getResponseCode() == 204) {
-                log.warning("Requested player not found (url: " + urlStr + ")");
+                log.warn("Requested player not found (url: {0})", urlStr);
                 return null;
             } else if (connection.getInputStream() == null) {
                 log.severe("No InputStream in connection");

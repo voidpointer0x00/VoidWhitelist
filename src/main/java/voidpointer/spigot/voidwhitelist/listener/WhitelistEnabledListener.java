@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
@@ -45,7 +44,7 @@ public final class WhitelistEnabledListener implements Listener {
         }
     }
 
-    public void register(final JavaPlugin plugin) {
+    public void register() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 }
