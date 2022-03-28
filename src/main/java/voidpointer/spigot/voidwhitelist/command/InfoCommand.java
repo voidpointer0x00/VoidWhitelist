@@ -19,10 +19,10 @@ public final class InfoCommand extends Command {
     public static final String PERMISSION = "whitelist.info";
 
     @AutowiredLocale private static Locale locale;
-    @NonNull private final WhitelistService whitelistService;
-    @NonNull private final UUIDFetcher uniqueIdFetcher;
+    private final WhitelistService whitelistService;
+    private final UUIDFetcher uniqueIdFetcher;
 
-    public InfoCommand(final WhitelistService whitelistService, final UUIDFetcher uniqueIdFetcher) {
+    public InfoCommand(final @NonNull WhitelistService whitelistService, final @NonNull UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         super.setPermission(PERMISSION);
 

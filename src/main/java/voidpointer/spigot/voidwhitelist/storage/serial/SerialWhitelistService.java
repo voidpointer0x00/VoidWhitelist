@@ -21,9 +21,9 @@ public final class SerialWhitelistService extends CachedWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
 
     @AutowiredLocale private static LocaleLog log;
-    @NonNull private final File dataFolder;
+    private final File dataFolder;
 
-    public SerialWhitelistService(final File dataFolder) {
+    public SerialWhitelistService(final @NonNull File dataFolder) {
         this.dataFolder = dataFolder;
         load();
         CacheBuilder.newBuilder().weakValues();

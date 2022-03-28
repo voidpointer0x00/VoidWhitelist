@@ -16,7 +16,7 @@ public final class KickTask extends BukkitRunnable {
     @NonNull private final WeakReference<Player> playerReference;
     @NonNull private final String kickReason;
 
-    public KickTask(final Player player, final String kickReason) {
+    public KickTask(final @NonNull Player player, final String kickReason) {
         this(new WeakReference<>(player), kickReason);
     }
 
@@ -31,7 +31,7 @@ public final class KickTask extends BukkitRunnable {
         player.kickPlayer(kickReason);
     }
 
-    public KickTask scheduleKick(final Plugin plugin, final Date expiresAt) {
+    public void scheduleKick(final Plugin plugin, final Date expiresAt) {
         if (!Whitelistable.isDateExpirable(expiresAt))
             throw new IllegalStateException("Cannot schedule kick task for a player without expirable date");
 
@@ -40,7 +40,5 @@ public final class KickTask extends BukkitRunnable {
             delay = 0;
 
         super.runTaskLater(plugin, TimeUnit.MILLISECONDS.toSeconds(delay) * 20L);
-
-        return this;
     }
 }

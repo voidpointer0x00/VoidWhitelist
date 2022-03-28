@@ -17,9 +17,9 @@ public final class WhitelistConfig {
     private static final String STORAGE_METHOD_PATH = "storage-method";
 
     @AutowiredLocale private static LocaleLog log;
-    @NonNull private final JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
-    public WhitelistConfig(@NonNull final JavaPlugin plugin) {
+    public WhitelistConfig(final @NonNull JavaPlugin plugin) {
         this.plugin = plugin;
         saveIfNotExists();
     }

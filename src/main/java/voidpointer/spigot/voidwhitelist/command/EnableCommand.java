@@ -18,10 +18,10 @@ public final class EnableCommand extends Command {
     public static final String PERMISSION = "whitelist.enable";
 
     @AutowiredLocale private static Locale locale;
-    @NonNull private final WhitelistConfig whitelistConfig;
-    @NonNull private final EventManager eventManager;
+    private final WhitelistConfig whitelistConfig;
+    private final EventManager eventManager;
 
-    public EnableCommand(final WhitelistConfig whitelistConfig, final EventManager eventManager) {
+    public EnableCommand(final @NonNull WhitelistConfig whitelistConfig, final @NonNull EventManager eventManager) {
         super(NAME);
         super.setPermission(PERMISSION);
 

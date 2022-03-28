@@ -26,12 +26,12 @@ public final class AddCommand extends Command {
     public static final int MIN_REQUIRED_ARGS = 1;
 
     @AutowiredLocale private static Locale locale;
-    @NonNull private final WhitelistService whitelistService;
-    @NonNull private final EventManager eventManager;
-    @NonNull private final UUIDFetcher uniqueIdFetcher;
+    private final WhitelistService whitelistService;
+    private final EventManager eventManager;
+    private final UUIDFetcher uniqueIdFetcher;
 
-    public AddCommand(final WhitelistService whitelistService, final EventManager eventManager,
-                      final UUIDFetcher uniqueIdFetcher) {
+    public AddCommand(final @NonNull WhitelistService whitelistService, final @NonNull EventManager eventManager,
+                      final @NonNull UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
         super.setPermission(PERMISSION);

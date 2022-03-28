@@ -17,12 +17,12 @@ public final class WhitelistCommand extends Command {
     public static final int MIN_REQUIRED_ARGS = 1;
 
     @AutowiredLocale private static Locale locale;
-    @NonNull private final CommandManager whitelistCommands = new CommandManager();
+    private final CommandManager whitelistCommands = new CommandManager();
 
-    public WhitelistCommand(@NonNull final WhitelistService whitelistService,
-                            @NonNull final WhitelistConfig whitelistConfig,
-                            @NonNull final EventManager eventManager,
-                            @NonNull final UUIDFetcher uniqueIdFetcher) {
+    public WhitelistCommand(final @NonNull WhitelistService whitelistService,
+                            final @NonNull WhitelistConfig whitelistConfig,
+                            final @NonNull EventManager eventManager,
+                            final @NonNull UUIDFetcher uniqueIdFetcher) {
         super(NAME);
 
         whitelistCommands.addCommand(new AddCommand(whitelistService, eventManager, uniqueIdFetcher));

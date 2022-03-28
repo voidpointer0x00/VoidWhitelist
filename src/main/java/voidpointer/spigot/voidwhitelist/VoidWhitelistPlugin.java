@@ -40,7 +40,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     private UUIDFetcher uniqueIdFetcher;
 
     // for tests
-    protected VoidWhitelistPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
+    VoidWhitelistPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
         super(loader, description, dataFolder, file);
     }
 

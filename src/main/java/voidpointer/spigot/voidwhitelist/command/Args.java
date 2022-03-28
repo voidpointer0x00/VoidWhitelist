@@ -1,6 +1,7 @@
 package voidpointer.spigot.voidwhitelist.command;
 
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -8,12 +9,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public final class Args {
-    @Getter
-    private final CommandSender sender;
-    @Getter
-    private final LinkedList<String> args;
+    @Getter private final CommandSender sender;
+    @Getter private final LinkedList<String> args;
 
-    public Args(final CommandSender sender, final String[] args) {
+    public Args(final @NonNull CommandSender sender, final @NonNull String[] args) {
         this.sender = sender;
         this.args = new LinkedList<>(Arrays.asList(args));
     }

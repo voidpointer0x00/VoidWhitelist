@@ -60,8 +60,7 @@ public final class UniversalUUIDFetcher implements UUIDFetcher {
 
             String uniqueIdStr = readUniqueIdFromResponse(response);
             Optional<UUID> optionalUUID = Optional.of(UUID.fromString(uniqueIdStr));
-            if (optionalUUID.isPresent())
-                onlineUuidCache.put(name, optionalUUID.get());
+            onlineUuidCache.put(name, optionalUUID.get());
             return optionalUUID;
         });
     }

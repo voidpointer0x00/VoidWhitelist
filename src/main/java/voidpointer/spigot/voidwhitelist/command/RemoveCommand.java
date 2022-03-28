@@ -19,13 +19,13 @@ public class RemoveCommand extends Command {
     public static final Integer MIN_ARGS = 1;
 
     @AutowiredLocale private static Locale locale;
-    @NonNull private final WhitelistService whitelistService;
-    @NonNull private final EventManager eventManager;
-    @NonNull private final UUIDFetcher uniqueIdFetcher;
+    private final WhitelistService whitelistService;
+    private final EventManager eventManager;
+    private final UUIDFetcher uniqueIdFetcher;
 
-    public RemoveCommand(@NonNull final WhitelistService whitelistService,
-                         @NonNull final EventManager eventManager,
-                         @NonNull final UUIDFetcher uniqueIdFetcher) {
+    public RemoveCommand(final @NonNull WhitelistService whitelistService,
+                         final @NonNull EventManager eventManager,
+                         final @NonNull UUIDFetcher uniqueIdFetcher) {
         super(NAME);
         super.setPermission(PERMISSION);
         super.setRequiredArgsNumber(MIN_ARGS);
