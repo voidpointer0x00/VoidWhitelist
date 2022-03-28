@@ -5,17 +5,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 
 public final class Args {
     @Getter
     private final CommandSender sender;
     @Getter
-    private final List<String> args;
+    private final LinkedList<String> args;
 
     public Args(final CommandSender sender, final String[] args) {
         this.sender = sender;
-        this.args = Arrays.asList(args);
+        this.args = new LinkedList<>(Arrays.asList(args));
     }
 
     public Player getPlayer() {

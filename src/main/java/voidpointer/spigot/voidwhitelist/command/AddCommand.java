@@ -53,7 +53,7 @@ public final class AddCommand extends Command {
         } else {
             expiresAt = Whitelistable.NEVER_EXPIRES;
         }
-        uniqueIdFetcher.getUUID(args.getArgs().get(0)).thenAcceptAsync(uuidOptional -> {
+        uniqueIdFetcher.getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
                         .set("player", args.get(0))
