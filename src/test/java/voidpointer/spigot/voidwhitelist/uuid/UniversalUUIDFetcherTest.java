@@ -1,6 +1,7 @@
 package voidpointer.spigot.voidwhitelist.uuid;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+import manifold.ext.rt.api.Jailbreak;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -82,5 +83,18 @@ class UniversalUUIDFetcherTest {
         UUID uuid = uuidFetcher.getOfflineUUID(name);
         assertNotNull(uuid);
         assertEquals(expect, uuid.toString());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getIdUuid")
+    void testIdToUuid(String id, String expect) {
+        @Jailbreak UniversalUUIDFetcher uuidFetcher = new UniversalUUIDFetcher(false);
+        assertEquals(expect, uuidFetcher.idToUuid(id));
+    }
+
+    static Stream<Arguments> getIdUuid() {
+        return Stream.of(
+                arguments("c55a15b5896f4c099c0775ad36572aad", "c55a15b5-896f-4c09-9c07-75ad36572aad")
+        );
     }
 }
