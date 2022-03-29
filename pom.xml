@@ -116,8 +116,12 @@
                             </artifactSet>
                             <relocations>
                                 <relocation>
-                                    <pattern>voidpointer.spigot.framework</pattern>
-                                    <shadedPattern>voidpointer.spigot.voidwhitelist.framework</shadedPattern>
+                                    <pattern>voidpointer.spigot.framework.di</pattern>
+                                    <shadedPattern>voidpointer.spigot.voidwhitelist.di</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>voidpointer.spigot.framework.localemodule</pattern>
+                                    <shadedPattern>voidpointer.spigot.voidwhitelist.locale</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -167,6 +171,11 @@
             <groupId>com.github.NyanGuyMF</groupId>
             <artifactId>locale-module</artifactId>
             <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>voidpointer.spigot.framework</groupId>
+            <artifactId>void-di</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
