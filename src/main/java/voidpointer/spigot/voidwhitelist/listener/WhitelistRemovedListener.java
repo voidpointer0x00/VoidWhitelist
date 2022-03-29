@@ -14,13 +14,13 @@
  */
 package voidpointer.spigot.voidwhitelist.listener;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
@@ -30,7 +30,7 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 @RequiredArgsConstructor
 public final class WhitelistRemovedListener implements Listener {
     @AutowiredLocale private static Locale locale;
-    @NonNull private final WhitelistConfig whitelistConfig;
+    @Autowired private static WhitelistConfig whitelistConfig;
 
     /**
      * Kick the removed player it they're online.

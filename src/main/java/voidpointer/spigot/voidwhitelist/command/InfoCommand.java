@@ -14,8 +14,8 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import lombok.NonNull;
 import org.bukkit.command.CommandSender;
+import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -33,15 +33,12 @@ public final class InfoCommand extends Command {
     public static final String PERMISSION = "whitelist.info";
 
     @AutowiredLocale private static Locale locale;
-    private final WhitelistService whitelistService;
-    private final UUIDFetcher uniqueIdFetcher;
+    @Autowired private static WhitelistService whitelistService;
+    @Autowired private static UUIDFetcher uniqueIdFetcher;
 
-    public InfoCommand(final @NonNull WhitelistService whitelistService, final @NonNull UUIDFetcher uniqueIdFetcher) {
+    public InfoCommand() {
         super(NAME);
         super.setPermission(PERMISSION);
-
-        this.whitelistService = whitelistService;
-        this.uniqueIdFetcher = uniqueIdFetcher;
     }
 
     @Override public void execute(final Args args) {

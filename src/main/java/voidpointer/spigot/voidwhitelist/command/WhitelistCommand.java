@@ -14,15 +14,10 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
-import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
-import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
 
 import java.util.List;
 
@@ -33,17 +28,14 @@ public final class WhitelistCommand extends Command {
     @AutowiredLocale private static Locale locale;
     private final CommandManager whitelistCommands = new CommandManager();
 
-    public WhitelistCommand(final @NonNull WhitelistService whitelistService,
-                            final @NonNull WhitelistConfig whitelistConfig,
-                            final @NonNull EventManager eventManager,
-                            final @NonNull UUIDFetcher uniqueIdFetcher) {
+    public WhitelistCommand() {
         super(NAME);
 
-        whitelistCommands.addCommand(new AddCommand(whitelistService, eventManager, uniqueIdFetcher));
-        whitelistCommands.addCommand(new RemoveCommand(whitelistService, eventManager, uniqueIdFetcher));
-        whitelistCommands.addCommand(new EnableCommand(whitelistConfig, eventManager));
-        whitelistCommands.addCommand(new DisableCommand(whitelistConfig, eventManager));
-        whitelistCommands.addCommand(new InfoCommand(whitelistService, uniqueIdFetcher));
+        whitelistCommands.addCommand(new AddCommand());
+        whitelistCommands.addCommand(new RemoveCommand());
+        whitelistCommands.addCommand(new EnableCommand());
+        whitelistCommands.addCommand(new DisableCommand());
+        whitelistCommands.addCommand(new InfoCommand());
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 

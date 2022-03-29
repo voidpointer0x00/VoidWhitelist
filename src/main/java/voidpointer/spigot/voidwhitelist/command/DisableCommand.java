@@ -14,8 +14,8 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import lombok.NonNull;
 import org.bukkit.command.CommandSender;
+import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
@@ -32,15 +32,12 @@ public final class DisableCommand extends Command {
     public static final String PERMISSION = "whitelist.disable";
 
     @AutowiredLocale private static Locale locale;
-    private final WhitelistConfig whitelistConfig;
-    private final EventManager eventManager;
+    @Autowired private static WhitelistConfig whitelistConfig;
+    @Autowired private static EventManager eventManager;
 
-    public DisableCommand(final @NonNull WhitelistConfig whitelistConfig, final @NonNull EventManager eventManager) {
+    public DisableCommand() {
         super(NAME);
         super.setPermission(PERMISSION);
-
-        this.whitelistConfig = whitelistConfig;
-        this.eventManager = eventManager;
     }
 
     @Override public void execute(final Args args) {

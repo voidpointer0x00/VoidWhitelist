@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
@@ -33,7 +34,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public final class WhitelistAddedListener implements Listener {
     @AutowiredLocale private static Locale locale;
-    @NonNull private final Plugin plugin;
+    @Autowired(mapId="plugin")
+    private static Plugin plugin;
     @NonNull private final Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler(priority=EventPriority.MONITOR)

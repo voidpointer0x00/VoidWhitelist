@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+  ~
+  ~  Copyright (C) 2022 Vasiliy Petukhov <void.pointer@ya.ru>
+  ~
+  ~  Everyone is permitted to copy and distribute verbatim or modified
+  ~  copies of this license document, and changing it is allowed as long
+  ~  as the name is changed.
+  ~
+  ~             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+  ~    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+  ~
+  ~   0. You just DO WHAT THE FUCK YOU WANT TO.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -173,9 +188,9 @@
             <version>3.0.0</version>
         </dependency>
         <dependency>
-            <groupId>voidpointer.spigot.framework</groupId>
-            <artifactId>void-di</artifactId>
-            <version>1.0.0</version>
+            <groupId>com.github.NyanGuyMF</groupId>
+            <artifactId>dependency-injector</artifactId>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

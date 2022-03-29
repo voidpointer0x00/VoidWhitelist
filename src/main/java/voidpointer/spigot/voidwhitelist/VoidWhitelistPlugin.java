@@ -19,6 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import voidpointer.spigot.framework.di.Dependency;
+import voidpointer.spigot.framework.di.Injector;
 import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationResolver;
 import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
@@ -48,10 +50,12 @@ import java.util.WeakHashMap;
 public final class VoidWhitelistPlugin extends JavaPlugin {
     @PluginLocale(defaultMessages=WhitelistMessage.class)
     private static TranslatedLocaleFile locale;
-    private WhitelistService whitelistService;
-    private WhitelistConfig whitelistConfig;
-    private EventManager eventManager;
-    private UUIDFetcher uniqueIdFetcher;
+    @Dependency private static WhitelistService whitelistService;
+    @Dependency private static WhitelistConfig whitelistConfig;
+    @Dependency private static EventManager eventManager;
+    @Dependency private static UUIDFetcher uniqueIdFetcher;
+    @Dependency(id="plugin")
+    private static JavaPlugin instance;
 
     // for tests
     VoidWhitelistPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
@@ -59,8 +63,9 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     @Override public void onLoad() {
-        whitelistConfig = new WhitelistConfig(this);
-        eventManager = new EventManager(this);
+        instance = this;
+        whitelistConfig = new WhitelistConfig();
+        eventManager = new EventManager();
         uniqueIdFetcher = new UniversalUUIDFetcher(whitelistConfig.isUUIDModeOnline());
 
         LocaleAnnotationResolver.resolve(this);
@@ -68,8 +73,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
 
     @Override public void onEnable() {
         whitelistService = new StorageFactory(getDataFolder()).loadStorage(whitelistConfig);
-        new WhitelistCommand(whitelistService, whitelistConfig, eventManager, uniqueIdFetcher)
-                .register(this);
+        Injector.inject(this);
+        new WhitelistCommand().register(this);
         registerListeners();
 
         if (whitelistConfig.isWhitelistEnabled())
@@ -78,11 +83,11 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
 
     private void registerListeners() {
         Map<Player, KickTask> scheduledKickTasks = Collections.synchronizedMap(new WeakHashMap<>());
-        new LoginListener(this, whitelistService, whitelistConfig, scheduledKickTasks).register();
-        new WhitelistEnabledListener(this, whitelistService, scheduledKickTasks).register();
+        new LoginListener(this, scheduledKickTasks).register();
+        new WhitelistEnabledListener(scheduledKickTasks).register();
         new WhitelistDisabledListener(scheduledKickTasks).register(this);
-        new WhitelistAddedListener(this, scheduledKickTasks).register();
-        new WhitelistRemovedListener(whitelistConfig).register(this);
+        new WhitelistAddedListener(scheduledKickTasks).register();
+        new WhitelistRemovedListener().register(this);
         new QuitListener(scheduledKickTasks).register(this);
     }
 

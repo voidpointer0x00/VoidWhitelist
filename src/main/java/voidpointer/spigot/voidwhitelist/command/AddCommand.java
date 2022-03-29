@@ -14,10 +14,10 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -40,19 +40,14 @@ public final class AddCommand extends Command {
     public static final int MIN_REQUIRED_ARGS = 1;
 
     @AutowiredLocale private static Locale locale;
-    private final WhitelistService whitelistService;
-    private final EventManager eventManager;
-    private final UUIDFetcher uniqueIdFetcher;
+    @Autowired private static WhitelistService whitelistService;
+    @Autowired private static EventManager eventManager;
+    @Autowired private static UUIDFetcher uniqueIdFetcher;
 
-    public AddCommand(final @NonNull WhitelistService whitelistService, final @NonNull EventManager eventManager,
-                      final @NonNull UUIDFetcher uniqueIdFetcher) {
+    public AddCommand() {
         super(NAME);
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
         super.setPermission(PERMISSION);
-
-        this.whitelistService = whitelistService;
-        this.eventManager = eventManager;
-        this.uniqueIdFetcher = uniqueIdFetcher;
     }
 
     @Override public void execute(final Args args) {

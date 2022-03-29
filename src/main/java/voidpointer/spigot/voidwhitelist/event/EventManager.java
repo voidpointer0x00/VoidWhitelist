@@ -14,14 +14,13 @@
  */
 package voidpointer.spigot.voidwhitelist.event;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
+import voidpointer.spigot.framework.di.Autowired;
 
-@RequiredArgsConstructor
 public final class EventManager {
-    @NonNull private final Plugin plugin;
+    @Autowired(mapId="plugin")
+    private static Plugin plugin;
 
     public void callEvent(final Event event) {
         plugin.getServer().getScheduler().runTask(plugin, () ->
