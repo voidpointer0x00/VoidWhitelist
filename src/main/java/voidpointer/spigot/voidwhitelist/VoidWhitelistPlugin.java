@@ -38,8 +38,7 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
-import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
-import voidpointer.spigot.voidwhitelist.uuid.UniversalUUIDFetcher;
+import voidpointer.spigot.voidwhitelist.uuid.DefaultUUIDFetcher;
 
 import java.io.File;
 import java.util.Collections;
@@ -53,7 +52,6 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Dependency private static WhitelistService whitelistService;
     @Dependency private static WhitelistConfig whitelistConfig;
     @Dependency private static EventManager eventManager;
-    @Dependency private static UUIDFetcher uniqueIdFetcher;
     @Dependency(id="plugin")
     private static JavaPlugin instance;
 
@@ -66,7 +64,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         instance = this;
         whitelistConfig = new WhitelistConfig(this);
         eventManager = new EventManager(this);
-        uniqueIdFetcher = new UniversalUUIDFetcher(whitelistConfig.isUUIDModeOnline());
+        DefaultUUIDFetcher.updateMode(whitelistConfig.isUUIDModeOnline());
 
         LocaleAnnotationResolver.resolve(this);
     }

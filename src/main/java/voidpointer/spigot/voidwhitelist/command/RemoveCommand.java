@@ -23,7 +23,7 @@ import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
+import voidpointer.spigot.voidwhitelist.uuid.DefaultUUIDFetcher;
 
 import java.util.Optional;
 
@@ -35,7 +35,6 @@ public class RemoveCommand extends Command {
     @AutowiredLocale private static Locale locale;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
-    @Autowired private static UUIDFetcher uniqueIdFetcher;
 
     public RemoveCommand() {
         super(NAME);
@@ -46,10 +45,12 @@ public class RemoveCommand extends Command {
 
     @Override public void execute(final Args args) {
         final String name = args.get(0);
-        uniqueIdFetcher.getUUID(name).thenAcceptAsync(uuidOptional -> {
+        DefaultUUIDFetcher.of(args.getOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
-                locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+                locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
+                        .set("cmd", getName())
                         .set("player", name)
+                        .set("date", null)
                         .send(args.getSender());
                 return;
             }

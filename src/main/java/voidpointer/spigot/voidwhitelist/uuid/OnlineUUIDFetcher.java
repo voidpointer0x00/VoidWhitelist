@@ -28,41 +28,16 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
-public final class UniversalUUIDFetcher implements UUIDFetcher {
+public final class OnlineUUIDFetcher {
     private static final String UUID_API_URL = "https://api.mojang.com/users/profiles/minecraft/";
     private static final Gson gson = new GsonBuilder().create();
     @AutowiredLocale private static LocaleLog log;
-    private final Cache<String, UUID> onlineUuidCache = CacheBuilder.newBuilder()
+    private static final Cache<String, UUID> onlineUuidCache = CacheBuilder.newBuilder()
             .expireAfterAccess(6L, TimeUnit.HOURS)
             .build();
-    private final Cache<String, UUID> offlineUuidCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(6, TimeUnit.HOURS)
-            .build();
 
-    private final Function<String, CompletableFuture<Optional<UUID>>> defaultMethod;
-
-    public UniversalUUIDFetcher(final boolean isOnlineMode) {
-        this.defaultMethod = isOnlineMode
-                ? this::getOnlineUUID
-                : (name) -> CompletableFuture.completedFuture(Optional.of(getOfflineUUID(name)));
-    }
-
-    @Override public CompletableFuture<Optional<UUID>> getUUID(final String name) {
-        return defaultMethod.apply(name);
-    }
-
-    @Override public UUID getOfflineUUID(final String name) {
-        UUID uniqueId = offlineUuidCache.getIfPresent(name);
-        if (uniqueId != null)
-            return uniqueId;
-        uniqueId = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes());
-        offlineUuidCache.put(name, uniqueId);
-        return uniqueId;
-    }
-
-    @Override public CompletableFuture<Optional<UUID>> getOnlineUUID(final String name) {
+    public static CompletableFuture<Optional<UUID>> getUUID(final String name) {
         UUID uniqueId = onlineUuidCache.getIfPresent(name);
         if (uniqueId != null)
             return CompletableFuture.completedFuture(Optional.of(uniqueId));
@@ -78,7 +53,7 @@ public final class UniversalUUIDFetcher implements UUIDFetcher {
         });
     }
 
-    private UUID callApi(final String name) {
+    private static UUID callApi(final String name) {
         try {
             String id = requestApiUrl(name);
             String uuid = idToUuid(id);
@@ -92,7 +67,7 @@ public final class UniversalUUIDFetcher implements UUIDFetcher {
         }
     }
 
-    private String idToUuid(final String id) {
+    private static String idToUuid(final String id) {
         StringBuilder uuidBuilder = new StringBuilder(id.length() + 4);
         for (int index = 0; index < id.length(); index++) {
             uuidBuilder.append(id.charAt(index));
@@ -102,11 +77,11 @@ public final class UniversalUUIDFetcher implements UUIDFetcher {
         return uuidBuilder.toString();
     }
 
-    private String requestApiUrl(final String name) throws IOException {
+    private static String requestApiUrl(final String name) throws IOException {
         return gson.fromJson(newApiRequestConnection(name), MojangUUIDResponse.class).id;
     }
 
-    private InputStreamReader newApiRequestConnection(final String name) throws IOException {
+    private static InputStreamReader newApiRequestConnection(final String name) throws IOException {
         return new InputStreamReader(new URL(UUID_API_URL + name).openStream());
     }
 }

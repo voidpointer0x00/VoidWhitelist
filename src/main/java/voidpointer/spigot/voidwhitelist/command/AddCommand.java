@@ -26,12 +26,13 @@ import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
+import voidpointer.spigot.voidwhitelist.uuid.DefaultUUIDFetcher;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class AddCommand extends Command {
@@ -42,7 +43,6 @@ public final class AddCommand extends Command {
     @AutowiredLocale private static Locale locale;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
-    @Autowired private static UUIDFetcher uniqueIdFetcher;
 
     public AddCommand() {
         super(NAME);
@@ -52,31 +52,43 @@ public final class AddCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        final Date expiresAt;
+        final Optional<Date> expiresAt = parseExpiresAtAndWarnIfWrong(args);
+        if (expiresAt == null)
+            return;
+
+        DefaultUUIDFetcher.of(args.getOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
+            if (!uuidOptional.isPresent()) {
+                locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
+                        .set("cmd", getName())
+                        .set("player", args.get(0))
+                        .set("date", expiresAt.map(date -> String.valueOf(date.getTime())).orElse(null))
+                        .send(args.getSender());
+                return;
+            }
+            whitelistService.add(uuidOptional.get(), expiresAt.orElse(Whitelistable.NEVER_EXPIRES))
+                    .thenAcceptAsync(this::callWhitelistAddedEvent);
+
+            if (expiresAt.isPresent())
+                notifyAdded(args);
+            else
+                notifyAddedForever(args, expiresAt.get());
+        });
+    }
+
+    private Optional<Date> parseExpiresAtAndWarnIfWrong(final Args args) {
         if (hasExpiresAtArgument(args.size())) {
             final long whitelistTimePeriod = EssentialsDateParser.parseDate(args.get(1));
             if (EssentialsDateParser.WRONG_DATE_FORMAT == whitelistTimePeriod) {
                 locale.localize(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
-                return;
+                return null;
             }
-            expiresAt = new Date(whitelistTimePeriod);
-        } else {
-            expiresAt = Whitelistable.NEVER_EXPIRES;
+            return Optional.of(new Date(whitelistTimePeriod));
         }
-        uniqueIdFetcher.getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
-            if (!uuidOptional.isPresent()) {
-                locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
-                        .set("player", args.get(0))
-                        .send(args.getSender());
-                return;
-            }
-            whitelistService.add(uuidOptional.get(), expiresAt).thenAcceptAsync(this::callWhitelistAddedEvent);
+        return Optional.empty();
+    }
 
-            if (expiresAt != Whitelistable.NEVER_EXPIRES)
-                notifyAddedForever(args, expiresAt);
-            else
-                notifyAdded(args);
-        });
+    private boolean hasExpiresAtArgument(int argsNumber) {
+        return MIN_REQUIRED_ARGS < argsNumber;
     }
 
     private void notifyAddedForever(final Args args, final Date expiresAt) {
@@ -118,9 +130,5 @@ public final class AddCommand extends Command {
 
     private void callWhitelistAddedEvent(final Whitelistable whitelistable) {
         eventManager.callAsyncEvent(new WhitelistAddedEvent(whitelistable));
-    }
-
-    private boolean hasExpiresAtArgument(int argsNumber) {
-        return MIN_REQUIRED_ARGS < argsNumber;
     }
 }

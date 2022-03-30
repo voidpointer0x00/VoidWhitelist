@@ -39,7 +39,7 @@ public final class EssentialsDateParser {
          *
          * Now method returns only Unix-time or -1 if not found
          *      instead of Exception throwing.
-         * * in this case we don't need past time so..
+         * * in this case we don't need the past tense so...
          */
         Matcher m = DATE_PATTERN.matcher(date);
         int years = 0;

@@ -21,7 +21,7 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.uuid.UUIDFetcher;
+import voidpointer.spigot.voidwhitelist.uuid.DefaultUUIDFetcher;
 
 import java.util.Date;
 import java.util.Optional;
@@ -34,7 +34,6 @@ public final class InfoCommand extends Command {
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static WhitelistService whitelistService;
-    @Autowired private static UUIDFetcher uniqueIdFetcher;
 
     public InfoCommand() {
         super(NAME);
@@ -51,8 +50,10 @@ public final class InfoCommand extends Command {
         getUniqueId(args).thenAcceptAsync(uuidOptional -> {
             final String name = args.get(0);
             if (!uuidOptional.isPresent()) {
-                locale.localize(WhitelistMessage.API_REQUEST_FAILED_DIRECT_UUID_NOT_IMPLEMENTED_YET)
+                locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
+                        .set("cmd", getName())
                         .set("player", name)
+                        .set("date", null)
                         .send(args.getSender());
             }
             final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
@@ -74,7 +75,7 @@ public final class InfoCommand extends Command {
         if (args.isEmpty())
             return CompletableFuture.completedFuture(Optional.of(args.getPlayer().getUniqueId()));
         else
-            return uniqueIdFetcher.getUUID(args.get(0));
+            return DefaultUUIDFetcher.of(args.getOptions()).getUUID(args.get(0));
     }
 
     private boolean isSelfConsole(final Args args) {
