@@ -14,9 +14,9 @@
  */
 package voidpointer.spigot.voidwhitelist.config;
 
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
@@ -31,10 +31,10 @@ public final class WhitelistConfig {
     private static final String STORAGE_METHOD_PATH = "storage-method";
 
     @AutowiredLocale private static LocaleLog log;
-    @Autowired(mapId="plugin")
-    private static JavaPlugin plugin;
+    @NonNull private final JavaPlugin plugin;
 
-    public WhitelistConfig() {
+    public WhitelistConfig(final JavaPlugin plugin) {
+        this.plugin = plugin;
         saveIfNotExists();
     }
 
