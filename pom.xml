@@ -149,10 +149,6 @@
                                     <pattern>voidpointer.spigot.framework.localemodule</pattern>
                                     <shadedPattern>voidpointer.spigot.voidwhitelist.locale</shadedPattern>
                                 </relocation>
-                                <relocation>
-                                    <pattern>org.apache.commons</pattern>
-                                    <shadedPattern>voidpointer.spigot.voidwhitelist.lib.commons</shadedPattern>
-                                </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
