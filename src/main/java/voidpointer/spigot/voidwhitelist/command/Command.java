@@ -26,7 +26,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public abstract class Command implements CommandExecutor, TabCompleter {
@@ -47,6 +49,9 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private int requiredArgsNumber = DEFAULT_REQUIRED_ARGS_NUMBER;
+
+    @Getter
+    private final Set<ArgOption> options = new HashSet<>();
 
     @Override public final boolean onCommand(
             final CommandSender sender,
@@ -112,5 +117,11 @@ public abstract class Command implements CommandExecutor, TabCompleter {
             throw new NotImplementedException("Subtype must implement onNotEnoughArgs() if args are required");
     }
 
+    // TODO: use locale DI
     protected abstract void onNoPermission(final CommandSender sender);
+
+    protected final void addOptions(ArgOption[] options) {
+        for (ArgOption option : options)
+            this.options.add(option);
+    }
 }

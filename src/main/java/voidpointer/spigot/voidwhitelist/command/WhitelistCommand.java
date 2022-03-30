@@ -44,6 +44,7 @@ public final class WhitelistCommand extends Command {
 
         args.getArgs().removeFirst();
         try {
+            // TODO: don't use exceptions
             whitelistCommands.executeCommand(subCommandName, args);
         } catch (IllegalArgumentException illegalArgumentException) {
             locale.localize(WhitelistMessage.WHITELIST_HELP).send(args.getSender());

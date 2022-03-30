@@ -39,6 +39,7 @@ public final class InfoCommand extends Command {
     public InfoCommand() {
         super(NAME);
         super.setPermission(PERMISSION);
+        super.addOptions(UuidOptions.values());
     }
 
     @Override public void execute(final Args args) {

@@ -48,6 +48,7 @@ public final class AddCommand extends Command {
         super(NAME);
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
         super.setPermission(PERMISSION);
+        super.addOptions(UuidOptions.values());
     }
 
     @Override public void execute(final Args args) {

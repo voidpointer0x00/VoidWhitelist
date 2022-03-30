@@ -20,11 +20,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class Args {
     @Getter private final CommandSender sender;
     @Getter private final LinkedList<String> args;
+    @Getter private final Set<ArgOption> options = Collections.synchronizedSet(new HashSet<>());
 
     public Args(final @NonNull CommandSender sender, final @NonNull String[] args) {
         this.sender = sender;
@@ -37,6 +44,25 @@ public final class Args {
         } else {
             throw new ClassCastException("CommandSender isn't a Player instance.");
         }
+    }
+
+    public void parseOptions(final Collection<ArgOption> argOptions) {
+        if (argOptions.isEmpty())
+            return;
+        List<String> matchingArgs = args.parallelStream().filter(arg -> {
+            for (ArgOption option : argOptions) {
+                if (!option.matches(arg))
+                    continue;
+                options.add(option);
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        args.removeAll(matchingArgs);
+    }
+
+    public boolean hasOption(final ArgOption option) {
+        return options.contains(option);
     }
 
     public boolean isPlayer() {

@@ -49,6 +49,7 @@ public final class CommandManager {
             throw new IllegalArgumentException("CommandManager does not contain \"" + commandName + "\" command.");
 
         final Command command = commands.get(commandName);
+        args.parseOptions(command.getOptions());
         if (command.isValidForExecution(args))
             command.execute(args);
     }

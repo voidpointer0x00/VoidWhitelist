@@ -41,6 +41,7 @@ public class RemoveCommand extends Command {
         super(NAME);
         super.setPermission(PERMISSION);
         super.setRequiredArgsNumber(MIN_ARGS);
+        super.addOptions(UuidOptions.values());
     }
 
     @Override public void execute(final Args args) {
