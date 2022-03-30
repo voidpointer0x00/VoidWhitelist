@@ -71,11 +71,10 @@ public final class InfoCommand extends Command {
     }
 
     private CompletableFuture<Optional<UUID>> getUniqueId(final Args args) {
-        if (args.isEmpty()) {
-            return uniqueIdFetcher.getUUID(args.get(0));
-        } else {
+        if (args.isEmpty())
             return CompletableFuture.completedFuture(Optional.of(args.getPlayer().getUniqueId()));
-        }
+        else
+            return uniqueIdFetcher.getUUID(args.get(0));
     }
 
     private boolean isSelfConsole(final Args args) {
