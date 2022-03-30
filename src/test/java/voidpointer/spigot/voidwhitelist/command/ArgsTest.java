@@ -16,6 +16,7 @@ package voidpointer.spigot.voidwhitelist.command;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,7 +40,7 @@ class ArgsTest {
         sender = MockBukkit.getMock().getConsoleSender();
     }
 
-    @BeforeAll static void tearUp() {
+    @AfterAll static void tearUp() {
         MockBukkit.unmock();
     }
 
