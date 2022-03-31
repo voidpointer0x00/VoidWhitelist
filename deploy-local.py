@@ -1,9 +1,9 @@
+import json
 import os
 import re
-import json
-import sys
 import shutil
 import subprocess
+import sys
 
 MIN_PYTHON = (3, 8)
 if sys.version_info < MIN_PYTHON:
@@ -62,7 +62,7 @@ for file in os.listdir(endpoint):
     if match:
         if autoyes:
             print('Removed %s file from the endpoint.' % file)
-            os.remove(os.join(endpoint, file))
+            os.remove(os.path.join(endpoint, file))
             continue
         while True:
             answer = input('Remove %s file from the endpoint? (y/n) ' % file).lower()
