@@ -42,14 +42,10 @@ public final class WhitelistCommand extends Command {
 
     @Override public void execute(final Args args) {
         final String subCommandName = args.get(0);
-
         args.getArgs().removeFirst();
-        try {
-            // TODO: don't use exceptions
-            whitelistCommands.executeCommand(subCommandName, args);
-        } catch (IllegalArgumentException illegalArgumentException) {
+
+        if (!whitelistCommands.executeCommand(subCommandName, args))
             locale.localize(WhitelistMessage.WHITELIST_HELP).send(args.getSender());
-        }
     }
 
     @Override public List<String> tabComplete(final Args args) {

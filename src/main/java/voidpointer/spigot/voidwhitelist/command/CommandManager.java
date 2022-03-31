@@ -44,14 +44,23 @@ public final class CommandManager {
         }
     }
 
-    public void executeCommand(final String commandName, final Args args) throws IllegalArgumentException {
+    public boolean hasCommand(final String commandName) {
+        return commands.containsKey(commandName);
+    }
+
+    /**
+     * @return {@code true} if the command is executed successfully,
+     *          or {@code false} if command not found.
+     */
+    public boolean executeCommand(final String commandName, final Args args) {
         if (!commands.containsKey(commandName))
-            throw new IllegalArgumentException("CommandManager does not contain \"" + commandName + "\" command.");
+            return false;
 
         final Command command = commands.get(commandName);
         args.parseOptions(command.getOptions());
         if (command.isValidForExecution(args))
             command.execute(args);
+        return true;
     }
 
     public List<String> tabComplete(final Args args) throws IllegalArgumentException {
