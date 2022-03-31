@@ -24,6 +24,7 @@ import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
@@ -36,10 +37,13 @@ public final class WhitelistAddedListener implements Listener {
     @AutowiredLocale private static Locale locale;
     @Autowired(mapId="plugin")
     private static Plugin plugin;
+    @Autowired private static WhitelistConfig config;
     @NonNull private final Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler(priority=EventPriority.MONITOR)
     public void onAdded(final WhitelistAddedEvent event) {
+        if (!config.isWhitelistEnabled())
+            return;
         Optional<Player> player = event.getWhitelistable().findAssociatedOnlinePlayer();
         if (!player.isPresent())
             return;
