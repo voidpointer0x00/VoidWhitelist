@@ -1,6 +1,6 @@
 messages:
   added: '&eИгрок &6«&c{player}&6» &eдобавлен в whitelist.'
-  added-temp: '&eИгрок &6«&c{player}&6» &eдобавлен до &6«&c{time}&6»&e.'
+  added-temp: '&eИгрок &6«&c{player}&6» &eдобавлен до &6«&c{date}&6»&e.'
   add-help: '&eИспользуйте &6/whitelist add &cnickname'
   console-whitelisted: '&eКонсоль не может быть в whitelist, введите ник игрока для
     проверки.'
@@ -9,7 +9,7 @@ messages:
   info-not-whitelisted: '&eИгрок &6«&c{player}&6» &cотсутствует &eв whitelist.'
   info-whitelisted: '&eИгрок &6«&c{player}&6» &aесть &eв whitelist.'
   info-whitelisted-temp: '&eИгрок &6«&c{player}&6» &aесть &eв whitelist, истекает
-    &d{time}&e.'
+    &d{date}&e.'
   login-disallowed: '&cВас нет в whitelist.'
   no-permission: '&cУ Вас недостаточно прав.'
   removed: '&eИгрок &6«&c{player}&6» &eудален из whitelist.'

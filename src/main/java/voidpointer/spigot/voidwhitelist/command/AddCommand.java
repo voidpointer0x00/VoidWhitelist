@@ -69,9 +69,9 @@ public final class AddCommand extends Command {
                     .thenAcceptAsync(this::callWhitelistAddedEvent);
 
             if (expiresAt.isPresent())
-                notifyAdded(args);
+                notifyAdded(args, expiresAt.get());
             else
-                notifyAddedForever(args, expiresAt.get());
+                notifyAddedForever(args);
         });
     }
 
@@ -91,16 +91,16 @@ public final class AddCommand extends Command {
         return MIN_REQUIRED_ARGS < argsNumber;
     }
 
-    private void notifyAddedForever(final Args args, final Date expiresAt) {
-        locale.localize(WhitelistMessage.ADDED_TEMP)
+    private void notifyAddedForever(final Args args) {
+        locale.localize(WhitelistMessage.ADDED)
                 .set("player", args.get(0))
-                .set("date", expiresAt.toString())
                 .send(args.getSender());
     }
 
-    private void notifyAdded(final Args args) {
-        locale.localize(WhitelistMessage.ADDED)
+    private void notifyAdded(final Args args, final Date expiresAt) {
+        locale.localize(WhitelistMessage.ADDED_TEMP)
                 .set("player", args.get(0))
+                .set("date", expiresAt.toString())
                 .send(args.getSender());
     }
 
