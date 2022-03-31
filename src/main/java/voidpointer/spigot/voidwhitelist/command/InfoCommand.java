@@ -17,16 +17,21 @@ package voidpointer.spigot.voidwhitelist.command;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.LocalizedMessage;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.uuid.DefaultUUIDFetcher;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.INFO_NOT_WHITELISTED;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.INFO_WHITELISTED;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.INFO_WHITELISTED_TEMP;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.PLAYER_DETAILS;
 
 public final class InfoCommand extends Command {
     public static final String NAME = "info";
@@ -48,22 +53,14 @@ public final class InfoCommand extends Command {
         }
 
         getUniqueId(args).thenAcceptAsync(uuidOptional -> {
-            final String name = args.get(0);
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
-                        .set("player", name)
+                        .set("player", args.get(0))
                         .set("date", null)
                         .send(args.getSender());
             }
-            final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
-            if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
-                tellNotWhitelisted(args.getSender(), name);
-            } else if (whitelistable.get().isExpirable()) {
-                tellWhitelistedTemporarily(args.getSender(), name, whitelistable.get().getExpiresAt());
-            } else {
-                tellWhitelisted(args.getSender(), name);
-            }
+            tellInfo(args, whitelistService.find(uuidOptional.get()).join(), uuidOptional.get());
         });
     }
 
@@ -82,23 +79,19 @@ public final class InfoCommand extends Command {
         return !args.isPlayer() && args.isEmpty();
     }
 
-    private void tellNotWhitelisted(final CommandSender sender, final String name) {
-        locale.localize(WhitelistMessage.INFO_NOT_WHITELISTED)
-                .set("player", name)
-                .send(sender);
-    }
-
-    private void tellWhitelistedTemporarily(final CommandSender sender, final String name,
-                                            final Date expiresAt) {
-        locale.localize(WhitelistMessage.INFO_WHITELISTED_TEMP)
-                .set("player", name)
-                .set("time", expiresAt.toString())
-                .send(sender);
-    }
-
-    private void tellWhitelisted(final CommandSender sender, final String name) {
-        locale.localize(WhitelistMessage.INFO_WHITELISTED)
-                .set("player", name)
-                .send(sender);
+    private void tellInfo(final Args args, final Optional<Whitelistable> whitelistable, final UUID uuid) {
+        LocalizedMessage message;
+        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
+            message = locale.localize(INFO_NOT_WHITELISTED);
+        } else if (whitelistable.get().isExpirable()) {
+            message = locale.localize(INFO_WHITELISTED_TEMP)
+                    .set("date", whitelistable.get().getExpiresAt().toString());
+        } else {
+            message = locale.localize(INFO_WHITELISTED);
+        }
+        message.set("player-details", locale.localize(PLAYER_DETAILS).getRawMessage())
+                .set("player", args.get(0))
+                .set("uuid", uuid.toString())
+                .send(args.getSender());
     }
 }
