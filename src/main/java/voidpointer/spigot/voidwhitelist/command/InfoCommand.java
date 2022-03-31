@@ -15,7 +15,7 @@
 package voidpointer.spigot.voidwhitelist.command;
 
 import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.LocalizedMessage;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -36,7 +36,7 @@ public final class InfoCommand extends Command {
     public static final String NAME = "info";
     public static final String PERMISSION = "whitelist.info";
 
-    @AutowiredLocale private static Locale locale;
+    @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
 
     public InfoCommand() {
@@ -60,6 +60,9 @@ public final class InfoCommand extends Command {
                         .send(args.getSender());
             }
             tellInfo(args, whitelistService.find(uuidOptional.get()).join(), uuidOptional.get());
+        }).whenCompleteAsync((res, th) -> {
+            if (th != null)
+                locale.warn("Couldn't get information about player", th);
         });
     }
 

@@ -18,7 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
@@ -40,7 +40,7 @@ public final class AddCommand extends Command {
     public static final String PERMISSION = "whitelist.add";
     public static final int MIN_REQUIRED_ARGS = 1;
 
-    @AutowiredLocale private static Locale locale;
+    @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
 
@@ -72,6 +72,9 @@ public final class AddCommand extends Command {
                 notifyAdded(args, expiresAt.get());
             else
                 notifyAddedForever(args);
+        }).whenCompleteAsync((res, th) -> {
+            if (th != null)
+                locale.warn("Couldn't add a player to the whitelist", th);
         });
     }
 

@@ -16,7 +16,7 @@ package voidpointer.spigot.voidwhitelist.command;
 
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
@@ -32,7 +32,7 @@ public class RemoveCommand extends Command {
     public static final String PERMISSION = "whitelist.remove";
     public static final Integer MIN_ARGS = 1;
 
-    @AutowiredLocale private static Locale locale;
+    @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
 
@@ -67,6 +67,9 @@ public class RemoveCommand extends Command {
                     .set("player", name)
                     .send(args.getSender());
             eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
+        }).whenCompleteAsync((res, th) -> {
+            if (th != null)
+                locale.warn("Couldn't remove a player from the whitelist", th);
         });
     }
 
