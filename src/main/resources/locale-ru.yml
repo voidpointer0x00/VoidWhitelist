@@ -16,6 +16,7 @@ messages:
   remove-help: '&eИспользуйте &6/whitelist remove &cnickname'
   remove-not-whitelisted: '&eИгрока &6«&c{player}&6» &eнет в whitelist.'
   whitelist-help: '&eИспользуйте &6/whitelist &cadd&6|&cremove&6|&cinfo&6|&con&6|&coff'
-  wrong-date-format: '&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут:
-    &a1d15h45m'
-  you-were-removed: '&cВас исключили из whitelist.'
+  uuid-fail-try-offline: '&cНе удалось запросить online UUID, попробуйте \(&6-offline&c
+    flag &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}] [click.suggest{/whitelist
+    {cmd} -offline {player} {date}}]'
+  wrong-date-format: '&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут &a1d15h45m'

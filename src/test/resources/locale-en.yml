@@ -17,5 +17,5 @@ messages:
     flag &8&l(click)) [hover{&6/whitelist {cmd} -offline {player} {date}}] [click.suggest{/whitelist
     {cmd} -offline {player} {date}}]'
   whitelist-help: '&eUse &6/whitelist &cadd&6|&cremove&6|&cinfo&6|&con&6|&coff'
-  wrong-date-format: '&cInvalid date-time format. A valid example for 1 day, 15 hours and 45 minutes: &a1d15h45m'
+  wrong-date-format: '&cInvalid date-time format. A valid example for 1 day, 15 hours and 45 minutes &a1d15h45m'
   you-were-removed: '&cYou''ve been removed from a whitelist.'
