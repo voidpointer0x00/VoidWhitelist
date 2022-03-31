@@ -19,6 +19,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.Message;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class AddCommand extends Command {
@@ -61,7 +63,7 @@ public final class AddCommand extends Command {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", args.get(0))
-                        .set("date", expiresAt.map(date -> String.valueOf(date.getTime())).orElse(null))
+                        .set("date", expiresAt.orElse(null))
                         .send(args.getSender());
                 return;
             }
@@ -69,9 +71,9 @@ public final class AddCommand extends Command {
                     .thenAcceptAsync(this::callWhitelistAddedEvent);
 
             if (expiresAt.isPresent())
-                notifyAdded(args, expiresAt.get());
+                notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);
             else
-                notifyAddedForever(args);
+                notifyAdded(args, null, uuidOptional.get(), WhitelistMessage.ADDED);
         }).whenCompleteAsync((res, th) -> {
             if (th != null)
                 locale.warn("Couldn't add a player to the whitelist", th);
@@ -94,16 +96,12 @@ public final class AddCommand extends Command {
         return MIN_REQUIRED_ARGS < argsNumber;
     }
 
-    private void notifyAddedForever(final Args args) {
-        locale.localize(WhitelistMessage.ADDED)
+    private void notifyAdded(final Args args, final Date expiresAt, final UUID uuid, final Message message) {
+        locale.localize(message)
+                .set("player-details", locale.localize(WhitelistMessage.PLAYER_DETAILS))
                 .set("player", args.get(0))
-                .send(args.getSender());
-    }
-
-    private void notifyAdded(final Args args, final Date expiresAt) {
-        locale.localize(WhitelistMessage.ADDED_TEMP)
-                .set("player", args.get(0))
-                .set("date", expiresAt.toString())
+                .set("uuid", uuid)
+                .set("date", expiresAt)
                 .send(args.getSender());
     }
 

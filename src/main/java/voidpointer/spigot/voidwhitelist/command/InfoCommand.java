@@ -79,15 +79,13 @@ public final class InfoCommand extends Command {
 
     private void tellInfo(final Args args, final Optional<Whitelistable> whitelistable, final UUID uuid) {
         LocalizedMessage message;
-        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
+        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin())
             message = locale.localize(INFO_NOT_WHITELISTED);
-        } else if (whitelistable.get().isExpirable()) {
-            message = locale.localize(INFO_WHITELISTED_TEMP)
-                    .set("date", whitelistable.get().getExpiresAt().toString());
-        } else {
+        else if (whitelistable.get().isExpirable())
+            message = locale.localize(INFO_WHITELISTED_TEMP).set("date", whitelistable.get().getExpiresAt());
+        else
             message = locale.localize(INFO_WHITELISTED);
-        }
-        message.set("player-details", locale.localize(PLAYER_DETAILS).getRawMessage())
+        message.set("player-details", locale.localize(PLAYER_DETAILS))
                 .set("player", args.get(0))
                 .set("uuid", uuid.toString())
                 .send(args.getSender());

@@ -20,8 +20,8 @@ import voidpointer.spigot.framework.localemodule.Message;
 
 @RequiredArgsConstructor
 public enum WhitelistMessage implements Message {
-    ADDED("&eИгрок &6«&c{player}&6» &eдобавлен в whitelist."),
-    ADDED_TEMP("&eИгрок &6«&c{player}&6» &eдобавлен до &6«&c{date}&6»&e."),
+    ADDED("&eИгрок &6«&c{player-details}&6» &eдобавлен в whitelist."),
+    ADDED_TEMP("&eИгрок &6«&c{player-details}&6» &eдобавлен до &6«&c{date}&6»&e."),
     ADD_HELP("&eИспользуйте &6/whitelist add &cnickname"),
     CONSOLE_WHITELISTED("&eКонсоль не может быть в whitelist, введите ник игрока для проверки."),
     DISABLED("&eWhitelist &cвыключен&e."),
@@ -32,9 +32,9 @@ public enum WhitelistMessage implements Message {
     LOGIN_DISALLOWED("&cВас нет в whitelist."),
     NO_PERMISSION("&cУ Вас недостаточно прав."),
     PLAYER_DETAILS("\\(&c{player}) [hover{&eUUID: &6{uuid}}] [click.copy{{uuid}}]"),
-    REMOVED("&eИгрок &6«&c{player}&6» &eудален из whitelist."),
+    REMOVED("&eИгрок &6«&c{player-details}&6» &eудален из whitelist."),
     REMOVE_HELP("&eИспользуйте &6/whitelist remove &cnickname"),
-    REMOVE_NOT_WHITELISTED("&eИгрока &6«&c{player}&6» &eнет в whitelist."),
+    REMOVE_NOT_WHITELISTED("&eИгрока &6«&c{player-details}&6» &eнет в whitelist."),
     UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить online UUID, попробуйте " +
             "\\(&6-offline &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +
             " [click.suggest{/whitelist {cmd} -offline {player} {date}}] "),

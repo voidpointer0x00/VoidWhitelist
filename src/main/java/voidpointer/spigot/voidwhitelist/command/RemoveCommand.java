@@ -58,12 +58,16 @@ public class RemoveCommand extends Command {
             final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
             if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
                 locale.localize(WhitelistMessage.REMOVE_NOT_WHITELISTED)
+                        .set("player-details", locale.localize(WhitelistMessage.PLAYER_DETAILS))
+                        .set("uuid", uuidOptional.get())
                         .set("player", name)
                         .send(args.getSender());
                 return;
             }
             whitelistService.remove(whitelistable.get());
             locale.localize(WhitelistMessage.REMOVED)
+                    .set("player-details", locale.localize(WhitelistMessage.PLAYER_DETAILS))
+                    .set("uuid", uuidOptional.get())
                     .set("player", name)
                     .send(args.getSender());
             eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
