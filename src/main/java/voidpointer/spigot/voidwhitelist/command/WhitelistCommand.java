@@ -59,8 +59,4 @@ public final class WhitelistCommand extends Command {
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
         locale.localize(WhitelistMessage.WHITELIST_HELP).send(sender);
     }
-
-    @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
-    }
 }

@@ -14,12 +14,10 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
-import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.DISABLED;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.ENABLED;
@@ -38,9 +36,5 @@ public final class StatusCommand extends Command {
 
     @Override public void execute(final Args args) {
         locale.localize(config.isWhitelistEnabled() ? ENABLED : DISABLED).send(args.getSender());
-    }
-
-    @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localize(WhitelistMessage.NO_PERMISSION);
     }
 }

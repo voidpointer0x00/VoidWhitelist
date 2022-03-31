@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.LocalizedMessage;
@@ -62,10 +61,6 @@ public final class InfoCommand extends Command {
             }
             tellInfo(args, whitelistService.find(uuidOptional.get()).join(), uuidOptional.get());
         });
-    }
-
-    @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 
     private CompletableFuture<Optional<UUID>> getUniqueId(final Args args) {

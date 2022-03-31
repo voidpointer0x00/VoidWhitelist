@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
@@ -48,9 +47,5 @@ public final class DisableCommand extends Command {
 
     @Override public List<String> getAliases() {
         return ALIASES;
-    }
-
-    @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 }

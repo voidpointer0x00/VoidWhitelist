@@ -24,6 +24,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
+import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +39,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     public static final Integer DEFAULT_REQUIRED_ARGS_NUMBER = 0;
 
     private static final List<String> EMPTY_ALIASES = Collections.emptyList();
+    @AutowiredLocale private static Locale locale;
 
     @Getter
     @Setter(AccessLevel.PROTECTED)
@@ -117,8 +121,9 @@ public abstract class Command implements CommandExecutor, TabCompleter {
             throw new NotImplementedException("Subtype must implement onNotEnoughArgs() if args are required");
     }
 
-    // TODO: use locale DI
-    protected abstract void onNoPermission(final CommandSender sender);
+    protected void onNoPermission(final CommandSender sender) {
+        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
+    }
 
     protected final void addOptions(ArgOption[] options) {
         for (ArgOption option : options)

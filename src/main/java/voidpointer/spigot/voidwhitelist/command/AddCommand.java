@@ -124,10 +124,6 @@ public final class AddCommand extends Command {
         locale.localize(WhitelistMessage.ADD_HELP).send(sender);
     }
 
-    @Override protected void onNoPermission(final CommandSender sender) {
-        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
-    }
-
     private void callWhitelistAddedEvent(final Whitelistable whitelistable) {
         eventManager.callAsyncEvent(new WhitelistAddedEvent(whitelistable));
     }
