@@ -71,7 +71,7 @@ public final class GuiCommand extends Command {
             ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE, 1);
             ItemMeta meta = item.getItemMeta();
             if (meta != null)
-                meta.setDisplayName(uuid.toString());
+                meta.setDisplayName(String.valueOf(uuid));
             pane.addItem(new GuiItem(item));
             countDownLatch.countDown();
         }).exceptionally(th -> {
