@@ -37,6 +37,7 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new DisableCommand());
         whitelistCommands.addCommand(new InfoCommand());
         whitelistCommands.addCommand(new StatusCommand());
+        whitelistCommands.addCommand(new GuiCommand());
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 
