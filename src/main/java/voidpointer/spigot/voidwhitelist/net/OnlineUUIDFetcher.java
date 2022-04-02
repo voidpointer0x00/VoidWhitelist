@@ -67,7 +67,7 @@ public final class OnlineUUIDFetcher {
         }
     }
 
-    private static String idToUuid(final String id) {
+    protected static String idToUuid(final String id) {
         StringBuilder uuidBuilder = new StringBuilder(id.length() + 4);
         for (int index = 0; index < id.length(); index++) {
             uuidBuilder.append(id.charAt(index));
