@@ -48,18 +48,31 @@ public abstract class CachedWhitelistService implements WhitelistService {
     @Setter(AccessLevel.PROTECTED)
     private ConcurrentSkipListSet<Whitelistable> cachedWhitelist = new ConcurrentSkipListSet<>();
 
-    @Override public CompletableFuture<SortedSet<Whitelistable>> findAll(final Whitelistable offset, final int limit) {
+    @Override public CompletableFuture<SortedSet<Whitelistable>> findAll(final int limit) {
         if (cachedWhitelist.isEmpty())
             return completedFuture(Collections.emptySortedSet());
         return supplyAsync(() -> {
-            SortedSet<Whitelistable> subset = new TreeSet<>();
-            Iterator<Whitelistable> iterator = cachedWhitelist.iterator();
-            while (iterator.hasNext() && !iterator.next().equals(offset))
-                ;
-            for (int index = 0; (index < limit) && iterator.hasNext(); index++, subset.add(iterator.next()))
-                ;
+            Whitelistable first = cachedWhitelist.first();
+            SortedSet<Whitelistable> subset = findAll0(first, limit);
+            subset.add(first);
             return subset;
         });
+    }
+
+    @Override public CompletableFuture<SortedSet<Whitelistable>> findAll(final Whitelistable offset, final int limit) {
+        if (cachedWhitelist.isEmpty())
+            return completedFuture(Collections.emptySortedSet());
+        return supplyAsync(() -> findAll0(offset, limit));
+    }
+
+    private SortedSet<Whitelistable> findAll0(final Whitelistable offset, final int limit) {
+        SortedSet<Whitelistable> subset = new TreeSet<>();
+        Iterator<Whitelistable> iterator = cachedWhitelist.iterator();
+        while (iterator.hasNext() && !iterator.next().equals(offset))
+            ;
+        for (int index = 0; (index < limit) && iterator.hasNext(); index++, subset.add(iterator.next()))
+            ;
+        return subset;
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> findFirst() {
