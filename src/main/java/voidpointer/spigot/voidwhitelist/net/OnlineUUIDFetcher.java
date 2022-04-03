@@ -64,6 +64,9 @@ public final class OnlineUUIDFetcher {
         } catch (IllegalArgumentException illegalArgumentException) {
             log.warn("Invalid UUID format", illegalArgumentException);
             return null;
+        } catch (NullPointerException nullPointerException) {
+            /* 204 No Content API response, meaning no associated player profile found */
+            return null;
         }
     }
 
@@ -77,7 +80,7 @@ public final class OnlineUUIDFetcher {
         return uuidBuilder.toString();
     }
 
-    private static String requestApiUrl(final String name) throws IOException {
+    private static String requestApiUrl(final String name) throws IOException, NullPointerException {
         return gson.fromJson(newApiRequestConnection(name), MojangUUIDResponse.class).id;
     }
 
