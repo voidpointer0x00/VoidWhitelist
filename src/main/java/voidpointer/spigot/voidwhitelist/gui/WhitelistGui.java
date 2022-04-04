@@ -14,21 +14,16 @@
  */
 package voidpointer.spigot.voidwhitelist.gui;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
-import com.mojang.authlib.GameProfile;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -36,8 +31,6 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.net.Profile;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.Phaser;
 
@@ -70,35 +63,13 @@ public final class WhitelistGui {
     }
 
     public void addProfile(final Profile profile) throws ConcurrentModificationException {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
-        if (skullMeta != null) {
-            if (profile.getTexturesBase64().isPresent())
-                setProfile(skullMeta, profile.toGameProfile());
-            skullMeta.setDisplayName("§e" + profile.getName());
-        }
-        head.setItemMeta(skullMeta);
-        getCurrentPage().addItem(new GuiItem(head));
+        ProfileSkull profileSkull = ProfileSkull.of(profile);
+        getCurrentPage().addItem(profileSkull.toGuiItem());
         // TODO: actions on click
     }
 
     private OutlinePane getCurrentPage() {
         return (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage()).iterator().next();
-    }
-
-    private void setProfile(final SkullMeta meta, final GameProfile toGameProfile) {
-        try {
-            setProfile0(meta, toGameProfile);
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException exception) {
-            locale.warn("Unable to set profile for skull", exception);
-        }
-    }
-
-    private void setProfile0(final SkullMeta skullMeta, GameProfile profile)
-            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        Method mtd = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-        mtd.setAccessible(true);
-        mtd.invoke(skullMeta, profile);
     }
 
     public void show(final HumanEntity humanEntity) {
