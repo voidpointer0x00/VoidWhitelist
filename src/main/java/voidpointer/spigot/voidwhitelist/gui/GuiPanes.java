@@ -51,21 +51,26 @@ class GuiPanes {
         forward.setDisplayName("§eNext page");
         ProfileSkull back = ControlSkulls.getBack();
         back.setDisplayName("§ePrevious page");
-        ProfileSkull status;
-        if (whitelistConfig.isWhitelistEnabled()) {
-            status = ControlSkulls.getEnabled();
-            status.setDisplayName("§aEnabled");
-        } else {
-            status = ControlSkulls.getDisabled();
-            status.setDisplayName("§cDisabled");
-        }
-        status.onClick(whitelistGui::onStatusClick);
+
+        ProfileSkull enabled, disabled, current;
+        enabled = ControlSkulls.getEnabled();
+        enabled.setDisplayName("§aEnabled");
+        disabled = ControlSkulls.getDisabled();
+        disabled.setDisplayName("§cDisabled");
+        current = whitelistConfig.isWhitelistEnabled() ? enabled : disabled;
+        whitelistGui.setDisabledButton(disabled.toGuiItem());
+        whitelistGui.setEnabledButton(enabled.toGuiItem());
+
+        enabled.onClick(whitelistGui::onStatusClick);
+        disabled.onClick(whitelistGui::onStatusClick);
         back.onClick(whitelistGui::onPreviousPageClick);
         forward.onClick(whitelistGui::onNextPageClick);
+
         controlPane.addItem(forward.toGuiItem());
         controlPane.addItem(back.toGuiItem());
-        controlPane.addItem(status.toGuiItem());
+        controlPane.addItem(current.toGuiItem());
         controlPane.flipVertically(true);
+
         return controlPane;
     }
 }
