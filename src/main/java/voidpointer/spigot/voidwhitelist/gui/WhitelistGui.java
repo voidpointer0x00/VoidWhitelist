@@ -34,12 +34,11 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.net.Profile;
-import voidpointer.spigot.voidwhitelist.task.LoadingTask;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.CountDownLatch;
+import java.util.ConcurrentModificationException;
 
 @Getter
 public final class WhitelistGui {
@@ -49,9 +48,10 @@ public final class WhitelistGui {
     private final ChestGui gui;
     private final PaginatedPane whitelistPane;
     private WeakReference<HumanEntity> viewer;
-    private LoadingTask loadingTask;
     @Setter(AccessLevel.PRIVATE)
     private boolean isUpdating = false;
+
+    /* TODO: a new gui for each player */
 
     public WhitelistGui() {
         gui = new ChestGui(6, "§6VoidWhitelist");
@@ -66,19 +66,6 @@ public final class WhitelistGui {
     public int availableProfileSlots() {
         OutlinePane currentPage = getCurrentPage();
         return currentPage.getHeight() * currentPage.getLength() - currentPage.getItems().size();
-    }
-
-    public void stopLoading() {
-        if (loadingTask != null) {
-            loadingTask.cancel();
-            gui.setTitle("§6VoidWhitelist");
-            update();
-        }
-    }
-
-    public void startLoading(final CountDownLatch countDownLatch, final int countDownStart) {
-        loadingTask = new LoadingTask(this, countDownLatch, countDownStart);
-        loadingTask.runTaskTimer(plugin, 0, 3);
     }
 
     public void addProfile(final Profile profile) throws ConcurrentModificationException {
