@@ -17,6 +17,7 @@ package voidpointer.spigot.voidwhitelist.gui;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.mojang.authlib.GameProfile;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -46,7 +47,7 @@ public final class WhitelistGui {
     private static Plugin plugin;
     @AutowiredLocale private static LocaleLog locale;
     private final ChestGui gui;
-    private final OutlinePane whitelistPane;
+    private final PaginatedPane whitelistPane;
     private WeakReference<HumanEntity> viewer;
     private LoadingTask loadingTask;
     @Setter(AccessLevel.PRIVATE)
@@ -56,8 +57,15 @@ public final class WhitelistGui {
         gui = new ChestGui(6, "§6VoidWhitelist");
         gui.setOnGlobalClick(this::cancelClickIfNotPlayerInventory);
         gui.setOnClose(this::clearViewer);
-        whitelistPane = new OutlinePane(7, 4);
+        whitelistPane = new PaginatedPane(7, 4);
+        whitelistPane.addPane(0, new OutlinePane(7, 4));
+        whitelistPane.setPage(0);
         gui.addPane(whitelistPane);
+    }
+
+    public int availableProfileSlots() {
+        OutlinePane currentPage = getCurrentPage();
+        return currentPage.getHeight() * currentPage.getLength() - currentPage.getItems().size();
     }
 
     public void stopLoading() {
@@ -80,8 +88,12 @@ public final class WhitelistGui {
             setProfile(skullMeta, profile.toGameProfile());
         skullMeta.setDisplayName("§e" + profile.getName());
         head.setItemMeta(skullMeta);
-        whitelistPane.addItem(new GuiItem(head));
+        getCurrentPage().addItem(new GuiItem(head));
         // TODO: actions on click
+    }
+
+    private OutlinePane getCurrentPage() {
+        return (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage()).iterator().next();
     }
 
     private void setProfile(final SkullMeta meta, final GameProfile toGameProfile) {
