@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public final class SimpleWhitelistable extends AbstractWhitelistable implements Comparable<SimpleWhitelistable> {
+public final class SimpleWhitelistable extends AbstractWhitelistable {
     @NonNull
     @EqualsAndHashCode.Include
     private UUID uniqueId;
@@ -48,13 +48,5 @@ public final class SimpleWhitelistable extends AbstractWhitelistable implements 
 
     @Override public String toString() {
         return uniqueId.toString();
-    }
-
-    @Override public int compareTo(@NonNull final SimpleWhitelistable o) {
-        if (uniqueId.equals(o.uniqueId))
-            return 0;
-        if (createdAt.compareTo(o.createdAt) <= 0)
-            return -1;
-        return 1;
     }
 }

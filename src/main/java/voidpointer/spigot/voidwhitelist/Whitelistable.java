@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface Whitelistable {
+public interface Whitelistable extends Comparable<Whitelistable> {
     Date NEVER_EXPIRES = null;
 
     /**

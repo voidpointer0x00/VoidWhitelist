@@ -21,6 +21,6 @@ import java.lang.reflect.Type;
 
 final class WhitelistableInstanceCreator implements InstanceCreator<Whitelistable> {
     @Override public Whitelistable createInstance(final Type type) {
-        return new JsonWhitelistableNamePojo();
+        return new JsonWhitelistablePojo();
     }
 }

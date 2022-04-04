@@ -28,14 +28,18 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.CachedWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
-import voidpointer.spigot.voidwhitelist.storage.UnknownVersionException;
+import voidpointer.spigot.voidwhitelist.storage.update.JsonUpdate;
+import voidpointer.spigot.voidwhitelist.storage.update.JsonUpdateFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public final class JsonWhitelistService extends CachedWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
@@ -54,7 +58,9 @@ public final class JsonWhitelistService extends CachedWhitelistService {
     private static final JsonParser parser = new JsonParser();
 
     @AutowiredLocale private static LocaleLog log;
+    private final JsonUpdateFactory updateFactory = new JsonUpdateFactory();
     private final File whitelistFile;
+    private boolean wasUpdated = false;
 
     public JsonWhitelistService(final File dataFolder) {
         whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
@@ -67,10 +73,13 @@ public final class JsonWhitelistService extends CachedWhitelistService {
             return;
         }
 
-        List<Whitelistable> whitelistedPlayers = readAndParseWhitelistFileContents(whitelistFile);
-        if (null != whitelistedPlayers)
-            for (Whitelistable whitelistable : whitelistedPlayers)
-                this.getCachedWhitelist().add(whitelistable);
+        Collection<Whitelistable> whitelistedPlayers = readAndParseWhitelistFileContents(whitelistFile);
+        for (Whitelistable whitelistable : whitelistedPlayers)
+            this.getCachedWhitelist().add(whitelistable);
+        if (wasUpdated) {
+            saveWhitelist();
+            wasUpdated = false;
+        }
     }
 
     @Override protected void saveWhitelist() {
@@ -79,40 +88,62 @@ public final class JsonWhitelistService extends CachedWhitelistService {
         whitelistObject.add(WHITELIST_PROPERTY, gson.toJsonTree(getCachedWhitelist()));
         try {
             Files.write(gson.toJson(whitelistObject), whitelistFile, Charset.defaultCharset());
-        } catch (IOException ioException) {
+        } catch (final IOException ioException) {
             log.severe("An exception occurred while saving the whitelist", ioException);
         }
     }
 
-    private List<Whitelistable> readAndParseWhitelistFileContents(final File whitelistFile) {
+    private Collection<Whitelistable> readAndParseWhitelistFileContents(final File whitelistFile) {
         String whitelistFileContents = readWhitelistFileContents(whitelistFile);
         if (null == whitelistFileContents)
-            return null;
+            return Collections.emptyList();
 
         try {
             JsonElement root = parser.parse(whitelistFileContents);
             StorageVersion version = parseVersion(root);
-            if (version != StorageVersion.CURRENT) {
-                // TODO: implement version updates
-                throw new RuntimeException("Different storage versions are not supported.");
-            }
+            if (version != StorageVersion.CURRENT)
+                return performUpdate(version, root);
+
             Type whitelistType = new TypeToken<List<Whitelistable>>() {}.getType();
             return gson.fromJson(root.getAsJsonObject().get(WHITELIST_PROPERTY), whitelistType);
         } catch (final JsonSyntaxException jsonSyntaxException) {
             log.severe("Invalid json syntax in whitelist file", jsonSyntaxException);
-            return null;
-        } catch (UnknownVersionException unknownVersionException) {
-            log.severe("Unknown storage version");
-            return null;
+            backup();
+            return Collections.emptyList();
         }
     }
 
-    private StorageVersion parseVersion(final JsonElement root) throws UnknownVersionException {
+    private Collection<Whitelistable> performUpdate(final StorageVersion version, final JsonElement root) {
+        Optional<JsonUpdate> update = updateFactory.from(version);
+        if (!update.isPresent()) {
+            backup();
+            return Collections.emptyList();
+        }
+        Collection<Whitelistable> updated = update.get().performUpdate(root);
+        if (updated == null) {
+            backup();
+            return Collections.emptyList();
+        }
+        wasUpdated = true;
+        log.info("Automatically updated JSON storage from {0} to {1}", version, StorageVersion.CURRENT);
+        return updated;
+    }
+
+    private void backup() {
+        try {
+            Files.copy(whitelistFile, new File(whitelistFile.getAbsolutePath() + ".bak"));
+            log.info("Created a backup {0}.bak file", whitelistFile.getName());
+        } catch (final IOException ioException) {
+            log.warn("Unable to create a backup .bak file for " + whitelistFile.getName(), ioException);
+        }
+    }
+
+    private StorageVersion parseVersion(final JsonElement root) {
         String versionStr = root.getAsJsonObject().get(VERSION_PROPERTY).getAsString();
         for (StorageVersion storageVersion : StorageVersion.values())
             if (storageVersion.toString().equals(versionStr))
                 return storageVersion;
-        throw new UnknownVersionException();
+        return StorageVersion.UNDEFINED;
     }
 
     private String readWhitelistFileContents(final File whitelistFile) {
