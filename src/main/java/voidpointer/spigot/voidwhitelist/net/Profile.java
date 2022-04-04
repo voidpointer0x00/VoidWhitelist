@@ -77,7 +77,7 @@ public final class Profile {
                     .map(JsonElement::getAsJsonObject)
                     .filter(property -> property.get("name").getAsString().equals("textures"))
                     .findFirst();
-            return Optional.of(texturesProperty.get().get("value").getAsString());
+            return texturesProperty.map(jsonObject -> jsonObject.get("value").getAsString());
         } catch (IllegalStateException | NullPointerException ignoreInvalidJson) {
             return Optional.empty();
         }
