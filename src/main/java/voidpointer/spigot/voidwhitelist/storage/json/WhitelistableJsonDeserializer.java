@@ -31,6 +31,10 @@ final class WhitelistableJsonDeserializer implements JsonDeserializer<Whitelista
         if (!uniqueIdField.isJsonPrimitive())
             throw new JsonParseException("Unsupported JSON type for NAME_FIELD: " + uniqueIdField);
 
+        final JsonElement nameField = json.getAsJsonObject().get(WhitelistableJsonSerializer.NAME_FIELD);
+        if (!nameField.isJsonPrimitive())
+            throw new JsonParseException("Unsupported JSON type for NAME_FIELD: " + nameField);
+
         final JsonElement expiresAtField = json.getAsJsonObject().get(WhitelistableJsonSerializer.EXPIRES_AT_FIELD);
         if (!(expiresAtField.isJsonNull() || expiresAtField.isJsonPrimitive()))
             throw new JsonParseException("Unsupported JSON type for EXPIRES_AT_FIELD: " + expiresAtField);
@@ -41,6 +45,7 @@ final class WhitelistableJsonDeserializer implements JsonDeserializer<Whitelista
 
         JsonWhitelistablePojo whitelistablePojo = new JsonWhitelistablePojo();
         whitelistablePojo.setUniqueId(UUID.fromString(uniqueIdField.getAsString()));
+        whitelistablePojo.setName(nameField.getAsString());
         whitelistablePojo.setExpiresAt(!expiresAtField.isJsonNull() ? new Date(expiresAtField.getAsLong()) : null);
         try {
             whitelistablePojo.setCreatedAt(new Date(createdAtField.getAsLong()));
