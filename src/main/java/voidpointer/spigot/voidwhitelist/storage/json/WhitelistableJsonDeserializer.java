@@ -18,6 +18,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.lang.reflect.Type;
@@ -25,6 +27,8 @@ import java.util.Date;
 import java.util.UUID;
 
 final class WhitelistableJsonDeserializer implements JsonDeserializer<Whitelistable> {
+    @AutowiredLocale private static LocaleLog log;
+
     @Override public Whitelistable deserialize(final JsonElement json, final Type typeOfT,
                                                    final JsonDeserializationContext context) throws JsonParseException {
         final JsonElement uniqueIdField = json.getAsJsonObject().get(WhitelistableJsonSerializer.UNIQUE_ID_FIELD);
@@ -32,8 +36,10 @@ final class WhitelistableJsonDeserializer implements JsonDeserializer<Whitelista
             throw new JsonParseException("Unsupported JSON type for NAME_FIELD: " + uniqueIdField);
 
         final JsonElement nameField = json.getAsJsonObject().get(WhitelistableJsonSerializer.NAME_FIELD);
-        if (!nameField.isJsonPrimitive())
+        if (!(nameField.isJsonNull() || nameField.isJsonPrimitive()))
             throw new JsonParseException("Unsupported JSON type for NAME_FIELD: " + nameField);
+        if (nameField.isJsonNull())
+            log.warn("Encountered \"null\" name while parsing whitelistable, please, update it manually!");
 
         final JsonElement expiresAtField = json.getAsJsonObject().get(WhitelistableJsonSerializer.EXPIRES_AT_FIELD);
         if (!(expiresAtField.isJsonNull() || expiresAtField.isJsonPrimitive()))
@@ -45,7 +51,7 @@ final class WhitelistableJsonDeserializer implements JsonDeserializer<Whitelista
 
         JsonWhitelistablePojo whitelistablePojo = new JsonWhitelistablePojo();
         whitelistablePojo.setUniqueId(UUID.fromString(uniqueIdField.getAsString()));
-        whitelistablePojo.setName(nameField.getAsString());
+        whitelistablePojo.setName(nameField.isJsonNull() ? null : nameField.getAsString());
         whitelistablePojo.setExpiresAt(!expiresAtField.isJsonNull() ? new Date(expiresAtField.getAsLong()) : null);
         try {
             whitelistablePojo.setCreatedAt(new Date(createdAtField.getAsLong()));
