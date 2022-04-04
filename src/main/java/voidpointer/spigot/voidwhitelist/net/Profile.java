@@ -25,6 +25,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
@@ -44,7 +45,7 @@ public final class Profile {
 
     @EqualsAndHashCode.Include
     private final UUID uuid;
-    private String name;
+    @Nullable private String name;
     private Optional<String> texturesBase64 = Optional.empty();
 
     public GameProfile toGameProfile() {
