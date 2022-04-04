@@ -102,10 +102,6 @@ public abstract class CachedWhitelistService implements WhitelistService {
         });
     }
 
-    @Override public CompletableFuture<Whitelistable> add(final UUID uuid) {
-        return add(uuid, Whitelistable.NEVER_EXPIRES);
-    }
-
     @Override public CompletableFuture<Whitelistable> add(final UUID uuid, final Date expiresAt) {
         return supplyAsync(() -> {
             Whitelistable whitelistable = new SimpleWhitelistable(uuid, expiresAt);

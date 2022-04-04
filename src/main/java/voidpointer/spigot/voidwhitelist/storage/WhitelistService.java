@@ -55,8 +55,6 @@ public interface WhitelistService {
 
     CompletableFuture<Optional<Whitelistable>> find(final UUID uuid);
 
-    CompletableFuture<Whitelistable> add(final UUID uuid);
-
     CompletableFuture<Whitelistable> add(final UUID uuid, final Date expiresAt);
 
     CompletableFuture<Boolean> remove(final Whitelistable whitelistable);
