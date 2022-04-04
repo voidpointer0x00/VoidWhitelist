@@ -45,13 +45,14 @@ public final class AddProfileSkullTask extends BukkitRunnable {
             return;
         }
         Profile profile;
-        while ((profile = profiles.peek()) != null) {
+        while ((profile = profiles.poll()) != null) {
             try {
                 gui.addProfile(profile);
-                profiles.poll();
                 countDownLatch.countDown();
                 updateLoading();
-            } catch (ConcurrentModificationException ignore) {}
+            } catch (ConcurrentModificationException ignore) {
+                profiles.add(profile);
+            }
         }
         gui.update();
     }
