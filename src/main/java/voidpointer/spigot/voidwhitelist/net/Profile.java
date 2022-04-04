@@ -50,8 +50,7 @@ public final class Profile {
 
     public GameProfile toGameProfile() {
         GameProfile gameProfile = new GameProfile(uuid, name);
-        if (texturesBase64.isPresent())
-            gameProfile.getProperties().put("textures", new Property("textures", texturesBase64.get()));
+        texturesBase64.ifPresent(s -> gameProfile.getProperties().put("textures", new Property("textures", s)));
         return gameProfile;
     }
 
