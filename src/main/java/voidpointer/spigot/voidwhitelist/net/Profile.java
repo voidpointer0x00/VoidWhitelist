@@ -55,12 +55,8 @@ public final class Profile {
     }
 
     protected void fromJson(final JsonElement json) {
-        try {
-            name = getNameFromJson(json).orElse(uuid.toString() + " offline?");
-            texturesBase64 = Optional.ofNullable(getEncodedTexturesFromJson(json.getAsJsonObject()));
-        } catch (RuntimeException runtimeException) {
-            log.warn("Unable to parse Profile", runtimeException);
-        }
+        name = getNameFromJson(json).orElse(null);
+        texturesBase64 = getEncodedTexturesFromJson(json);
     }
 
     private Optional<String> getNameFromJson(final JsonElement json) {
@@ -74,12 +70,16 @@ public final class Profile {
         }
     }
 
-    private String getEncodedTexturesFromJson(final JsonObject json) throws RuntimeException {
-        JsonArray properties = json.get("properties").getAsJsonArray();
-        Optional<JsonObject> texturesProperty = StreamSupport.stream(properties.spliterator(), false)
-                .map(JsonElement::getAsJsonObject)
-                .filter(property -> property.get("name").getAsString().equals("textures"))
-                .findFirst();
-        return texturesProperty.get().get("value").getAsString();
+    private Optional<String> getEncodedTexturesFromJson(final JsonElement json) throws RuntimeException {
+        try {
+            JsonArray properties = json.getAsJsonObject().get("properties").getAsJsonArray();
+            Optional<JsonObject> texturesProperty = StreamSupport.stream(properties.spliterator(), false)
+                    .map(JsonElement::getAsJsonObject)
+                    .filter(property -> property.get("name").getAsString().equals("textures"))
+                    .findFirst();
+            return Optional.of(texturesProperty.get().get("value").getAsString());
+        } catch (IllegalStateException | NullPointerException ignoreInvalidJson) {
+            return Optional.empty();
+        }
     }
 }
