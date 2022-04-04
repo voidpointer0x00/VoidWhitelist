@@ -45,16 +45,14 @@ public final class WhitelistGui {
     @Setter(AccessLevel.PRIVATE)
     private Phaser updatingStatus = new Phaser();
 
-    /* TODO: a new gui for each player */
-
     public WhitelistGui() {
         gui = new ChestGui(6, "§6VoidWhitelist");
         gui.setOnGlobalClick(this::cancelClickIfNotPlayerInventory);
         gui.setOnClose(this::clearViewer);
-        whitelistPane = new PaginatedPane(7, 4);
-        whitelistPane.addPane(0, new OutlinePane(7, 4));
-        whitelistPane.setPage(0);
+        whitelistPane = GuiPanes.createWhitelistPane();
         gui.addPane(whitelistPane);
+        gui.addPane(GuiPanes.getDelimiter());
+        gui.addPane(GuiPanes.createControlPane(this));
     }
 
     public int availableProfileSlots() {
@@ -63,7 +61,7 @@ public final class WhitelistGui {
     }
 
     public void addProfile(final Profile profile) throws ConcurrentModificationException {
-        ProfileSkull profileSkull = ProfileSkull.of(profile);
+        ProfileSkull profileSkull = ProfileSkull.of(profile).setupDisplayInfo();
         getCurrentPage().addItem(profileSkull.toGuiItem());
         // TODO: actions on click
     }
@@ -87,6 +85,18 @@ public final class WhitelistGui {
             gui.update();
             updatingStatus.arriveAndDeregister();
         });
+    }
+
+    public void onStatusClick(final InventoryClickEvent event) {
+
+    }
+
+    public void onNextPageClick(final InventoryClickEvent event) {
+
+    }
+
+    public void onPreviousPageClick(final InventoryClickEvent event) {
+
     }
 
     private void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {

@@ -17,6 +17,7 @@ package voidpointer.spigot.voidwhitelist.gui;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.mojang.authlib.GameProfile;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -26,33 +27,48 @@ import voidpointer.spigot.voidwhitelist.net.Profile;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 public final class ProfileSkull {
     @AutowiredLocale private static LocaleLog locale;
 
     private final Profile profile;
     private final ItemStack skull;
+    private final GuiItem guiSkull;
 
     private ProfileSkull(final Profile profile) {
         this.profile = profile;
         skull = new ItemStack(Material.PLAYER_HEAD);
+        guiSkull = new GuiItem(skull);
         applyTexturesIfPossible();
-        setupName();
-        setupLore();
     }
 
-    private void setupName() {
+    public static ProfileSkull of(final Profile profile) {
+        return new ProfileSkull(profile);
+    }
+
+    public ProfileSkull setupDisplayInfo() {
         assert skull.getItemMeta() instanceof SkullMeta;
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
         meta.setDisplayName("§e" + profile.getName());
+        meta.setLore(Collections.singletonList("§eUUID: §6" + profile.getUuid()));
+        skull.setItemMeta(meta);
+        return this;
+    }
+
+    public void setDisplayName(final String displayName) {
+        assert skull.getItemMeta() instanceof SkullMeta;
+        SkullMeta meta = (SkullMeta) skull.getItemMeta();
+        meta.setDisplayName(displayName);
         skull.setItemMeta(meta);
     }
 
-    private void setupLore() {
-        assert skull.getItemMeta() instanceof SkullMeta;
-        SkullMeta meta = (SkullMeta) skull.getItemMeta();
-        meta.setLore(Collections.singletonList("§eUUID: §6" + profile.getUuid()));
-        skull.setItemMeta(meta);
+    public void onClick(Consumer<InventoryClickEvent> consumer) {
+        guiSkull.setAction(consumer);
+    }
+
+    public GuiItem toGuiItem() {
+        return guiSkull;
     }
 
     private void applyTexturesIfPossible() {
@@ -71,13 +87,5 @@ public final class ProfileSkull {
         setProfileMethod.setAccessible(true);
         setProfileMethod.invoke(skullMeta, profile.toGameProfile());
         skull.setItemMeta(skullMeta);
-    }
-
-    public static ProfileSkull of(final Profile profile) {
-        return new ProfileSkull(profile);
-    }
-
-    public GuiItem toGuiItem() {
-        return new GuiItem(skull);
     }
 }
