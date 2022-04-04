@@ -55,7 +55,7 @@ public final class Profile {
         return gameProfile;
     }
 
-    protected void fromJson(final JsonElement json) {
+    void fromJson(final JsonElement json) {
         name = getNameFromJson(json).orElse(null);
         texturesBase64 = getEncodedTexturesFromJson(json);
     }
