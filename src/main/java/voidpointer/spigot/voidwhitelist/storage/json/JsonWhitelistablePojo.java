@@ -37,6 +37,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public final class JsonWhitelistablePojo extends AbstractWhitelistable {
     @NonNull private UUID uniqueId;
+    private String name;
     private Date expiresAt;
     private Date createdAt;
 

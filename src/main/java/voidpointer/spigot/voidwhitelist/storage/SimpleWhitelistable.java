@@ -29,6 +29,7 @@ public final class SimpleWhitelistable extends AbstractWhitelistable {
     @NonNull
     @EqualsAndHashCode.Include
     private UUID uniqueId;
+    private String name;
     private Date expiresAt;
     private Date createdAt;
 

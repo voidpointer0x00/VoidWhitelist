@@ -36,6 +36,10 @@ public interface Whitelistable extends Comparable<Whitelistable> {
 
     UUID getUniqueId();
 
+    String getName();
+
+    void setName(final String name);
+
     /* TODO:
      *  Consider adding a String name property.
      *  This would require changing WhitelistService#add() method to accept
