@@ -24,11 +24,11 @@ import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
 
 import java.lang.reflect.Type;
 
-final class WhitelistableJsonSerializer implements JsonSerializer<Whitelistable> {
-    static final String UNIQUE_ID_FIELD = "uniqueId";
-    static final String EXPIRES_AT_FIELD = "expiresAt";
-    static final String CREATED_AT_FIELD = "createdAt";
-    static final String NAME_FIELD = "name";
+public final class WhitelistableJsonSerializer implements JsonSerializer<Whitelistable> {
+    public static final String UNIQUE_ID_FIELD = "uniqueId";
+    public static final String EXPIRES_AT_FIELD = "expiresAt";
+    public static final String CREATED_AT_FIELD = "createdAt";
+    public static final String NAME_FIELD = "name";
 
     @Override public JsonElement serialize(final Whitelistable src, final Type typeOfSrc, final JsonSerializationContext context) {
         assert src instanceof AbstractWhitelistable;
