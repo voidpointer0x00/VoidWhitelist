@@ -25,18 +25,17 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 
 class GuiPanes {
-    private static final StaticPane DELIMITER;
-    static {
-        DELIMITER = new StaticPane(7, 0, 1, 6);
-        DELIMITER.fillWith(new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
-    }
-
+    private static StaticPane delimiter;
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static WhitelistConfig whitelistConfig;
 
     public static StaticPane getDelimiter() {
-        return DELIMITER;
+        if (delimiter == null) {
+            delimiter = new StaticPane(7, 0, 1, 6);
+            delimiter.fillWith(new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
+        return delimiter;
     }
 
     public static PaginatedPane createWhitelistPane() {
