@@ -26,8 +26,8 @@ import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
+import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.uuid.DefaultUUIDFetcher;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,12 +68,17 @@ public final class AddCommand extends Command {
                 return;
             }
             whitelistService.add(uuidOptional.get(), expiresAt.orElse(Whitelistable.NEVER_EXPIRES))
-                    .thenAcceptAsync(this::callWhitelistAddedEvent);
-
-            if (expiresAt.isPresent())
-                notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);
-            else
-                notifyAdded(args, null, uuidOptional.get(), WhitelistMessage.ADDED);
+                    .whenCompleteAsync((res, th) -> {
+                        if (th != null) {
+                            locale.warn("Couldn't add a player to the whitelist", th);
+                            return;
+                        }
+                        if (expiresAt.isPresent())
+                            notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);
+                        else
+                            notifyAdded(args, null, uuidOptional.get(), WhitelistMessage.ADDED);
+                        callWhitelistAddedEvent(res);
+                    });
         }).whenCompleteAsync((res, th) -> {
             if (th != null)
                 locale.warn("Couldn't add a player to the whitelist", th);

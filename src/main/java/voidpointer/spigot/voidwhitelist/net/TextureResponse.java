@@ -12,15 +12,22 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.storage.json;
+package voidpointer.spigot.voidwhitelist.net;
 
-import com.google.gson.InstanceCreator;
-import voidpointer.spigot.voidwhitelist.Whitelistable;
+import java.util.Collection;
 
-import java.lang.reflect.Type;
+final class TextureResponse {
+    Collection<Property> properties;
+    static class Property {
+        String name;
+        String value;
+    }
 
-final class WhitelistableInstanceCreator implements InstanceCreator<Whitelistable> {
-    @Override public Whitelistable createInstance(final Type type) {
-        return new JsonWhitelistablePojo();
+    String getTextures() {
+        for (Property property : properties) {
+            if (property.name.equalsIgnoreCase("textures"))
+                return property.value;
+        }
+        return null;
     }
 }

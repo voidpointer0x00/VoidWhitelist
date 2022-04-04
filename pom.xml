@@ -55,11 +55,6 @@
                             <artifactId>lombok</artifactId>
                             <version>1.18.22</version>
                         </path>
-                        <path>
-                            <groupId>systems.manifold</groupId>
-                            <artifactId>manifold-ext</artifactId>
-                            <version>2022.1.7</version>
-                        </path>
                     </annotationProcessorPaths>
                 </configuration>
                 <executions>
@@ -70,6 +65,13 @@
                             <goal>testCompile</goal>
                         </goals>
                         <configuration>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>systems.manifold</groupId>
+                                    <artifactId>manifold-ext</artifactId>
+                                    <version>2022.1.7</version>
+                                </path>
+                            </annotationProcessorPaths>
                             <compilerArgs>
                                 <arg>-Xplugin:Manifold</arg>
                             </compilerArgs>
@@ -149,6 +151,10 @@
                                     <pattern>voidpointer.spigot.framework.localemodule</pattern>
                                     <shadedPattern>voidpointer.spigot.voidwhitelist.locale</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
+                                    <shadedPattern>voidpointer.spigot.voidwhitelist.inventoryframework</shadedPattern>
+                                </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
@@ -183,6 +189,10 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
+            <id>aikar-repo</id>
+            <url>https://repo.aikar.co/nexus/content/repositories/aikar-release/</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -202,14 +212,20 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.11</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.NyanGuyMF</groupId>
             <artifactId>locale-module</artifactId>
-            <version>3.1.0</version>
+            <version>v3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.NyanGuyMF</groupId>
             <artifactId>dependency-injector</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -227,6 +243,11 @@
             <groupId>systems.manifold</groupId>
             <artifactId>manifold-ext</artifactId>
             <version>2022.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stefvanschie.inventoryframework</groupId>
+            <artifactId>IF</artifactId>
+            <version>0.10.5</version>
         </dependency>
     </dependencies>
 </project>

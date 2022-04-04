@@ -14,11 +14,9 @@
  */
 package voidpointer.spigot.voidwhitelist.storage;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
@@ -27,13 +25,22 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
-@AllArgsConstructor
 public final class SimpleWhitelistable extends AbstractWhitelistable {
     @NonNull
     @EqualsAndHashCode.Include
     private UUID uniqueId;
     private Date expiresAt;
+    private Date createdAt;
+
+    public SimpleWhitelistable(final UUID uniqueId, final Date expiresAt) {
+        this(uniqueId, expiresAt, new Date());
+    }
+
+    public SimpleWhitelistable(final UUID uniqueId, final Date expiresAt, final Date createdAt) {
+        this.uniqueId = uniqueId;
+        this.expiresAt = expiresAt;
+        this.createdAt = createdAt;
+    }
 
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);

@@ -12,7 +12,13 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.storage;
+package voidpointer.spigot.voidwhitelist.storage.update;
 
-public class UnknownVersionException extends Exception {
+import com.google.gson.JsonElement;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
+
+import java.util.Collection;
+
+public interface JsonUpdate {
+    Collection<Whitelistable> performUpdate(final JsonElement root);
 }

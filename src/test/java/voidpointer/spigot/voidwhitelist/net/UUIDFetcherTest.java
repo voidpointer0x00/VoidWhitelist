@@ -12,7 +12,7 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.uuid;
+package voidpointer.spigot.voidwhitelist.net;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import manifold.ext.rt.api.Jailbreak;

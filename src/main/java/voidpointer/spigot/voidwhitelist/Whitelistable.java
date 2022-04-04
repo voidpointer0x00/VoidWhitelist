@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface Whitelistable {
+public interface Whitelistable extends Comparable<Whitelistable> {
     Date NEVER_EXPIRES = null;
 
     /**
@@ -35,6 +35,17 @@ public interface Whitelistable {
     Optional<Player> findAssociatedOnlinePlayer();
 
     UUID getUniqueId();
+
+    /* TODO:
+     *  Consider adding a String name property.
+     *  This would require changing WhitelistService#add() method to accept
+     *      name as well as required UUID and non-required date. It seems like
+     *      the name is available for all method executors.
+     *  This way the API will allow showing Whitelistable's in-game name avoiding
+     *      a search through Bukkit API or Mojang web requests.
+     *  Though, it will require automatic name updates on Join events. Perhaps,
+     *      some notifications & configuration needed.
+     */
 
     /**
      * Checks whether this entity is associated with provided player or not.

@@ -12,7 +12,7 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.uuid;
+package voidpointer.spigot.voidwhitelist.net;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -64,10 +64,13 @@ public final class OnlineUUIDFetcher {
         } catch (IllegalArgumentException illegalArgumentException) {
             log.warn("Invalid UUID format", illegalArgumentException);
             return null;
+        } catch (NullPointerException nullPointerException) {
+            /* 204 No Content API response, meaning no associated player profile found */
+            return null;
         }
     }
 
-    private static String idToUuid(final String id) {
+    protected static String idToUuid(final String id) {
         StringBuilder uuidBuilder = new StringBuilder(id.length() + 4);
         for (int index = 0; index < id.length(); index++) {
             uuidBuilder.append(id.charAt(index));
@@ -77,7 +80,7 @@ public final class OnlineUUIDFetcher {
         return uuidBuilder.toString();
     }
 
-    private static String requestApiUrl(final String name) throws IOException {
+    private static String requestApiUrl(final String name) throws IOException, NullPointerException {
         return gson.fromJson(newApiRequestConnection(name), MojangUUIDResponse.class).id;
     }
 

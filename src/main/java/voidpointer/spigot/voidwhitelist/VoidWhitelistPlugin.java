@@ -35,10 +35,10 @@ import voidpointer.spigot.voidwhitelist.listener.WhitelistDisabledListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistEnabledListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistRemovedListener;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
+import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
-import voidpointer.spigot.voidwhitelist.uuid.DefaultUUIDFetcher;
 
 import java.io.File;
 import java.util.Collections;
