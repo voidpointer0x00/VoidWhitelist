@@ -39,6 +39,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ConcurrentModificationException;
+import java.util.concurrent.Phaser;
 
 @Getter
 public final class WhitelistGui {
@@ -49,7 +50,7 @@ public final class WhitelistGui {
     private final PaginatedPane whitelistPane;
     private WeakReference<HumanEntity> viewer;
     @Setter(AccessLevel.PRIVATE)
-    private boolean isUpdating = false;
+    private Phaser updatingStatus = new Phaser();
 
     /* TODO: a new gui for each player */
 
@@ -108,14 +109,13 @@ public final class WhitelistGui {
     }
 
     public void update() {
-        // we need to ensure that it's executing synchronously
-        if (!isUpdating) {
-            setUpdating(true);
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                gui.update();
-                setUpdating(false);
-            });
-        }
+        if (updatingStatus.getRegisteredParties() > 0)
+            updatingStatus.arriveAndAwaitAdvance();
+        updatingStatus.register();
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            gui.update();
+            updatingStatus.arriveAndDeregister();
+        });
     }
 
     private void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {
