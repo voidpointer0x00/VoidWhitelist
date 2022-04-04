@@ -21,13 +21,13 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -46,27 +46,27 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public abstract class CachedWhitelistService implements WhitelistService {
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.PROTECTED)
-    private ConcurrentSkipListSet<Whitelistable> cachedWhitelist = new ConcurrentSkipListSet<>();
+    private Set<Whitelistable> cachedWhitelist = ConcurrentHashMap.newKeySet();
 
-    @Override public CompletableFuture<SortedSet<Whitelistable>> findAll(final int limit) {
+    @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
         if (cachedWhitelist.isEmpty())
-            return completedFuture(Collections.emptySortedSet());
+            return completedFuture(Collections.emptySet());
         return supplyAsync(() -> {
-            Whitelistable first = cachedWhitelist.first();
-            SortedSet<Whitelistable> subset = findAll0(first, limit);
+            Whitelistable first = cachedWhitelist.iterator().next();
+            Set<Whitelistable> subset = findAll0(first, limit);
             subset.add(first);
-            return subset;
+            return Collections.unmodifiableSet(subset);
         });
     }
 
-    @Override public CompletableFuture<SortedSet<Whitelistable>> findAll(final Whitelistable offset, final int limit) {
+    @Override public CompletableFuture<Set<Whitelistable>> findAll(final Whitelistable offset, final int limit) {
         if (cachedWhitelist.isEmpty())
-            return completedFuture(Collections.emptySortedSet());
-        return supplyAsync(() -> findAll0(offset, limit));
+            return completedFuture(Collections.emptySet());
+        return supplyAsync(() -> Collections.unmodifiableSet(findAll0(offset, limit)));
     }
 
-    private SortedSet<Whitelistable> findAll0(final Whitelistable offset, final int limit) {
-        SortedSet<Whitelistable> subset = new TreeSet<>();
+    private Set<Whitelistable> findAll0(final Whitelistable offset, final int limit) {
+        Set<Whitelistable> subset = new HashSet<>();
         Iterator<Whitelistable> iterator = cachedWhitelist.iterator();
         while (iterator.hasNext() && !iterator.next().equals(offset))
             ;
@@ -76,15 +76,15 @@ public abstract class CachedWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> findFirst() {
-        if (!cachedWhitelist.isEmpty())
-            return completedFuture(Optional.of(cachedWhitelist.first()));
-        return completedFuture(Optional.empty());
+        if (cachedWhitelist.isEmpty())
+            return completedFuture(Optional.empty());
+        return completedFuture(Optional.of(cachedWhitelist.iterator().next()));
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> findLast() {
-        if (!cachedWhitelist.isEmpty())
-            return completedFuture(Optional.of(cachedWhitelist.last()));
-        return completedFuture(Optional.empty());
+        if (cachedWhitelist.isEmpty())
+            return completedFuture(Optional.empty());
+        return completedFuture(Optional.of(cachedWhitelist.iterator().next()));
     }
 
     @Override public CompletableFuture<Integer> size() {

@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.storage;
 
-import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -52,15 +51,6 @@ public abstract class AbstractWhitelistable implements Whitelistable {
 
     @Override public int hashCode() {
         return getUniqueId().hashCode();
-    }
-
-    @Override public int compareTo(@NonNull final Whitelistable o) {
-        assert o instanceof AbstractWhitelistable;
-        if (getUniqueId().equals(o.getUniqueId()))
-            return 0;
-        if (getCreatedAt().compareTo(((AbstractWhitelistable) o).getCreatedAt()) <= 0)
-            return -1;
-        return 1;
     }
 
     public abstract Date getExpiresAt();

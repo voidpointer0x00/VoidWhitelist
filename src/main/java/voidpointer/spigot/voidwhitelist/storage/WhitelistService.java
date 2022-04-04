@@ -19,6 +19,7 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +34,7 @@ public interface WhitelistService {
      * @return {@code limit} number of elements starting from the {@code first} exclusively.
      *          If none found an empty set will be returned. {@link Collections#emptySortedSet()}.
      */
-    CompletableFuture<SortedSet<Whitelistable>> findAll(int limit);
+    CompletableFuture<Set<Whitelistable>> findAll(int limit);
 
     /**
      * Finds {@code limit} elements starting from the {@code first} exclusively.
@@ -45,7 +46,7 @@ public interface WhitelistService {
      * @return {@code limit} number of elements starting from the {@code first} exclusively.
      *          If none found an empty set will be returned. {@link Collections#emptySortedSet()}.
      */
-    CompletableFuture<SortedSet<Whitelistable>> findAll(final Whitelistable first, int limit);
+    CompletableFuture<Set<Whitelistable>> findAll(final Whitelistable first, int limit);
 
     CompletableFuture<Optional<Whitelistable>> findFirst();
 
