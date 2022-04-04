@@ -84,9 +84,11 @@ public final class WhitelistGui {
     public void addProfile(final Profile profile) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
-        if ((skullMeta != null) && profile.getTexturesBase64().isPresent())
-            setProfile(skullMeta, profile.toGameProfile());
-        skullMeta.setDisplayName("§e" + profile.getName());
+        if (skullMeta != null) {
+            if (profile.getTexturesBase64().isPresent())
+                setProfile(skullMeta, profile.toGameProfile());
+            skullMeta.setDisplayName("§e" + profile.getName());
+        }
         head.setItemMeta(skullMeta);
         getCurrentPage().addItem(new GuiItem(head));
         // TODO: actions on click
