@@ -29,8 +29,6 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
-import java.io.ByteArrayInputStream;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -58,18 +56,22 @@ public final class Profile {
 
     protected void fromJson(final JsonElement json) {
         try {
-            name = getNameFromJson(json);
+            name = getNameFromJson(json).orElse(uuid.toString() + " offline?");
             texturesBase64 = Optional.ofNullable(getEncodedTexturesFromJson(json.getAsJsonObject()));
         } catch (RuntimeException runtimeException) {
             log.warn("Unable to parse Profile", runtimeException);
         }
     }
 
-    private String getNameFromJson(final JsonElement json) {
-        JsonElement nameElement = json.getAsJsonObject().get("name");
-        if (nameElement == null)
-            return null;
-        return nameElement.getAsString();
+    private Optional<String> getNameFromJson(final JsonElement json) {
+        try {
+            return Optional.of(json.getAsJsonObject().get("name").toString());
+        } catch (final IllegalStateException notAJsonObject) {
+            return Optional.empty();
+        } catch (final NullPointerException invalidUuid) {
+            log.warn("NPE: {0}", json.getAsJsonObject().get("errorMessage"));
+            return Optional.empty();
+        }
     }
 
     private String getEncodedTexturesFromJson(final JsonObject json) throws RuntimeException {
@@ -79,9 +81,5 @@ public final class Profile {
                 .filter(property -> property.get("name").getAsString().equals("textures"))
                 .findFirst();
         return texturesProperty.get().get("value").getAsString();
-    }
-
-    private ByteArrayInputStream decodeBase64(final String base64String) {
-        return new ByteArrayInputStream(Base64.getDecoder().decode(base64String));
     }
 }
