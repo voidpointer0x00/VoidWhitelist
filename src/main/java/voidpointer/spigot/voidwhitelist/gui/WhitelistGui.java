@@ -81,7 +81,7 @@ public final class WhitelistGui {
         loadingTask.runTaskTimer(plugin, 0, 3);
     }
 
-    public void addProfile(final Profile profile) {
+    public void addProfile(final Profile profile) throws ConcurrentModificationException {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
         if (skullMeta != null) {
