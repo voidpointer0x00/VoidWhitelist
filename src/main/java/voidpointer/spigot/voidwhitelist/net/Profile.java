@@ -62,7 +62,7 @@ public final class Profile {
 
     private Optional<String> getNameFromJson(final JsonElement json) {
         try {
-            return Optional.of(json.getAsJsonObject().get("name").toString());
+            return Optional.of(json.getAsJsonObject().get("name").getAsString());
         } catch (final IllegalStateException notAJsonObject) {
             return Optional.empty();
         } catch (final NullPointerException invalidUuid) {
