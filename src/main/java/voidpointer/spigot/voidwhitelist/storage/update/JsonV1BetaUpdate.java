@@ -37,7 +37,6 @@ final class JsonV1BetaUpdate extends AbstractJsonUpdate {
                 .uniqueId(uniqueId)
                 .name(profile.getName())
                 .expiresAt(expiresAtElement.isJsonNull() ? null : new Date(expiresAtElement.getAsLong()))
-                .createdAt(new Date())
                 .build();
     }
 }
