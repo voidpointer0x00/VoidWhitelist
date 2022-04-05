@@ -124,9 +124,6 @@ public final class WhitelistGui {
     }
 
     public void onNextPageClick(final InventoryClickEvent event) {
-        // TODO: #fillCurrentPage() that will fill current page with profiles
-        //  to avoid repeating the code with add command.
-        // TODO: check whether current page is empty and fill only if it's not
         Optional<OutlinePane> nextPage = setToNextPageAndGet();
         if (!nextPage.isPresent())
             return;
