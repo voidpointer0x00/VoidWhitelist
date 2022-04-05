@@ -136,7 +136,10 @@ public final class WhitelistGui {
     }
 
     public void onPreviousPageClick(final InventoryClickEvent event) {
-
+        if (whitelistPane.getPage() == 0)
+            return;
+        whitelistPane.setPage(whitelistPane.getPage() - 1);
+        update();
     }
 
     public void fillCurrentPage(final Set<Whitelistable> whitelistable) {
