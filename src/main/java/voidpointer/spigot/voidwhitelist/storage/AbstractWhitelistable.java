@@ -56,6 +56,4 @@ public abstract class AbstractWhitelistable implements Whitelistable {
     public abstract Date getExpiresAt();
 
     public abstract void setExpiresAt(final Date date);
-
-    public abstract Date getCreatedAt();
 }

@@ -45,19 +45,10 @@ final class WhitelistableJsonDeserializer implements JsonDeserializer<Whitelista
         if (!(expiresAtField.isJsonNull() || expiresAtField.isJsonPrimitive()))
             throw new JsonParseException("Unsupported JSON type for EXPIRES_AT_FIELD: " + expiresAtField);
 
-        final JsonElement createdAtField = json.getAsJsonObject().get(WhitelistableJsonSerializer.CREATED_AT_FIELD);
-        if (!createdAtField.isJsonPrimitive())
-            throw new JsonParseException("Unsupported JSON type for CREATED_AT_FIELD: " + createdAtField);
-
         JsonWhitelistablePojo whitelistablePojo = new JsonWhitelistablePojo();
         whitelistablePojo.setUniqueId(UUID.fromString(uniqueIdField.getAsString()));
         whitelistablePojo.setName(nameField.isJsonNull() ? null : nameField.getAsString());
         whitelistablePojo.setExpiresAt(!expiresAtField.isJsonNull() ? new Date(expiresAtField.getAsLong()) : null);
-        try {
-            whitelistablePojo.setCreatedAt(new Date(createdAtField.getAsLong()));
-        } catch (NumberFormatException numberFormatException) {
-            throw new JsonParseException("Invalid createdAt Date format", numberFormatException);
-        }
         return whitelistablePojo;
     }
 }

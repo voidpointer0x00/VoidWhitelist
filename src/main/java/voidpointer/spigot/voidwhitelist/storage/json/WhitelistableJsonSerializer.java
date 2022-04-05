@@ -27,7 +27,6 @@ import java.lang.reflect.Type;
 public final class WhitelistableJsonSerializer implements JsonSerializer<Whitelistable> {
     public static final String UNIQUE_ID_FIELD = "uniqueId";
     public static final String EXPIRES_AT_FIELD = "expiresAt";
-    public static final String CREATED_AT_FIELD = "createdAt";
     public static final String NAME_FIELD = "name";
 
     @Override public JsonElement serialize(final Whitelistable src, final Type typeOfSrc, final JsonSerializationContext context) {
@@ -36,7 +35,6 @@ public final class WhitelistableJsonSerializer implements JsonSerializer<Whiteli
         jsonObject.add(UNIQUE_ID_FIELD, new JsonPrimitive(src.getUniqueId().toString()));
         jsonObject.add(NAME_FIELD, new JsonPrimitive(src.getName()));
         jsonObject.add(EXPIRES_AT_FIELD, new JsonPrimitive(src.getExpiresAt().getTime()));
-        jsonObject.add(CREATED_AT_FIELD, new JsonPrimitive(((AbstractWhitelistable) src).getCreatedAt().getTime()));
         return jsonObject;
     }
 }
