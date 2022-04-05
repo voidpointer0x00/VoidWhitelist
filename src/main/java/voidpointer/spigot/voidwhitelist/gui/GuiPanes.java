@@ -38,11 +38,15 @@ class GuiPanes {
         return delimiter;
     }
 
-    public static PaginatedPane createWhitelistPane() {
+    public static PaginatedPane createWhitelistPagesPane() {
         PaginatedPane whitelistPane = new PaginatedPane(0, 0, 7, 6);
-        whitelistPane.addPane(0, new OutlinePane(7, 6));
+        whitelistPane.addPane(0, createWhitelistPagePane());
         whitelistPane.setPage(0);
         return whitelistPane;
+    }
+
+    public static OutlinePane createWhitelistPagePane() {
+        return new OutlinePane(7, 6);
     }
 
     public static OutlinePane createControlPane(final WhitelistGui whitelistGui) {
