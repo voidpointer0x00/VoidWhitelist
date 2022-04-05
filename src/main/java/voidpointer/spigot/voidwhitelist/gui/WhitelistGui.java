@@ -132,6 +132,7 @@ public final class WhitelistGui {
             return;
         int capacity = availableProfileSlots();
         int offset = whitelistPane.getPage() * nextPage.get().getHeight() * nextPage.get().getLength();
+        offset += (nextPage.get().getHeight() * nextPage.get().getLength() - capacity);
         whitelistService.findAll(offset, capacity).thenAcceptAsync(this::fillCurrentPage);
     }
 
@@ -143,8 +144,10 @@ public final class WhitelistGui {
     }
 
     public void fillCurrentPage(final Set<Whitelistable> whitelistable) {
-        if (whitelistable.isEmpty())
+        if (whitelistable.isEmpty()) {
+            update();
             return;
+        }
         ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(whitelistable.stream()
                 .map(Whitelistable::getUniqueId)
                 .collect(Collectors.toList()));
