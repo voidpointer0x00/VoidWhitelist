@@ -37,6 +37,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
+
 public final class AddCommand extends Command {
     public static final String NAME = "add";
     public static final String PERMISSION = "whitelist.add";
@@ -67,7 +69,7 @@ public final class AddCommand extends Command {
                         .send(args.getSender());
                 return;
             }
-            whitelistService.add(uuidOptional.get(), expiresAt.orElse(Whitelistable.NEVER_EXPIRES))
+            whitelistService.add(uuidOptional.get(), args.get(0), expiresAt.orElse(NEVER_EXPIRES))
                     .whenCompleteAsync((res, th) -> {
                         if (th != null) {
                             locale.warn("Couldn't add a player to the whitelist", th);

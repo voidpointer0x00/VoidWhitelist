@@ -40,7 +40,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  * 
  * In order to save the cached whitelist entries you need to implement
  *  {@link #saveWhitelist()} methods. It will be invoked upon any modification
- *  ({@link #add(UUID, Date)}, {@link #remove(Whitelistable)} to the cached whitelist.
+ *  ({@link #add(UUID, String, Date)}, {@link #remove(Whitelistable)} to the cached whitelist.
  */
 public abstract class CachedWhitelistService implements WhitelistService {
     @Getter(AccessLevel.PROTECTED)
@@ -99,9 +99,9 @@ public abstract class CachedWhitelistService implements WhitelistService {
         });
     }
 
-    @Override public CompletableFuture<Whitelistable> add(final UUID uuid, final Date expiresAt) {
+    @Override public CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt) {
         return supplyAsync(() -> {
-            Whitelistable whitelistable = new SimpleWhitelistable(uuid, expiresAt);
+            Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt);
             if (!cachedWhitelist.add(whitelistable)) {
                 cachedWhitelist.remove(whitelistable);
                 cachedWhitelist.add(whitelistable);
