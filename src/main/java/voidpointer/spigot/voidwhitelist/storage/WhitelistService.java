@@ -46,7 +46,7 @@ public interface WhitelistService {
      * @return {@code limit} number of elements starting from the {@code first} exclusively.
      *          If none found an empty set will be returned. {@link Collections#emptySortedSet()}.
      */
-    CompletableFuture<Set<Whitelistable>> findAll(final Whitelistable first, int limit);
+    CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit);
 
     CompletableFuture<Optional<Whitelistable>> findFirst();
 

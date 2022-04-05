@@ -51,23 +51,21 @@ public abstract class CachedWhitelistService implements WhitelistService {
         if (cachedWhitelist.isEmpty())
             return completedFuture(Collections.emptySet());
         return supplyAsync(() -> {
-            Whitelistable first = cachedWhitelist.iterator().next();
-            Set<Whitelistable> subset = findAll0(first, limit);
-            subset.add(first);
+            Set<Whitelistable> subset = findAll0(0, limit);
             return Collections.unmodifiableSet(subset);
         });
     }
 
-    @Override public CompletableFuture<Set<Whitelistable>> findAll(final Whitelistable offset, final int limit) {
+    @Override public CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit) {
         if (cachedWhitelist.isEmpty())
             return completedFuture(Collections.emptySet());
         return supplyAsync(() -> Collections.unmodifiableSet(findAll0(offset, limit)));
     }
 
-    private Set<Whitelistable> findAll0(final Whitelistable offset, final int limit) {
+    private Set<Whitelistable> findAll0(final int offset, final int limit) {
         Set<Whitelistable> subset = new HashSet<>();
         Iterator<Whitelistable> iterator = cachedWhitelist.iterator();
-        while (iterator.hasNext() && !iterator.next().equals(offset))
+        for (int index = 0; (index < offset) && iterator.hasNext(); index++, iterator.next())
             ;
         for (int index = 0; (index < limit) && iterator.hasNext(); index++, subset.add(iterator.next()))
             ;
