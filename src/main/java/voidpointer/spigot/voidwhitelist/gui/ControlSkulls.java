@@ -23,6 +23,7 @@ import static java.util.UUID.nameUUIDFromBytes;
 final class ControlSkulls {
     private static final String cyanForwardBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjNmYWJjMzg5MWM5NjJjOTEzOTU5ZDY1YmU5MGRhYTVkZTEyMTFmYTQwODdkYWUzODZmZjRlZDQyNDhmIn19fQ==";
     private static final String cyanBackBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTE0NTljZmM0NGNjNTFkZGYyNzk4ODU5NmQyZGU4YWM4NTU2ZTkzZDc5NDYyMTljZjY0YzkwYzhjMDVmY2EifX19";
+    private static final String cyanNumberBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYThhN2M2NTU2YjE1MDNiNjZhYjNlNTA5YTEyYjU0NjE3ZjdjNzM1Yjk3MWU5YjgxN2U5Njc3NmUwNTU0YiJ9fX0=";
     private static final String disabledBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2NjNDcwYWUyNjMxZWZkZmFmOTY3YjM2OTQxM2JjMjQ1MWNkN2EzOTQ2NWRhNzgzNmE2YzdhMTRlODc3In19fQ==";
     private static final String enabledBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzI5NmQzZTE0OTNmYTMyZDgyN2EzNjM1YTY4M2U1YmRlZDY0OTE0ZDc1ZTczYWFjZGNjYmE0NmQ4ZmQ5MCJ9fX0=";
 
@@ -31,6 +32,10 @@ final class ControlSkulls {
     }
 
     public static ProfileSkull getBack() {
+        return skullOf(cyanBackBase64);
+    }
+
+    public static ProfileSkull getNumber() {
         return skullOf(cyanBackBase64);
     }
 

@@ -25,9 +25,12 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 
 class GuiPanes {
-    private static StaticPane delimiter;
+    public static final int FORWARD_INDEX = 0;
+    public static final int BACK_INDEX = 1;
+    public static final int STATUS_INDEX = 2;
 
     @AutowiredLocale private static Locale locale;
+    private static StaticPane delimiter;
     @Autowired private static WhitelistConfig whitelistConfig;
 
     public static StaticPane getDelimiter() {
@@ -52,27 +55,27 @@ class GuiPanes {
     public static OutlinePane createControlPane(final WhitelistGui whitelistGui) {
         OutlinePane controlPane = new OutlinePane(8, 0, 1, 6);
         ProfileSkull forward = ControlSkulls.getForward();
-        forward.setDisplayName("§eNext page");
         ProfileSkull back = ControlSkulls.getBack();
-        back.setDisplayName("§ePrevious page");
+        ProfileSkull enabled = ControlSkulls.getEnabled();
+        ProfileSkull disabled = ControlSkulls.getDisabled();
+        ProfileSkull current = whitelistConfig.isWhitelistEnabled() ? enabled : disabled;
 
-        ProfileSkull enabled, disabled, current;
-        enabled = ControlSkulls.getEnabled();
-        enabled.setDisplayName("§aEnabled");
-        disabled = ControlSkulls.getDisabled();
-        disabled.setDisplayName("§cDisabled");
-        current = whitelistConfig.isWhitelistEnabled() ? enabled : disabled;
         whitelistGui.setDisabledButton(disabled.toGuiItem());
         whitelistGui.setEnabledButton(enabled.toGuiItem());
+
+        forward.setDisplayName("§eNext page");
+        back.setDisplayName("§ePrevious page");
+        enabled.setDisplayName("§aEnabled");
+        disabled.setDisplayName("§cDisabled");
 
         enabled.onClick(whitelistGui::onStatusClick);
         disabled.onClick(whitelistGui::onStatusClick);
         back.onClick(whitelistGui::onPreviousPageClick);
         forward.onClick(whitelistGui::onNextPageClick);
 
-        controlPane.addItem(forward.toGuiItem());
-        controlPane.addItem(back.toGuiItem());
-        controlPane.addItem(current.toGuiItem());
+        controlPane.insertItem(forward.toGuiItem(), FORWARD_INDEX);
+        controlPane.insertItem(back.toGuiItem(), BACK_INDEX);
+        controlPane.insertItem(current.toGuiItem(), STATUS_INDEX);
         controlPane.flipVertically(true);
 
         return controlPane;

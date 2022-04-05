@@ -18,7 +18,6 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.HumanEntity;
@@ -47,6 +46,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
 import java.util.stream.Collectors;
 
+import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;
 
 @Getter
@@ -61,11 +62,11 @@ public final class WhitelistGui {
     private final PaginatedPane whitelistPane;
     private final OutlinePane controlPane;
     private WeakReference<HumanEntity> viewer;
-    @Setter(AccessLevel.PRIVATE)
+    @Setter(PRIVATE)
     private Phaser updatingStatus = new Phaser();
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(PROTECTED)
     private GuiItem enabledButton;
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(PROTECTED)
     private GuiItem disabledButton;
 
     public WhitelistGui() {
@@ -113,12 +114,12 @@ public final class WhitelistGui {
             whitelistConfig.disableWhitelist();
             eventManager.callAsyncEvent(new WhitelistDisabledEvent());
             controlPane.removeItem(enabledButton);
-            controlPane.addItem(disabledButton);
+            controlPane.insertItem(disabledButton, GuiPanes.STATUS_INDEX);
         } else {
             whitelistConfig.enableWhitelist();
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
             controlPane.removeItem(disabledButton);
-            controlPane.addItem(enabledButton);
+            controlPane.insertItem(enabledButton, GuiPanes.STATUS_INDEX);
         }
         update();
     }
