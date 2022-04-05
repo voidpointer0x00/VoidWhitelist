@@ -26,6 +26,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
@@ -35,10 +36,12 @@ import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
 import voidpointer.spigot.voidwhitelist.net.Profile;
+import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
 
 import java.lang.ref.WeakReference;
 import java.util.ConcurrentModificationException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
@@ -52,6 +55,7 @@ public final class WhitelistGui {
     private static Plugin plugin;
     @Autowired private static EventManager eventManager;
     @Autowired private static WhitelistConfig whitelistConfig;
+    @Autowired private static WhitelistService whitelistService;
     @AutowiredLocale private static LocaleLog locale;
     private final ChestGui gui;
     private final PaginatedPane whitelistPane;
@@ -68,7 +72,7 @@ public final class WhitelistGui {
         gui = new ChestGui(6, "§6VoidWhitelist");
         gui.setOnGlobalClick(this::cancelClickIfNotPlayerInventory);
         gui.setOnClose(this::clearViewer);
-        whitelistPane = GuiPanes.createWhitelistPane();
+        whitelistPane = GuiPanes.createWhitelistPagesPane();
         gui.addPane(whitelistPane);
         gui.addPane(GuiPanes.getDelimiter());
         controlPane = GuiPanes.createControlPane(this);
@@ -84,10 +88,6 @@ public final class WhitelistGui {
         ProfileSkull profileSkull = ProfileSkull.of(profile).setupDisplayInfo();
         getCurrentPage().addItem(profileSkull.toGuiItem());
         // TODO: actions on click
-    }
-
-    private OutlinePane getCurrentPage() {
-        return (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage()).iterator().next();
     }
 
     public void show(final HumanEntity humanEntity) {
@@ -127,6 +127,12 @@ public final class WhitelistGui {
         // TODO: #fillCurrentPage() that will fill current page with profiles
         //  to avoid repeating the code with add command.
         // TODO: check whether current page is empty and fill only if it's not
+        Optional<OutlinePane> nextPage = setToNextPageAndGet();
+        if (!nextPage.isPresent())
+            return;
+        int capacity = availableProfileSlots();
+        int offset = whitelistPane.getPage() * nextPage.get().getHeight() * nextPage.get().getLength();
+        whitelistService.findAll(offset, capacity).thenAcceptAsync(this::fillCurrentPage);
     }
 
     public void onPreviousPageClick(final InventoryClickEvent event) {
@@ -141,6 +147,30 @@ public final class WhitelistGui {
                 .collect(Collectors.toList()));
         new AddProfileSkullTask(this, profiles, whitelistable.size())
                 .runTaskTimerAsynchronously(plugin, 0, 1L);
+    }
+
+    public Optional<OutlinePane> setToNextPageAndGet() {
+        if (availableProfileSlots() != 0)
+            return Optional.of(getCurrentPage());
+        OutlinePane nextPage;
+        if (isAtLastPage()) {
+            if (getCurrentPage().getItems().isEmpty())
+                return Optional.empty(); // can't create a new page while the current one is empty
+            nextPage = GuiPanes.createWhitelistPagePane();
+            whitelistPane.addPane(whitelistPane.getPages(), nextPage);
+        } else {
+            nextPage = (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage() + 1);
+        }
+        whitelistPane.setPage(whitelistPane.getPage() + 1);
+        return Optional.of(nextPage);
+    }
+
+    private boolean isAtLastPage() {
+        return whitelistPane.getPage() == (whitelistPane.getPages() - 1);
+    }
+
+    private @NonNull OutlinePane getCurrentPage() {
+        return (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage()).iterator().next();
     }
 
     private void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {
