@@ -29,15 +29,22 @@ import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
 import voidpointer.spigot.voidwhitelist.net.Profile;
+import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
 
 import java.lang.ref.WeakReference;
 import java.util.ConcurrentModificationException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
+import java.util.stream.Collectors;
+
+import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;
 
 @Getter
 public final class WhitelistGui {
@@ -124,6 +131,16 @@ public final class WhitelistGui {
 
     public void onPreviousPageClick(final InventoryClickEvent event) {
 
+    }
+
+    public void fillCurrentPage(final Set<Whitelistable> whitelistable) {
+        if (whitelistable.isEmpty())
+            return;
+        ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(whitelistable.stream()
+                .map(Whitelistable::getUniqueId)
+                .collect(Collectors.toList()));
+        new AddProfileSkullTask(this, profiles, whitelistable.size())
+                .runTaskTimerAsynchronously(plugin, 0, 1L);
     }
 
     private void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {
