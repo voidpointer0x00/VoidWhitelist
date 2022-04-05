@@ -16,6 +16,7 @@ package voidpointer.spigot.voidwhitelist.gui;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.mojang.authlib.GameProfile;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +33,7 @@ import java.util.function.Consumer;
 public final class ProfileSkull {
     @AutowiredLocale private static LocaleLog locale;
 
-    private final Profile profile;
+    @Getter private final Profile profile;
     private final ItemStack skull;
     private final GuiItem guiSkull;
 
@@ -67,7 +68,7 @@ public final class ProfileSkull {
         guiSkull.setAction(consumer);
     }
 
-    public GuiItem toGuiItem() {
+    public GuiItem getGuiItem() {
         return guiSkull;
     }
 

@@ -19,6 +19,7 @@ import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
@@ -31,12 +32,25 @@ class GuiPanes {
 
     @AutowiredLocale private static Locale locale;
     private static StaticPane delimiter;
+    private static ItemStack backgroundItem;
     @Autowired private static WhitelistConfig whitelistConfig;
+
+    public static ItemStack getBackgroundItem() {
+        if (backgroundItem == null) {
+            backgroundItem = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+            ItemMeta meta = backgroundItem.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(" ");
+                backgroundItem.setItemMeta(meta);
+            }
+        }
+        return backgroundItem;
+    }
 
     public static StaticPane getDelimiter() {
         if (delimiter == null) {
             delimiter = new StaticPane(7, 0, 1, 6);
-            delimiter.fillWith(new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+            delimiter.fillWith(getBackgroundItem());
         }
         return delimiter;
     }
@@ -60,8 +74,8 @@ class GuiPanes {
         ProfileSkull disabled = ControlSkulls.getDisabled();
         ProfileSkull current = whitelistConfig.isWhitelistEnabled() ? enabled : disabled;
 
-        whitelistGui.setDisabledButton(disabled.toGuiItem());
-        whitelistGui.setEnabledButton(enabled.toGuiItem());
+        whitelistGui.setDisabledButton(disabled.getGuiItem());
+        whitelistGui.setEnabledButton(enabled.getGuiItem());
 
         forward.setDisplayName("§eNext page");
         back.setDisplayName("§ePrevious page");
@@ -73,9 +87,9 @@ class GuiPanes {
         back.onClick(whitelistGui::onPreviousPageClick);
         forward.onClick(whitelistGui::onNextPageClick);
 
-        controlPane.insertItem(forward.toGuiItem(), FORWARD_INDEX);
-        controlPane.insertItem(back.toGuiItem(), BACK_INDEX);
-        controlPane.insertItem(current.toGuiItem(), STATUS_INDEX);
+        controlPane.insertItem(forward.getGuiItem(), FORWARD_INDEX);
+        controlPane.insertItem(back.getGuiItem(), BACK_INDEX);
+        controlPane.insertItem(current.getGuiItem(), STATUS_INDEX);
         controlPane.flipVertically(true);
 
         return controlPane;

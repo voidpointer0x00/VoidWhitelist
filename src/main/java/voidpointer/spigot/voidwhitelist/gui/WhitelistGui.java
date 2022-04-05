@@ -22,7 +22,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -38,10 +37,10 @@ import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
 
-import java.lang.ref.WeakReference;
 import java.util.ConcurrentModificationException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
 import java.util.stream.Collectors;
@@ -60,8 +59,8 @@ public final class WhitelistGui {
     @AutowiredLocale private static LocaleLog locale;
     private final ChestGui gui;
     private final PaginatedPane whitelistPane;
+    private final ConcurrentHashMap<Profile, ProfileScreen> profileScreens;
     private final OutlinePane controlPane;
-    private WeakReference<HumanEntity> viewer;
     @Setter(PRIVATE)
     private Phaser updatingStatus = new Phaser();
     @Setter(PROTECTED)
@@ -70,9 +69,9 @@ public final class WhitelistGui {
     private GuiItem disabledButton;
 
     public WhitelistGui() {
+        profileScreens = new ConcurrentHashMap<>();
         gui = new ChestGui(6, "§6VoidWhitelist");
         gui.setOnGlobalClick(this::cancelClickIfNotPlayerInventory);
-        gui.setOnClose(this::clearViewer);
         whitelistPane = GuiPanes.createWhitelistPagesPane();
         gui.addPane(whitelistPane);
         gui.addPane(GuiPanes.getDelimiter());
@@ -87,15 +86,14 @@ public final class WhitelistGui {
 
     public void addProfile(final Profile profile) throws ConcurrentModificationException {
         ProfileSkull profileSkull = ProfileSkull.of(profile).setupDisplayInfo();
-        getCurrentPage().addItem(profileSkull.toGuiItem());
-        // TODO: actions on click
+        getCurrentPage().addItem(profileSkull.getGuiItem());
+        ProfileScreen profileScreen = new ProfileScreen(this, profileSkull);
+        profileScreens.put(profile, profileScreen);
+        profileSkull.getGuiItem().setAction(event -> profileScreen.show(event.getWhoClicked()));
     }
 
     public void show(final HumanEntity humanEntity) {
-        if ((viewer != null) && (viewer.get() != null))
-            return;
         gui.show(humanEntity);
-        viewer = new WeakReference<>(humanEntity);
     }
 
     public void update() {
@@ -169,22 +167,18 @@ public final class WhitelistGui {
         return Optional.of(nextPage);
     }
 
-    private boolean isAtLastPage() {
-        return whitelistPane.getPage() == (whitelistPane.getPages() - 1);
-    }
-
-    private @NonNull OutlinePane getCurrentPage() {
-        return (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage()).iterator().next();
-    }
-
-    private void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {
+    void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {
         if (event.getClickedInventory() == null)
             return;
         if (event.getClickedInventory().getType() != InventoryType.PLAYER)
             event.setCancelled(true);
     }
 
-    private void clearViewer(final InventoryCloseEvent inventoryCloseEvent) {
-        viewer = null;
+    private boolean isAtLastPage() {
+        return whitelistPane.getPage() == (whitelistPane.getPages() - 1);
+    }
+
+    private @NonNull OutlinePane getCurrentPage() {
+        return (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage()).iterator().next();
     }
 }
