@@ -159,7 +159,7 @@ public final class WhitelistGui {
             nextPage = GuiPanes.createWhitelistPagePane();
             whitelistPane.addPane(whitelistPane.getPages(), nextPage);
         } else {
-            nextPage = (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage() + 1);
+            nextPage = (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage() + 1).iterator().next();
         }
         whitelistPane.setPage(whitelistPane.getPage() + 1);
         return Optional.of(nextPage);
