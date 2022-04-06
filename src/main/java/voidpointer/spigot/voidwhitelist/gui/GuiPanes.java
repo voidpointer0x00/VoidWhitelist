@@ -14,6 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.gui;
 
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
@@ -93,5 +94,18 @@ class GuiPanes {
         controlPane.flipVertically(true);
 
         return controlPane;
+    }
+
+    public static StaticPane createProfilePane(final WhitelistGui parent, final ProfileSkull profileSkull) {
+        StaticPane mainPane = new StaticPane(9, 3);
+        mainPane.fillWith(GuiPanes.getBackgroundItem());
+        GuiItem profileSkullItem = profileSkull.getGuiItem().copy();
+        profileSkullItem.setAction(event -> {});
+        mainPane.addItem(profileSkullItem, 4, 0);
+        ProfileSkull back = ControlSkulls.getBack();
+        back.setDisplayName("§eBack to whitelist");
+        back.getGuiItem().setAction(event -> parent.show(event.getWhoClicked()));
+        mainPane.addItem(back.getGuiItem(), 8, 2);
+        return mainPane;
     }
 }
