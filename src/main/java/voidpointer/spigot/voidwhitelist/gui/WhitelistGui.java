@@ -37,6 +37,7 @@ import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
 
+import java.lang.ref.WeakReference;
 import java.util.ConcurrentModificationException;
 import java.util.Optional;
 import java.util.Set;
@@ -63,6 +64,7 @@ public final class WhitelistGui {
     private final OutlinePane controlPane;
     @Setter(PRIVATE)
     private Phaser updatingStatus = new Phaser();
+    private WeakReference<AddProfileSkullTask> loadingTaskRef;
     @Setter(PROTECTED)
     private GuiItem enabledButton;
     @Setter(PROTECTED)
@@ -123,6 +125,8 @@ public final class WhitelistGui {
     }
 
     public void onNextPageClick(final InventoryClickEvent event) {
+        if (isLoading())
+            return;
         Optional<OutlinePane> nextPage = setToNextPageAndGet();
         if (!nextPage.isPresent())
             return;
@@ -133,6 +137,8 @@ public final class WhitelistGui {
     }
 
     public void onPreviousPageClick(final InventoryClickEvent event) {
+        if (isLoading())
+            return;
         if (whitelistPane.getPage() == 0)
             return;
         whitelistPane.setPage(whitelistPane.getPage() - 1);
@@ -147,8 +153,9 @@ public final class WhitelistGui {
         ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(whitelistable.stream()
                 .map(Whitelistable::getUniqueId)
                 .collect(Collectors.toList()));
-        new AddProfileSkullTask(this, profiles, whitelistable.size())
-                .runTaskTimerAsynchronously(plugin, 0, 1L);
+        AddProfileSkullTask loadingTask = new AddProfileSkullTask(this, profiles, whitelistable.size());
+        loadingTask.runTaskTimerAsynchronously(plugin, 0, 1L);
+        loadingTaskRef = new WeakReference<>(loadingTask);
     }
 
     public Optional<OutlinePane> setToNextPageAndGet() {
@@ -172,6 +179,13 @@ public final class WhitelistGui {
             return;
         if (event.getClickedInventory().getType() != InventoryType.PLAYER)
             event.setCancelled(true);
+    }
+
+    private boolean isLoading() {
+        // TODO: drop Java 8 support and use Java 16 API after release
+        //  loadingTaskRef.refersTo(null) instead of (null != loadingTask)
+        AddProfileSkullTask loadingTask = loadingTaskRef.get();
+        return (null != loadingTask) && loadingTask.isLoading();
     }
 
     private boolean isAtLastPage() {
