@@ -46,7 +46,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
 import java.util.stream.Collectors;
 
-import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;
 
@@ -62,13 +61,13 @@ public final class WhitelistGui {
     private final PaginatedPane whitelistPane;
     private final ConcurrentHashMap<Profile, ProfileScreen> profileScreens;
     private final OutlinePane controlPane;
-    @Setter(PRIVATE)
-    private Phaser updatingStatus = new Phaser();
+    private final Phaser updatingStatus = new Phaser();
     private WeakReference<AddProfileSkullTask> loadingTaskRef;
     @Setter(PROTECTED)
     private GuiItem enabledButton;
     @Setter(PROTECTED)
     private GuiItem disabledButton;
+    // TODO: add a refresh button
 
     public WhitelistGui() {
         profileScreens = new ConcurrentHashMap<>();
@@ -92,6 +91,10 @@ public final class WhitelistGui {
         ProfileScreen profileScreen = new ProfileScreen(this, profileSkull);
         profileScreens.put(profile, profileScreen);
         profileSkull.getGuiItem().setAction(event -> profileScreen.show(event.getWhoClicked()));
+    }
+
+    public void removeProfile(final GuiItem profileItem) {
+        getCurrentPage().removeItem(profileItem);
     }
 
     public void show(final HumanEntity humanEntity) {

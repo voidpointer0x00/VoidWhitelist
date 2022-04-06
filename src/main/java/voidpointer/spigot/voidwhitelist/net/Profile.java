@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import voidpointer.spigot.framework.di.Autowired;
@@ -38,14 +39,18 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @RequiredArgsConstructor(access=AccessLevel.PACKAGE)
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
+@ToString(onlyExplicitlyIncluded=true)
 public final class Profile {
     @AutowiredLocale private static LocaleLog log;
     @Autowired(mapId="plugin")
     private static Plugin plugin;
 
     @EqualsAndHashCode.Include
+    @ToString.Include
     private final UUID uuid;
-    @Nullable private String name;
+    @Nullable
+    @ToString.Include
+    private String name;
     private Optional<String> texturesBase64 = Optional.empty();
 
     public GameProfile toGameProfile() {
