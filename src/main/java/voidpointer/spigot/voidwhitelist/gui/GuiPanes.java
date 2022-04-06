@@ -96,16 +96,34 @@ class GuiPanes {
         return controlPane;
     }
 
-    public static StaticPane createProfilePane(final WhitelistGui parent, final ProfileSkull profileSkull) {
-        StaticPane mainPane = new StaticPane(9, 3);
+    public static StaticPane createProfilePane(final ProfileScreen profileScreen) {
+        StaticPane mainPane = new StaticPane(9, 4);
         mainPane.fillWith(GuiPanes.getBackgroundItem());
-        GuiItem profileSkullItem = profileSkull.getGuiItem().copy();
+
+        GuiItem profileSkullItem = profileScreen.getProfileSkull().getGuiItem().copy();
         profileSkullItem.setAction(event -> {});
-        mainPane.addItem(profileSkullItem, 4, 0);
+
         ProfileSkull back = ControlSkulls.getBack();
         back.setDisplayName("§eBack to whitelist");
-        back.getGuiItem().setAction(event -> parent.show(event.getWhoClicked()));
-        mainPane.addItem(back.getGuiItem(), 8, 2);
+        back.getGuiItem().setAction(profileScreen::back);
+
+        GuiItem removeButton = createKickButton();
+        removeButton.setAction(profileScreen::onRemoveButtonClick);
+        profileScreen.setRemoveButton(removeButton);
+
+        mainPane.addItem(profileSkullItem, 4, 1);
+        mainPane.addItem(back.getGuiItem(), 8, 3);
+        mainPane.addItem(removeButton, 5, 2);
+
         return mainPane;
+    }
+
+    private static GuiItem createKickButton() {
+        ItemStack removeButtonItem = new ItemStack(Material.BARRIER);
+        ItemMeta meta = removeButtonItem.getItemMeta();
+        assert meta != null : "ItemMeta for \"remove\" button item cannot be null";
+        meta.setDisplayName("§cRemove from the whitelist");
+        removeButtonItem.setItemMeta(meta);
+        return new GuiItem(removeButtonItem);
     }
 }
