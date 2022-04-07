@@ -105,8 +105,7 @@ public final class WhitelistGui extends AbstractGui {
         if (!nextPage.isPresent())
             return;
         int capacity = availableProfileSlots();
-        int offset = whitelistPane.getPage() * nextPage.get().getHeight() * nextPage.get().getLength();
-        offset += (nextPage.get().getHeight() * nextPage.get().getLength() - capacity);
+        int offset = getCurrentOffset();
         getWhitelistService().findAll(offset, capacity).thenAcceptAsync(this::fillCurrentPage);
     }
 
@@ -146,6 +145,14 @@ public final class WhitelistGui extends AbstractGui {
         }
         whitelistPane.setPage(whitelistPane.getPage() + 1);
         return Optional.of(nextPage);
+    }
+
+    private int getCurrentOffset() {
+        Pane currentPage = getCurrentPage();
+        int capacity = availableProfileSlots();
+        int offset = whitelistPane.getPage() * currentPage.getHeight() * currentPage.getLength();
+        offset += (currentPage.getHeight() * currentPage.getLength() - capacity);
+        return offset;
     }
 
     private boolean isLoading() {
