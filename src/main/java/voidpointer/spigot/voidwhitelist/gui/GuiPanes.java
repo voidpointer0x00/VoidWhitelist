@@ -96,7 +96,6 @@ class GuiPanes {
         // but framework devs decided to use ArrayList, so although it
         // defines capacity, it does not preallocate an array with a given
         // capacity.
-        // TODO: create a PR with preallocated GuiItem->{AIR, invisible} blocks
         controlPane.addItem(forward.getGuiItem());
         controlPane.addItem(back.getGuiItem());
         controlPane.addItem(refresh.getGuiItem());
