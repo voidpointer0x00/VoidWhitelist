@@ -25,6 +25,7 @@ final class ControlSkulls {
     private static final String cyanBackBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTE0NTljZmM0NGNjNTFkZGYyNzk4ODU5NmQyZGU4YWM4NTU2ZTkzZDc5NDYyMTljZjY0YzkwYzhjMDVmY2EifX19";
     private static final String disabledBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2NjNDcwYWUyNjMxZWZkZmFmOTY3YjM2OTQxM2JjMjQ1MWNkN2EzOTQ2NWRhNzgzNmE2YzdhMTRlODc3In19fQ==";
     private static final String enabledBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzI5NmQzZTE0OTNmYTMyZDgyN2EzNjM1YTY4M2U1YmRlZDY0OTE0ZDc1ZTczYWFjZGNjYmE0NmQ4ZmQ5MCJ9fX0=";
+    private static final String whiteRefreshBase64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDc1ZDNkYjAzZGMyMWU1NjNiMDM0MTk3ZGE0MzViNzllY2ZlZjRiOGUyZWNkYjczMGUzNzBjMzE2NjI5ZDM2ZiJ9fX0=";
 
     public static ProfileSkull getForward() {
         return skullOf(cyanForwardBase64);
@@ -40,6 +41,10 @@ final class ControlSkulls {
 
     public static ProfileSkull getDisabled() {
         return skullOf(disabledBase64);
+    }
+
+    public static ProfileSkull getRefresh() {
+        return skullOf(whiteRefreshBase64);
     }
 
     private static ProfileSkull skullOf(final String base64) {

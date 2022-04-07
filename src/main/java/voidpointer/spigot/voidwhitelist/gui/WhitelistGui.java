@@ -49,7 +49,6 @@ public final class WhitelistGui extends AbstractGui {
     private GuiItem enabledButton;
     @Setter(PROTECTED)
     private GuiItem disabledButton;
-    // TODO: add a refresh button
 
     public WhitelistGui() {
         super(new ChestGui(6, "§6VoidWhitelist"));
@@ -76,6 +75,10 @@ public final class WhitelistGui extends AbstractGui {
 
     public void removeProfile(final GuiItem profileItem) {
         getCurrentPage().removeItem(profileItem);
+    }
+
+    public void onRefresh(final InventoryClickEvent event) {
+
     }
 
     public void onStatusClick(final InventoryClickEvent event) {

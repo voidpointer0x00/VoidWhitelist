@@ -29,7 +29,8 @@ import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 class GuiPanes {
     public static final int FORWARD_INDEX = 0;
     public static final int BACK_INDEX = 1;
-    public static final int STATUS_INDEX = 2;
+    public static final int REFRESH_INDEX = 2;
+    public static final int STATUS_INDEX = 3;
 
     @AutowiredLocale private static Locale locale;
     private static StaticPane delimiter;
@@ -74,6 +75,7 @@ class GuiPanes {
         ProfileSkull enabled = ControlSkulls.getEnabled();
         ProfileSkull disabled = ControlSkulls.getDisabled();
         ProfileSkull current = whitelistConfig.isWhitelistEnabled() ? enabled : disabled;
+        ProfileSkull refresh = ControlSkulls.getRefresh();
 
         whitelistGui.setDisabledButton(disabled.getGuiItem());
         whitelistGui.setEnabledButton(enabled.getGuiItem());
@@ -82,15 +84,18 @@ class GuiPanes {
         back.setDisplayName("§ePrevious page");
         enabled.setDisplayName("§aEnabled");
         disabled.setDisplayName("§cDisabled");
+        refresh.setDisplayName("§eRefresh");
 
         enabled.onClick(whitelistGui::onStatusClick);
         disabled.onClick(whitelistGui::onStatusClick);
         back.onClick(whitelistGui::onPreviousPageClick);
         forward.onClick(whitelistGui::onNextPageClick);
+        refresh.onClick(whitelistGui::onRefresh);
 
         controlPane.insertItem(forward.getGuiItem(), FORWARD_INDEX);
         controlPane.insertItem(back.getGuiItem(), BACK_INDEX);
         controlPane.insertItem(current.getGuiItem(), STATUS_INDEX);
+        controlPane.insertItem(refresh.getGuiItem(), REFRESH_INDEX);
         controlPane.flipVertically(true);
 
         return controlPane;
