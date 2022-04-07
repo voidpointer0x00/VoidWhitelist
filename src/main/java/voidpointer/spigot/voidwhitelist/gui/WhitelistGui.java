@@ -70,7 +70,10 @@ public final class WhitelistGui extends AbstractGui {
         getCurrentPage().addItem(profileSkull.getGuiItem());
         ProfileScreen profileScreen = new ProfileScreen(this, profileSkull);
         profileScreens.put(profile, profileScreen);
-        profileSkull.getGuiItem().setAction(event -> profileScreen.show(event.getWhoClicked()));
+        profileSkull.getGuiItem().setAction(event -> {
+            if (!isLoading())
+                profileScreen.show(event.getWhoClicked());
+        });
     }
 
     public void removeProfile(final ProfileSkull profileSkull) {
