@@ -18,49 +18,28 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
-import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.LocaleLog;
-import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.net.Profile;
-import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.concurrent.Phaser;
 
 @Getter
-final class ProfileScreen {
-    @Autowired(mapId="plugin")
-    private static Plugin plugin;
-    @Autowired private static WhitelistService whitelistService;
-    @Autowired private static EventManager eventManager;
-    @AutowiredLocale private static LocaleLog log;
-    private final Phaser updatingStatus = new Phaser();
-
+final class ProfileScreen extends AbstractGui {
     private final WhitelistGui parent;
     private final ProfileSkull profileSkull;
-    private final ChestGui screen;
     @Setter private GuiItem removeButton;
 
     ProfileScreen(final WhitelistGui parent, final ProfileSkull profileSkull) {
+        super(new ChestGui(4, "§6" + (profileSkull.getProfile().getName() != null
+                ? profileSkull.getProfile().getName()
+                : profileSkull.getProfile().getUuid().toString())));
         this.parent = parent;
         this.profileSkull = profileSkull;
-        screen = new ChestGui(4, "§6" + (profileSkull.getProfile().getName() != null
-                ? profileSkull.getProfile().getName()
-                : profileSkull.getProfile().getUuid().toString()));
-        screen.setOnGlobalClick(parent::cancelClickIfNotPlayerInventory);
-        screen.addPane(GuiPanes.createProfilePane(this));
-    }
-
-    public void show(final HumanEntity humanEntity) {
-        screen.show(humanEntity);
+        addPane(GuiPanes.createProfilePane(this));
     }
 
     public void back(final InventoryClickEvent event) {
@@ -69,14 +48,14 @@ final class ProfileScreen {
 
     public void onRemoveButtonClick(final InventoryClickEvent event) {
         final Profile profile = profileSkull.getProfile();
-        whitelistService.find(profile.getUuid())
+        getWhitelistService().find(profile.getUuid())
                 .exceptionally(this::onFindException)
                 .thenAcceptAsync(whitelistableOptional -> {
                     if (!whitelistableOptional.isPresent()) {
                         onNotFound();
                         return;
                     }
-                    whitelistService.remove(whitelistableOptional.get())
+                    getWhitelistService().remove(whitelistableOptional.get())
                             .thenAccept(isRemoved -> {
                                 if (isRemoved)
                                     onRemoved(whitelistableOptional.get());
@@ -88,9 +67,9 @@ final class ProfileScreen {
     }
 
     private void onRemoved(final Whitelistable whitelistable) {
-        eventManager.callAsyncEvent(new WhitelistRemovedEvent(whitelistable));
+        getEventManager().callAsyncEvent(new WhitelistRemovedEvent(whitelistable));
         parent.removeProfile(profileSkull.getGuiItem());
-        plugin.getServer().getScheduler().runTask(plugin, () -> parent.show(screen.getViewers().get(0)));
+        getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> getViewer().ifPresent(parent::show));
         // TODO: add WhitelistGui::refresh() method - public version of fillCurrentPage
     }
 
@@ -118,19 +97,8 @@ final class ProfileScreen {
     }
 
     private Void onRemoveException(final Throwable throwable) {
-        log.warn("Couldn't remove "+profileSkull.getProfile()+" from the whitelist", throwable);
+        getLocaleLog().warn("Couldn't remove "+profileSkull.getProfile()+" from the whitelist", throwable);
         onNotRemoved();
         return null;
-    }
-
-    public void update() {
-        // TODO: extract to an abstract VoidGui (?) class
-        if (updatingStatus.getRegisteredParties() > 0)
-            updatingStatus.arriveAndAwaitAdvance();
-        updatingStatus.register();
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
-            screen.update();
-            updatingStatus.arriveAndDeregister();
-        });
     }
 }

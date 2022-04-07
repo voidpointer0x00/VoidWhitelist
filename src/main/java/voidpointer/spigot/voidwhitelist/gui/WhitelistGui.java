@@ -20,21 +20,12 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.LocaleLog;
-import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
-import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
 import voidpointer.spigot.voidwhitelist.net.Profile;
-import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
 
 import java.lang.ref.WeakReference;
@@ -43,25 +34,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Phaser;
 import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PROTECTED;
 import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;
 
 @Getter
-public final class WhitelistGui {
-    @Autowired(mapId="plugin")
-    private static Plugin plugin;
-    @Autowired private static EventManager eventManager;
-    @Autowired private static WhitelistConfig whitelistConfig;
-    @Autowired private static WhitelistService whitelistService;
-    @AutowiredLocale private static LocaleLog locale;
-    private final ChestGui gui;
+public final class WhitelistGui extends AbstractGui {
     private final PaginatedPane whitelistPane;
     private final ConcurrentHashMap<Profile, ProfileScreen> profileScreens;
     private final OutlinePane controlPane;
-    private final Phaser updatingStatus = new Phaser();
     private WeakReference<AddProfileSkullTask> loadingTaskRef;
     @Setter(PROTECTED)
     private GuiItem enabledButton;
@@ -70,14 +52,13 @@ public final class WhitelistGui {
     // TODO: add a refresh button
 
     public WhitelistGui() {
+        super(new ChestGui(6, "§6VoidWhitelist"));
         profileScreens = new ConcurrentHashMap<>();
-        gui = new ChestGui(6, "§6VoidWhitelist");
-        gui.setOnGlobalClick(this::cancelClickIfNotPlayerInventory);
         whitelistPane = GuiPanes.createWhitelistPagesPane();
-        gui.addPane(whitelistPane);
-        gui.addPane(GuiPanes.getDelimiter());
+        addPane(whitelistPane);
+        addPane(GuiPanes.getDelimiter());
         controlPane = GuiPanes.createControlPane(this);
-        gui.addPane(controlPane);
+        addPane(controlPane);
     }
 
     public int availableProfileSlots() {
@@ -97,30 +78,16 @@ public final class WhitelistGui {
         getCurrentPage().removeItem(profileItem);
     }
 
-    public void show(final HumanEntity humanEntity) {
-        gui.show(humanEntity);
-    }
-
-    public void update() {
-        if (updatingStatus.getRegisteredParties() > 0)
-            updatingStatus.arriveAndAwaitAdvance();
-        updatingStatus.register();
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
-            gui.update();
-            updatingStatus.arriveAndDeregister();
-        });
-    }
-
     public void onStatusClick(final InventoryClickEvent event) {
         assert (enabledButton != null) && (disabledButton != null) : "Enable/disable buttons must be set";
-        if (whitelistConfig.isWhitelistEnabled()) {
-            whitelistConfig.disableWhitelist();
-            eventManager.callAsyncEvent(new WhitelistDisabledEvent());
+        if (getWhitelistConfig().isWhitelistEnabled()) {
+            getWhitelistConfig().disableWhitelist();
+            getEventManager().callAsyncEvent(new WhitelistDisabledEvent());
             controlPane.removeItem(enabledButton);
             controlPane.insertItem(disabledButton, GuiPanes.STATUS_INDEX);
         } else {
-            whitelistConfig.enableWhitelist();
-            eventManager.callAsyncEvent(new WhitelistEnabledEvent());
+            getWhitelistConfig().enableWhitelist();
+            getEventManager().callAsyncEvent(new WhitelistEnabledEvent());
             controlPane.removeItem(disabledButton);
             controlPane.insertItem(enabledButton, GuiPanes.STATUS_INDEX);
         }
@@ -136,7 +103,7 @@ public final class WhitelistGui {
         int capacity = availableProfileSlots();
         int offset = whitelistPane.getPage() * nextPage.get().getHeight() * nextPage.get().getLength();
         offset += (nextPage.get().getHeight() * nextPage.get().getLength() - capacity);
-        whitelistService.findAll(offset, capacity).thenAcceptAsync(this::fillCurrentPage);
+        getWhitelistService().findAll(offset, capacity).thenAcceptAsync(this::fillCurrentPage);
     }
 
     public void onPreviousPageClick(final InventoryClickEvent event) {
@@ -157,7 +124,7 @@ public final class WhitelistGui {
                 .map(Whitelistable::getUniqueId)
                 .collect(Collectors.toList()));
         AddProfileSkullTask loadingTask = new AddProfileSkullTask(this, profiles, whitelistable.size());
-        loadingTask.runTaskTimerAsynchronously(plugin, 0, 1L);
+        loadingTask.runTaskTimerAsynchronously(getPlugin(), 0, 1L);
         loadingTaskRef = new WeakReference<>(loadingTask);
     }
 
@@ -175,13 +142,6 @@ public final class WhitelistGui {
         }
         whitelistPane.setPage(whitelistPane.getPage() + 1);
         return Optional.of(nextPage);
-    }
-
-    void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {
-        if (event.getClickedInventory() == null)
-            return;
-        if (event.getClickedInventory().getType() != InventoryType.PLAYER)
-            event.setCancelled(true);
     }
 
     private boolean isLoading() {

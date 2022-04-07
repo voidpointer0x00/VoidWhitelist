@@ -62,12 +62,12 @@ public final class AddProfileSkullTask extends BukkitRunnable {
     }
 
     private void updateLoading() {
-        gui.getGui().setTitle(String.format("§6VoidWhitelist§8§o Loading %d%%",
+        gui.getScreen().setTitle(String.format("§6VoidWhitelist§8§o Loading %d%%",
                 Math.round((profilesRequested - countDownLatch.getCount()) / (double) profilesRequested * 100)));
     }
 
     private void stopLoading() {
-        gui.getGui().setTitle("§6VoidWhitelist");
+        gui.getScreen().setTitle("§6VoidWhitelist");
         gui.update();
     }
 }
