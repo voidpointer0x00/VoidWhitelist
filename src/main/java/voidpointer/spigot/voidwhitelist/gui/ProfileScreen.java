@@ -26,6 +26,8 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.event.EventManager;
+import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
@@ -38,6 +40,7 @@ final class ProfileScreen {
     @Autowired(mapId="plugin")
     private static Plugin plugin;
     @Autowired private static WhitelistService whitelistService;
+    @Autowired private static EventManager eventManager;
     @AutowiredLocale private static LocaleLog log;
     private final Phaser updatingStatus = new Phaser();
 
@@ -76,7 +79,7 @@ final class ProfileScreen {
                     whitelistService.remove(whitelistableOptional.get())
                             .thenAccept(isRemoved -> {
                                 if (isRemoved)
-                                    onRemoved();
+                                    onRemoved(whitelistableOptional.get());
                                 else
                                     onNotRemoved();
                             })
@@ -84,7 +87,8 @@ final class ProfileScreen {
                 });
     }
 
-    private void onRemoved() {
+    private void onRemoved(final Whitelistable whitelistable) {
+        eventManager.callAsyncEvent(new WhitelistRemovedEvent(whitelistable));
         parent.removeProfile(profileSkull.getGuiItem());
         plugin.getServer().getScheduler().runTask(plugin, () -> parent.show(screen.getViewers().get(0)));
         // TODO: add WhitelistGui::refresh() method - public version of fillCurrentPage
