@@ -89,9 +89,6 @@ public final class WhitelistGui extends AbstractGui {
         getWhitelistService().findAll(getCurrentOffset(), availableSlots).thenAcceptAsync(whitelistableSet -> {
             if (whitelistableSet.isEmpty())
                 return;
-            // clear next pages
-            for (int page = whitelistPane.getPages(); --page > whitelistPane.getPage();)
-                whitelistPane.deletePage(page);
             fillCurrentPage(whitelistableSet);
         });
     }
@@ -159,6 +156,11 @@ public final class WhitelistGui extends AbstractGui {
         }
         whitelistPane.setPage(whitelistPane.getPage() + 1);
         return Optional.of(nextPage);
+    }
+
+    private void clearNextPages() {
+        for (int page = whitelistPane.getPages(); --page > whitelistPane.getPage();)
+            whitelistPane.deletePage(page);
     }
 
     private int getCurrentOffset() {
