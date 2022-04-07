@@ -67,7 +67,7 @@ final class ProfileScreen extends AbstractGui {
     }
 
     private void onRemoved(final Whitelistable whitelistable) {
-        getEventManager().callAsyncEvent(new WhitelistRemovedEvent(whitelistable));
+        getEventManager().callEvent(new WhitelistRemovedEvent(whitelistable));
         parent.removeProfile(profileSkull);
         getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> getViewer().ifPresent(parent::show));
         // TODO: add WhitelistGui::refresh() method - public version of fillCurrentPage
