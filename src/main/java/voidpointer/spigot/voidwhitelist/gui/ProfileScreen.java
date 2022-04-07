@@ -186,7 +186,9 @@ final class ProfileScreen extends AbstractGui {
     }
 
     private void displayInfo(final Whitelistable whitelistable) {
-        profilePane.addItem(GuiPanes.createInfoButton(whitelistable), 4, 2);
+        GuiItem infoButton = GuiPanes.createInfoButton(whitelistable);
+        infoButton.setAction(this::onRequestInfoButtonClick);
+        profilePane.addItem(infoButton, 4, 2);
     }
 
     private void infoNotFound() {
