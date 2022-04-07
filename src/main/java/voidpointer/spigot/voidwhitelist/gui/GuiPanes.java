@@ -74,7 +74,7 @@ class GuiPanes {
         ProfileSkull back = ControlSkulls.getBack();
         ProfileSkull enabled = ControlSkulls.getEnabled();
         ProfileSkull disabled = ControlSkulls.getDisabled();
-        ProfileSkull current = whitelistConfig.isWhitelistEnabled() ? enabled : disabled;
+        ProfileSkull currentStatus = whitelistConfig.isWhitelistEnabled() ? enabled : disabled;
         ProfileSkull refresh = ControlSkulls.getRefresh();
 
         whitelistGui.setDisabledButton(disabled.getGuiItem());
@@ -92,10 +92,15 @@ class GuiPanes {
         forward.onClick(whitelistGui::onNextPageClick);
         refresh.onClick(whitelistGui::onRefresh);
 
-        controlPane.insertItem(forward.getGuiItem(), FORWARD_INDEX);
-        controlPane.insertItem(back.getGuiItem(), BACK_INDEX);
-        controlPane.insertItem(current.getGuiItem(), STATUS_INDEX);
-        controlPane.insertItem(refresh.getGuiItem(), REFRESH_INDEX);
+        // order is important. I'd rather use insertItem(item, index)
+        // but framework devs decided to use ArrayList, so although it
+        // defines capacity, it does not preallocate an array with a given
+        // capacity.
+        // TODO: create a PR with preallocated GuiItem->{AIR, invisible} blocks
+        controlPane.addItem(forward.getGuiItem());
+        controlPane.addItem(back.getGuiItem());
+        controlPane.addItem(refresh.getGuiItem());
+        controlPane.addItem(currentStatus.getGuiItem());
         controlPane.flipVertically(true);
 
         return controlPane;
