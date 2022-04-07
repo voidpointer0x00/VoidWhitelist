@@ -92,7 +92,7 @@ final class ProfileScreen {
 
     private void onNotRemoved() {
         ItemMeta removeButtonMeta = removeButton.getItem().getItemMeta();
-        if (removeButtonMeta == null) {
+        if (removeButtonMeta != null) {
             removeButtonMeta.setDisplayName("§cRemove operation failed");
             removeButtonMeta.setLore(Arrays.asList("§6Check console log info, if you have access"));
         }
