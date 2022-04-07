@@ -24,7 +24,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
+
+import java.util.Arrays;
+
+import static org.bukkit.Material.BOOK;
+import static org.bukkit.Material.ENCHANTED_BOOK;
+import static org.bukkit.Material.WRITABLE_BOOK;
 
 class GuiPanes {
     public static final int FORWARD_INDEX = 0;
@@ -112,20 +119,57 @@ class GuiPanes {
         ProfileSkull back = ControlSkulls.getBack();
         GuiItem profileSkullItem = profileScreen.getProfileSkull().getGuiItem().copy();
         GuiItem removeButton = createKickButton();
+        GuiItem requestInfoButton = createRequestInfoButton();
+        GuiItem editButton = createEditButton();
 
         back.setDisplayName("§eBack to whitelist");
 
-        profileSkullItem.setAction(event -> {});
         back.getGuiItem().setAction(profileScreen::back);
+        profileSkullItem.setAction(event -> {});
         removeButton.setAction(profileScreen::onRemoveButtonClick);
+        requestInfoButton.setAction(profileScreen::onRequestInfoButtonClick);
+        editButton.setAction(profileScreen::onEditButtonClick);
 
         profileScreen.setRemoveButton(removeButton);
+        profileScreen.setRequestInfoButton(requestInfoButton);
+        profileScreen.setEditButton(editButton);
 
         mainPane.addItem(profileSkullItem, 4, 1);
         mainPane.addItem(back.getGuiItem(), 8, 3);
         mainPane.addItem(removeButton, 5, 2);
+        mainPane.addItem(requestInfoButton, 4, 2);
+        mainPane.addItem(editButton, 3, 2);
 
         return mainPane;
+    }
+
+    private static GuiItem createEditButton() {
+        ItemStack editButtonItem = new ItemStack(WRITABLE_BOOK);
+        ItemMeta meta = editButtonItem.getItemMeta();
+        assert meta != null : "ItemMeta for \"edit\" button item cannot be null";
+        meta.setDisplayName("§eEdit expire time");
+        editButtonItem.setItemMeta(meta);
+        return new GuiItem(editButtonItem);
+    }
+
+    public static GuiItem createInfoButton(final Whitelistable whitelistable) {
+        ItemStack infoButtonItem = new ItemStack(ENCHANTED_BOOK);
+        ItemMeta meta = infoButtonItem.getItemMeta();
+        assert meta != null : "ItemMeta for \"info\" button item cannot be null";
+        meta.setDisplayName("§eDetails");
+        meta.setLore(Arrays.asList("§eExpires at: §d" + whitelistable.getExpiresAt().toString(),
+                "§eAllowed to join: &6" + whitelistable.isAllowedToJoin()));
+        infoButtonItem.setItemMeta(meta);
+        return new GuiItem(infoButtonItem);
+    }
+
+    private static GuiItem createRequestInfoButton() {
+        ItemStack requestInfoButtonItem = new ItemStack(BOOK);
+        ItemMeta meta = requestInfoButtonItem.getItemMeta();
+        assert meta != null : "ItemMeta for \"requestInfo\" button item cannot be null";
+        meta.setDisplayName("§eMore info");
+        requestInfoButtonItem.setItemMeta(meta);
+        return new GuiItem(requestInfoButtonItem);
     }
 
     private static GuiItem createKickButton() {

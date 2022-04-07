@@ -32,6 +32,9 @@ final class ProfileScreen extends AbstractGui {
     private final WhitelistGui parent;
     private final ProfileSkull profileSkull;
     @Setter private GuiItem removeButton;
+    @Setter private GuiItem requestInfoButton;
+    @Setter private GuiItem editButton;
+    private GuiItem infoButton;
 
     ProfileScreen(final WhitelistGui parent, final ProfileSkull profileSkull) {
         super(new ChestGui(4, "§6" + (profileSkull.getProfile().getName() != null
@@ -100,5 +103,13 @@ final class ProfileScreen extends AbstractGui {
         getLocaleLog().warn("Couldn't remove "+profileSkull.getProfile()+" from the whitelist", throwable);
         onNotRemoved();
         return null;
+    }
+
+    public void onRequestInfoButtonClick(final InventoryClickEvent event) {
+
+    }
+
+    public void onEditButtonClick(final InventoryClickEvent event) {
+
     }
 }
