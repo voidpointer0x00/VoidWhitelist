@@ -109,15 +109,16 @@ class GuiPanes {
         StaticPane mainPane = new StaticPane(9, 4);
         mainPane.fillWith(GuiPanes.getBackgroundItem());
 
-        GuiItem profileSkullItem = profileScreen.getProfileSkull().getGuiItem().copy();
-        profileSkullItem.setAction(event -> {});
-
         ProfileSkull back = ControlSkulls.getBack();
-        back.setDisplayName("§eBack to whitelist");
-        back.getGuiItem().setAction(profileScreen::back);
-
+        GuiItem profileSkullItem = profileScreen.getProfileSkull().getGuiItem().copy();
         GuiItem removeButton = createKickButton();
+
+        back.setDisplayName("§eBack to whitelist");
+
+        profileSkullItem.setAction(event -> {});
+        back.getGuiItem().setAction(profileScreen::back);
         removeButton.setAction(profileScreen::onRemoveButtonClick);
+
         profileScreen.setRemoveButton(removeButton);
 
         mainPane.addItem(profileSkullItem, 4, 1);
