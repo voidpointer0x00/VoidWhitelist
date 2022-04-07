@@ -154,6 +154,8 @@ public final class WhitelistGui extends AbstractGui {
             whitelistPane.addPane(whitelistPane.getPages(), nextPage);
         } else {
             nextPage = (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage() + 1).iterator().next();
+            if (nextPage.getItems().isEmpty())
+                return Optional.of(getCurrentPage());
         }
         whitelistPane.setPage(whitelistPane.getPage() + 1);
         return Optional.of(nextPage);
