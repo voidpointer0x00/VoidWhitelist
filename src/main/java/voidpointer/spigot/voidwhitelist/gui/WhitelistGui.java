@@ -18,6 +18,7 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.Pane;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -82,7 +83,17 @@ public final class WhitelistGui extends AbstractGui {
     }
 
     public void onRefresh(final InventoryClickEvent event) {
-
+        final int availableSlots = availableProfileSlots();
+        if (availableSlots == 0)
+            return;
+        getWhitelistService().findAll(getCurrentOffset(), availableSlots).thenAcceptAsync(whitelistableSet -> {
+            if (whitelistableSet.isEmpty())
+                return;
+            // clear next pages
+            for (int page = whitelistPane.getPages(); --page > whitelistPane.getPage();)
+                whitelistPane.deletePage(page);
+            fillCurrentPage(whitelistableSet);
+        });
     }
 
     public void onStatusClick(final InventoryClickEvent event) {
