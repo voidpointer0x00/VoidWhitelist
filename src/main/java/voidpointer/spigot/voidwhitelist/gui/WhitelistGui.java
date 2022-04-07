@@ -73,8 +73,9 @@ public final class WhitelistGui extends AbstractGui {
         profileSkull.getGuiItem().setAction(event -> profileScreen.show(event.getWhoClicked()));
     }
 
-    public void removeProfile(final GuiItem profileItem) {
-        getCurrentPage().removeItem(profileItem);
+    public void removeProfile(final ProfileSkull profileSkull) {
+        profileScreens.remove(profileSkull.getProfile());
+        getCurrentPage().removeItem(profileSkull.getGuiItem());
     }
 
     public void onRefresh(final InventoryClickEvent event) {
