@@ -134,6 +134,7 @@ public final class WhitelistGui extends AbstractGui {
             update();
             return;
         }
+        clearNextPages();
         ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(whitelistable.stream()
                 .map(Whitelistable::getUniqueId)
                 .collect(Collectors.toList()));
