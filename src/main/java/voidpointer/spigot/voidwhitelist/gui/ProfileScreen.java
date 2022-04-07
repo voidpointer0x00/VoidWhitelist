@@ -16,6 +16,7 @@ package voidpointer.spigot.voidwhitelist.gui;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -31,6 +32,7 @@ import java.util.Optional;
 final class ProfileScreen extends AbstractGui {
     private final WhitelistGui parent;
     private final ProfileSkull profileSkull;
+    @Setter private StaticPane profilePane;
     @Setter private GuiItem removeButton;
     @Setter private GuiItem requestInfoButton;
     @Setter private GuiItem editButton;
@@ -52,10 +54,10 @@ final class ProfileScreen extends AbstractGui {
     public void onRemoveButtonClick(final InventoryClickEvent event) {
         final Profile profile = profileSkull.getProfile();
         getWhitelistService().find(profile.getUuid())
-                .exceptionally(this::onFindException)
+                .exceptionally(this::onRemoveFindException)
                 .thenAcceptAsync(whitelistableOptional -> {
                     if (!whitelistableOptional.isPresent()) {
-                        onNotFound();
+                        onRemoveNotFound();
                         return;
                     }
                     getWhitelistService().remove(whitelistableOptional.get())
@@ -86,7 +88,53 @@ final class ProfileScreen extends AbstractGui {
         update();
     }
 
-    private void onNotFound() {
+    public void onRequestInfoButtonClick(final InventoryClickEvent event) {
+        getWhitelistService().find(profileSkull.getProfile().getUuid())
+                .exceptionally(this::onRequestInfoFindException)
+                .thenAcceptAsync(whitelistable -> {
+                    if (whitelistable.isPresent()) /* TODO: Java 1.9 #ifPresetOrElse() */
+                        displayInfo(whitelistable.get());
+                    else
+                        infoNotFound();
+                }).exceptionally(this::onDisplayInfoException);
+        update();
+    }
+
+    public void onEditButtonClick(final InventoryClickEvent event) {
+
+    }
+
+    private void displayInfo(final Whitelistable whitelistable) {
+        profilePane.addItem(GuiPanes.createInfoButton(whitelistable), 4, 2);
+    }
+
+    private void infoNotFound() {
+        ItemMeta meta = requestInfoButton.getItem().getItemMeta();
+        assert meta != null : "ItemMeta for requestInfoButton cannot be null";
+        meta.setDisplayName("§cNothing was found.");
+        requestInfoButton.getItem().setItemMeta(meta);
+    }
+
+    private Void onDisplayInfoException(final Throwable thrown) {
+        ItemMeta meta = requestInfoButton.getItem().getItemMeta();
+        assert meta != null : "ItemMeta for requestInfoButton cannot be null";
+        meta.setDisplayName("§cInternal error :(");
+        requestInfoButton.getItem().setItemMeta(meta);
+        getLocaleLog().warn("Unable to display info", thrown);
+        return null;
+    }
+
+    private Optional<Whitelistable> onRequestInfoFindException(final Throwable thrown) {
+        ItemMeta meta = requestInfoButton.getItem().getItemMeta();
+        assert meta != null : "ItemMeta for requestInfoButton cannot be null";
+        meta.setDisplayName("§cCannot find info");
+        meta.setLore(Collections.singletonList("§cCheck console log for more details"));
+        requestInfoButton.getItem().setItemMeta(meta);
+        getLocaleLog().info("Failed searching for whitelistable on find info button", thrown);
+        return Optional.empty();
+    }
+
+    private void onRemoveNotFound() {
         ItemMeta removeButtonMeta = removeButton.getItem().getItemMeta();
         if (removeButtonMeta != null)
             removeButtonMeta.setDisplayName("§cPlayer not found");
@@ -94,7 +142,7 @@ final class ProfileScreen extends AbstractGui {
         update();
     }
 
-    private Optional<Whitelistable> onFindException(final Throwable throwable) {
+    private Optional<Whitelistable> onRemoveFindException(final Throwable throwable) {
         onNotRemoved();
         return Optional.empty();
     }
@@ -103,13 +151,5 @@ final class ProfileScreen extends AbstractGui {
         getLocaleLog().warn("Couldn't remove "+profileSkull.getProfile()+" from the whitelist", throwable);
         onNotRemoved();
         return null;
-    }
-
-    public void onRequestInfoButtonClick(final InventoryClickEvent event) {
-
-    }
-
-    public void onEditButtonClick(final InventoryClickEvent event) {
-
     }
 }

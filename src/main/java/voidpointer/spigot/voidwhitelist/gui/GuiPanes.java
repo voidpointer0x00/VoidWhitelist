@@ -27,7 +27,8 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.bukkit.Material.BOOK;
 import static org.bukkit.Material.ENCHANTED_BOOK;
@@ -113,8 +114,8 @@ class GuiPanes {
     }
 
     public static StaticPane createProfilePane(final ProfileScreen profileScreen) {
-        StaticPane mainPane = new StaticPane(9, 4);
-        mainPane.fillWith(GuiPanes.getBackgroundItem());
+        StaticPane profilePane = new StaticPane(9, 4);
+        profilePane.fillWith(GuiPanes.getBackgroundItem());
 
         ProfileSkull back = ControlSkulls.getBack();
         GuiItem profileSkullItem = profileScreen.getProfileSkull().getGuiItem().copy();
@@ -130,17 +131,18 @@ class GuiPanes {
         requestInfoButton.setAction(profileScreen::onRequestInfoButtonClick);
         editButton.setAction(profileScreen::onEditButtonClick);
 
+        profileScreen.setProfilePane(profilePane);
         profileScreen.setRemoveButton(removeButton);
         profileScreen.setRequestInfoButton(requestInfoButton);
         profileScreen.setEditButton(editButton);
 
-        mainPane.addItem(profileSkullItem, 4, 1);
-        mainPane.addItem(back.getGuiItem(), 8, 3);
-        mainPane.addItem(removeButton, 5, 2);
-        mainPane.addItem(requestInfoButton, 4, 2);
-        mainPane.addItem(editButton, 3, 2);
+        profilePane.addItem(profileSkullItem, 4, 1);
+        profilePane.addItem(back.getGuiItem(), 8, 3);
+        profilePane.addItem(removeButton, 5, 2);
+        profilePane.addItem(requestInfoButton, 4, 2);
+        profilePane.addItem(editButton, 3, 2);
 
-        return mainPane;
+        return profilePane;
     }
 
     private static GuiItem createEditButton() {
@@ -157,8 +159,11 @@ class GuiPanes {
         ItemMeta meta = infoButtonItem.getItemMeta();
         assert meta != null : "ItemMeta for \"info\" button item cannot be null";
         meta.setDisplayName("§eDetails");
-        meta.setLore(Arrays.asList("§eExpires at: §d" + whitelistable.getExpiresAt().toString(),
-                "§eAllowed to join: &6" + whitelistable.isAllowedToJoin()));
+        List<String> lore = new ArrayList<>(2);
+        lore.add("§eExpires at: "+(whitelistable.getExpiresAt()==null ?"§6never":"§d"+whitelistable.getExpiresAt()));
+        boolean allowedToJoin = whitelistable.isAllowedToJoin();
+        lore.add("§eAllowed to join: " + (allowedToJoin ? "§a" : "§c") + allowedToJoin);
+        meta.setLore(lore);
         infoButtonItem.setItemMeta(meta);
         return new GuiItem(infoButtonItem);
     }
