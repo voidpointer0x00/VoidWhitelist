@@ -69,8 +69,10 @@ final class ProfileScreen {
         whitelistService.find(profile.getUuid())
                 .exceptionally(this::onFindException)
                 .thenAcceptAsync(whitelistableOptional -> {
-                    if (!whitelistableOptional.isPresent())
+                    if (!whitelistableOptional.isPresent()) {
+                        onNotFound();
                         return;
+                    }
                     whitelistService.remove(whitelistableOptional.get())
                             .thenAccept(isRemoved -> {
                                 if (isRemoved)
@@ -94,6 +96,14 @@ final class ProfileScreen {
             removeButtonMeta.setDisplayName("§cRemove operation failed");
             removeButtonMeta.setLore(Arrays.asList("§6Check console log info, if you have access"));
         }
+        removeButton.getItem().setItemMeta(removeButtonMeta);
+        update();
+    }
+
+    private void onNotFound() {
+        ItemMeta removeButtonMeta = removeButton.getItem().getItemMeta();
+        if (removeButtonMeta != null)
+            removeButtonMeta.setDisplayName("§cPlayer not found");
         removeButton.getItem().setItemMeta(removeButtonMeta);
         update();
     }
