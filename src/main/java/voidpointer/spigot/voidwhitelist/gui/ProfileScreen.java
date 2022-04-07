@@ -31,7 +31,7 @@ import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.Phaser;
 
@@ -98,7 +98,7 @@ final class ProfileScreen {
         ItemMeta removeButtonMeta = removeButton.getItem().getItemMeta();
         if (removeButtonMeta != null) {
             removeButtonMeta.setDisplayName("§cRemove operation failed");
-            removeButtonMeta.setLore(Arrays.asList("§6Check console log info, if you have access"));
+            removeButtonMeta.setLore(Collections.singletonList("§6Check console log info, if you have access"));
         }
         removeButton.getItem().setItemMeta(removeButtonMeta);
         update();
