@@ -21,8 +21,10 @@ import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.config.LocaleSection;
+import voidpointer.spigot.voidwhitelist.message.GuiMessage;
 
 import java.io.File;
+import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 import static voidpointer.spigot.framework.localemodule.config.LocaleFile.MESSAGES_PATH;
@@ -51,5 +53,19 @@ public final class GuiConfig {
         ConfigurationSection messagesSection = config.getConfigurationSection(MESSAGES_PATH);
         requireNonNull(messagesSection, MESSAGES_PATH + " config section must exist in " + FILENAME);
         localeLog = new LocaleSection(plugin, messagesSection);
+        localeLog.addDefaults(GuiMessage.values());
+        save();
+    }
+
+    private void save() {
+        try {
+            save0();
+        } catch (final IOException ioException) {
+            localeLog.warn("Unable to save " + FILENAME, ioException);
+        }
+    }
+
+    private void save0() throws IOException {
+        config.save(configFile);
     }
 }
