@@ -41,6 +41,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static voidpointer.spigot.voidwhitelist.storage.StorageVersion.CURRENT;
+
 public final class JsonWhitelistService extends CachedWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
     private static final String VERSION_PROPERTY = "version";
@@ -84,7 +87,7 @@ public final class JsonWhitelistService extends CachedWhitelistService {
 
     @Override protected void saveWhitelist() {
         JsonObject whitelistObject = new JsonObject();
-        whitelistObject.add(VERSION_PROPERTY, new JsonPrimitive(StorageVersion.CURRENT.toString()));
+        whitelistObject.add(VERSION_PROPERTY, new JsonPrimitive(CURRENT.toString()));
         whitelistObject.add(WHITELIST_PROPERTY, gson.toJsonTree(getCachedWhitelist()));
         try {
             Files.write(gson.toJson(whitelistObject), whitelistFile, Charset.defaultCharset());
@@ -101,7 +104,7 @@ public final class JsonWhitelistService extends CachedWhitelistService {
         try {
             JsonElement root = parser.parse(whitelistFileContents);
             StorageVersion version = parseVersion(root);
-            if (version != StorageVersion.CURRENT)
+            if (version != CURRENT)
                 return performUpdate(version, root);
 
             Type whitelistType = new TypeToken<List<Whitelistable>>() {}.getType();
@@ -114,18 +117,22 @@ public final class JsonWhitelistService extends CachedWhitelistService {
     }
 
     private Collection<Whitelistable> performUpdate(final StorageVersion version, final JsonElement root) {
+        log.info("Performing a storage update from {0} to {1}, it might take a while.", version, CURRENT);
         Optional<JsonUpdate> update = updateFactory.from(version);
         if (!update.isPresent()) {
             backup();
             return Collections.emptyList();
         }
+        final long start = System.currentTimeMillis();
         Collection<Whitelistable> updated = update.get().performUpdate(root);
         if (updated == null) {
             backup();
             return Collections.emptyList();
         }
+        final long end = System.currentTimeMillis();
         wasUpdated = true;
-        log.info("Automatically updated JSON storage from {0} to {1}", version, StorageVersion.CURRENT);
+        log.info("Successfully updated JSON storage from {0} to {1} for {2} sec.", version, CURRENT,
+                MILLISECONDS.toSeconds(end - start));
         return updated;
     }
 

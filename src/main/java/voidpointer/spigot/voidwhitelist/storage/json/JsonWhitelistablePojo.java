@@ -37,8 +37,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public final class JsonWhitelistablePojo extends AbstractWhitelistable {
     @NonNull private UUID uniqueId;
+    private String name;
     private Date expiresAt;
-    private Date createdAt;
 
     @Override public Optional<Player> findAssociatedOnlinePlayer() {
         return Bukkit.getOnlinePlayers().stream()

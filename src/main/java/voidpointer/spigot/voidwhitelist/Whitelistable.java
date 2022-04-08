@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface Whitelistable extends Comparable<Whitelistable> {
+public interface Whitelistable {
     Date NEVER_EXPIRES = null;
 
     /**
@@ -35,6 +35,10 @@ public interface Whitelistable extends Comparable<Whitelistable> {
     Optional<Player> findAssociatedOnlinePlayer();
 
     UUID getUniqueId();
+
+    String getName();
+
+    void setName(final String name);
 
     /* TODO:
      *  Consider adding a String name property.
