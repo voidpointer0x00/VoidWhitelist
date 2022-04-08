@@ -21,6 +21,15 @@ import voidpointer.spigot.framework.localemodule.Message;
 @Getter
 @RequiredArgsConstructor
 public enum GuiMessage implements Message {
+    PROFILE_TITLE("&6{player}"),
+    PROFILE_LORE_EDITED("&aEdited"),
+    PROFILE_NOT_FOUND("&cPlayer not found"),
+    PROFILE_REMOVE_FAIL("&cRemove operation failed"),
+    PROFILE_INTERNAL("&cInternal error :("),
+    PROFILE_EDIT_DATE_INVALID("&cInvalid date"),
+    PROFILE_EDIT_DATE_VALID("&aValid date"),
+    PROFILE_INFO_NOT_FOUND("&cNothing found"),
+    ANVIL_EDIT_TITLE("&eEdit"),
     ;
     private final String defaultMessage;
 

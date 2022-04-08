@@ -24,8 +24,11 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import voidpointer.spigot.framework.di.Autowired;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
+import voidpointer.spigot.voidwhitelist.message.GuiMessage;
 import voidpointer.spigot.voidwhitelist.net.Profile;
 
 import java.util.Date;
@@ -34,9 +37,18 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.WRONG_DATE_FORMAT;
 import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.parseDate;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.ANVIL_EDIT_TITLE;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_EDIT_DATE_INVALID;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_EDIT_DATE_VALID;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_INFO_NOT_FOUND;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_INTERNAL;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_LORE_EDITED;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_NOT_FOUND;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_REMOVE_FAIL;
 
 @Getter
 final class ProfileScreen extends AbstractGui {
+    @Autowired private static LocaleLog locale;
     private final WhitelistGui parent;
     private final ProfileSkull profileSkull;
     @Setter private StaticPane profilePane;
@@ -45,12 +57,19 @@ final class ProfileScreen extends AbstractGui {
     @Setter private GuiItem editButton;
 
     ProfileScreen(final WhitelistGui parent, final ProfileSkull profileSkull) {
-        super(new ChestGui(4, "§6" + (profileSkull.getProfile().getName() != null
-                ? profileSkull.getProfile().getName()
-                : profileSkull.getProfile().getUuid().toString())));
+        super(new ChestGui(4, getTitleFor(profileSkull)));
         this.parent = parent;
         this.profileSkull = profileSkull;
         addPane(GuiPanes.createProfilePane(this));
+    }
+
+    private static String getTitleFor(final ProfileSkull profileSkull) {
+        final String nameOrUuid = profileSkull.getProfile().getName() != null
+                ? profileSkull.getProfile().getName()
+                : profileSkull.getProfile().getUuid().toString();
+        return locale.localize(GuiMessage.PROFILE_TITLE)
+                .set("player", nameOrUuid)
+                .getRawMessage();
     }
 
     public void back(final InventoryClickEvent event) {
@@ -83,12 +102,29 @@ final class ProfileScreen extends AbstractGui {
         getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> getViewer().ifPresent(parent::show));
     }
 
+    private void onRemoveNotFound() {
+        ItemMeta removeButtonMeta = removeButton.getItem().getItemMeta();
+        assert removeButtonMeta != null : "ItemMeta for remove button cannot be null";
+        removeButtonMeta.setLore(singletonList(locale.localize(PROFILE_NOT_FOUND).getRawMessage()));
+        removeButton.getItem().setItemMeta(removeButtonMeta);
+        update();
+    }
+
+    private Optional<Whitelistable> onRemoveFindException(final Throwable throwable) {
+        getLocaleLog().warn("Couldn't remove "+profileSkull.getProfile()+" from the whitelist", throwable);
+        onNotRemoved();
+        return Optional.empty();
+    }
+
+    private Void onRemoveException(final Throwable thrown) {
+        onRemoveFindException(thrown);
+        return null;
+    }
+
     private void onNotRemoved() {
         ItemMeta removeButtonMeta = removeButton.getItem().getItemMeta();
-        if (removeButtonMeta != null) {
-            removeButtonMeta.setDisplayName("§cRemove operation failed");
-            removeButtonMeta.setLore(singletonList("§6Check console log info, if you have access"));
-        }
+        assert removeButtonMeta != null : "ItemMeta for remove button cannot be null";
+        removeButtonMeta.setLore(singletonList(locale.localize(PROFILE_REMOVE_FAIL).getRawMessage()));
         removeButton.getItem().setItemMeta(removeButtonMeta);
         update();
     }
@@ -106,7 +142,7 @@ final class ProfileScreen extends AbstractGui {
     }
 
     public void onEditButtonClick(final InventoryClickEvent event) {
-        InputGui.ask("§eEdit", getViewer().get(),
+        InputGui.ask(locale.localize(ANVIL_EDIT_TITLE).getRawMessage(), getViewer().get(),
                 GuiPanes::setupEditDateAnvil, this::testInputDate, this::onEdited);
     }
 
@@ -136,14 +172,14 @@ final class ProfileScreen extends AbstractGui {
     private void notifyEdited() {
         ItemMeta meta = editButton.getItem().getItemMeta();
         assert meta != null : "ItemMeta for edit button cannot be null";
-        meta.setLore(singletonList("§aEdited"));
+        meta.setLore(singletonList(locale.localize(PROFILE_LORE_EDITED).getRawMessage()));
         editButton.getItem().setItemMeta(meta);
     }
 
     private void notifyEditNotFound() {
         ItemMeta meta = editButton.getItem().getItemMeta();
         assert meta != null : "ItemMeta for edit button cannot be null";
-        meta.setLore(singletonList("§cNot found"));
+        meta.setLore(singletonList(locale.localize(PROFILE_NOT_FOUND).getRawMessage()));
         editButton.getItem().setItemMeta(meta);
     }
 
@@ -167,7 +203,7 @@ final class ProfileScreen extends AbstractGui {
     private void displayEditInternalException() {
         ItemMeta meta = editButton.getItem().getItemMeta();
         assert meta != null : "ItemMeta for edit button cannot be null";
-        meta.setDisplayName("§cInternal exception");
+        meta.setLore(singletonList(locale.localize(PROFILE_INTERNAL).getRawMessage()));
         editButton.getItem().setItemMeta(meta);
     }
 
@@ -179,9 +215,9 @@ final class ProfileScreen extends AbstractGui {
         assert meta != null : "Resulting item meta cannot be null";
         boolean isValid = expiresAtTimestamp != WRONG_DATE_FORMAT;
         if (isValid)
-            meta.setDisplayName("§aValid date");
+            meta.setDisplayName(locale.localize(PROFILE_EDIT_DATE_VALID).getRawMessage());
         else
-            meta.setDisplayName("§cInvalid date format");
+            meta.setDisplayName(locale.localize(PROFILE_EDIT_DATE_INVALID).getRawMessage());
         result.setItemMeta(meta);
         return isValid;
     }
@@ -195,45 +231,25 @@ final class ProfileScreen extends AbstractGui {
     private void infoNotFound() {
         ItemMeta meta = requestInfoButton.getItem().getItemMeta();
         assert meta != null : "ItemMeta for requestInfoButton cannot be null";
-        meta.setDisplayName("§cNothing was found.");
+        meta.setDisplayName(locale.localize(PROFILE_INFO_NOT_FOUND).getRawMessage());
         requestInfoButton.getItem().setItemMeta(meta);
     }
 
     private Void onDisplayInfoException(final Throwable thrown) {
+        getLocaleLog().warn("Unable to display info", thrown);
         ItemMeta meta = requestInfoButton.getItem().getItemMeta();
         assert meta != null : "ItemMeta for requestInfoButton cannot be null";
-        meta.setDisplayName("§cInternal error :(");
+        meta.setLore(singletonList(locale.localize(PROFILE_INTERNAL).getRawMessage()));
         requestInfoButton.getItem().setItemMeta(meta);
-        getLocaleLog().warn("Unable to display info", thrown);
         return null;
     }
 
     private Optional<Whitelistable> onRequestInfoFindException(final Throwable thrown) {
+        getLocaleLog().info("Failed searching for whitelistable on find info button", thrown);
         ItemMeta meta = requestInfoButton.getItem().getItemMeta();
         assert meta != null : "ItemMeta for requestInfoButton cannot be null";
-        meta.setDisplayName("§cCannot find info");
-        meta.setLore(singletonList("§cCheck console log for more details"));
+        meta.setLore(singletonList(locale.localize(PROFILE_INTERNAL).getRawMessage()));
         requestInfoButton.getItem().setItemMeta(meta);
-        getLocaleLog().info("Failed searching for whitelistable on find info button", thrown);
         return Optional.empty();
-    }
-
-    private void onRemoveNotFound() {
-        ItemMeta removeButtonMeta = removeButton.getItem().getItemMeta();
-        if (removeButtonMeta != null)
-            removeButtonMeta.setDisplayName("§cPlayer not found");
-        removeButton.getItem().setItemMeta(removeButtonMeta);
-        update();
-    }
-
-    private Optional<Whitelistable> onRemoveFindException(final Throwable throwable) {
-        onNotRemoved();
-        return Optional.empty();
-    }
-
-    private Void onRemoveException(final Throwable throwable) {
-        getLocaleLog().warn("Couldn't remove "+profileSkull.getProfile()+" from the whitelist", throwable);
-        onNotRemoved();
-        return null;
     }
 }
