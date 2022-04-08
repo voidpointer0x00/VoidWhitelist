@@ -102,10 +102,6 @@ class GuiPanes {
         forward.onClick(whitelistGui::onNextPageClick);
         refresh.onClick(whitelistGui::onRefresh);
 
-        // order is important. I'd rather use insertItem(item, index)
-        // but framework devs decided to use ArrayList, so although it
-        // defines capacity, it does not preallocate an array with a given
-        // capacity.
         controlPane.addItem(forward.getGuiItem());
         controlPane.addItem(back.getGuiItem());
         controlPane.addItem(refresh.getGuiItem());
