@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.LocalizedMessage;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 
@@ -34,6 +35,7 @@ import static org.bukkit.Material.BOOK;
 import static org.bukkit.Material.ENCHANTED_BOOK;
 import static org.bukkit.Material.NAME_TAG;
 import static org.bukkit.Material.WRITABLE_BOOK;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.*;
 
 class GuiPanes {
     public static final int FORWARD_INDEX = 0;
@@ -89,11 +91,11 @@ class GuiPanes {
         whitelistGui.setDisabledButton(disabled.getGuiItem());
         whitelistGui.setEnabledButton(enabled.getGuiItem());
 
-        forward.setDisplayName("§eNext page");
-        back.setDisplayName("§ePrevious page");
-        enabled.setDisplayName("§aEnabled");
-        disabled.setDisplayName("§cDisabled");
-        refresh.setDisplayName("§eRefresh");
+        forward.setDisplayName(locale.localize(WHITELIST_NEXT).getRawMessage());
+        back.setDisplayName(locale.localize(WHITELIST_PREVIOUS).getRawMessage());
+        enabled.setDisplayName(locale.localize(WHITELIST_ENABLED).getRawMessage());
+        disabled.setDisplayName(locale.localize(WHITELIST_DISABLED).getRawMessage());
+        refresh.setDisplayName(locale.localize(WHITELIST_REFRESH).getRawMessage());
 
         enabled.onClick(whitelistGui::onStatusClick);
         disabled.onClick(whitelistGui::onStatusClick);
@@ -130,7 +132,7 @@ class GuiPanes {
         ItemStack clock = new ItemStack(Material.CLOCK);
         ItemMeta meta = clock.getItemMeta();
         assert meta != null : "ItemMeta for clock item cannot be null";
-        meta.setDisplayName("§eEnter new date");
+        meta.setDisplayName(locale.localize(ANVIL_CLOCK_NAME).getRawMessage());
         StaticPane resultingPane = new StaticPane(1, 1);
         resultingPane.addItem(new GuiItem(clock), 0, 0);
         anvilGui.getResultComponent().addPane(resultingPane);
@@ -146,7 +148,7 @@ class GuiPanes {
         GuiItem requestInfoButton = createRequestInfoButton();
         GuiItem editButton = createEditButton();
 
-        back.setDisplayName("§eBack to whitelist");
+        back.setDisplayName(locale.localize(PROFILE_BACK).getRawMessage());
 
         back.getGuiItem().setAction(profileScreen::back);
         profileSkullItem.setAction(event -> {});
@@ -172,7 +174,7 @@ class GuiPanes {
         ItemStack editButtonItem = new ItemStack(WRITABLE_BOOK);
         ItemMeta meta = editButtonItem.getItemMeta();
         assert meta != null : "ItemMeta for \"edit\" button item cannot be null";
-        meta.setDisplayName("§eEdit expire time");
+        meta.setDisplayName(locale.localize(PROFILE_EDIT_BOOK_NAME).getRawMessage());
         editButtonItem.setItemMeta(meta);
         return new GuiItem(editButtonItem);
     }
@@ -181,21 +183,32 @@ class GuiPanes {
         ItemStack infoButtonItem = new ItemStack(ENCHANTED_BOOK);
         ItemMeta meta = infoButtonItem.getItemMeta();
         assert meta != null : "ItemMeta for \"info\" button item cannot be null";
-        meta.setDisplayName("§eDetails");
-        List<String> lore = new ArrayList<>(2);
-        lore.add("§eExpires at: "+(whitelistable.getExpiresAt()==null ?"§6never":"§d"+whitelistable.getExpiresAt()));
-        boolean allowedToJoin = whitelistable.isAllowedToJoin();
-        lore.add("§eAllowed to join: " + (allowedToJoin ? "§a" : "§c") + allowedToJoin);
-        meta.setLore(lore);
+        meta.setDisplayName(locale.localize(PROFILE_DETAILS_BOOK_NAME).getRawMessage());
+        meta.setLore(getLoreFor(whitelistable));
         infoButtonItem.setItemMeta(meta);
         return new GuiItem(infoButtonItem);
+    }
+
+    private static List<String> getLoreFor(final Whitelistable whitelistable) {
+        List<String> lore = new ArrayList<>(2);
+        LocalizedMessage loreMessage = locale.localize(PROFILE_DETAILS_LORE);
+        if (Whitelistable.isDateExpirable(whitelistable.getExpiresAt()))
+            loreMessage.set("date", locale.localize(PROFILE_DETAILS_NEVER).getRawMessage());
+        else
+            loreMessage.set("date", locale.localize(PROFILE_DETAILS_DATE).set("date", whitelistable.getExpiresAt()));
+        loreMessage.set("status", whitelistable.isAllowedToJoin()
+                ? locale.localize(PROFILE_DETAILS_TRUE)
+                : locale.localize(PROFILE_DETAILS_FALSE));
+        for (final String loreEntry : loreMessage.getRawMessage().split("\\n"))
+            lore.add(loreEntry);
+        return lore;
     }
 
     private static GuiItem createRequestInfoButton() {
         ItemStack requestInfoButtonItem = new ItemStack(BOOK);
         ItemMeta meta = requestInfoButtonItem.getItemMeta();
         assert meta != null : "ItemMeta for \"requestInfo\" button item cannot be null";
-        meta.setDisplayName("§eMore info");
+        meta.setDisplayName(locale.localize(PROFILE_REQUEST_DETAILS).getRawMessage());
         requestInfoButtonItem.setItemMeta(meta);
         return new GuiItem(requestInfoButtonItem);
     }
@@ -204,7 +217,7 @@ class GuiPanes {
         ItemStack removeButtonItem = new ItemStack(Material.BARRIER);
         ItemMeta meta = removeButtonItem.getItemMeta();
         assert meta != null : "ItemMeta for \"remove\" button item cannot be null";
-        meta.setDisplayName("§cRemove from the whitelist");
+        meta.setDisplayName(locale.localize(PROFILE_REMOVE).getRawMessage());
         removeButtonItem.setItemMeta(meta);
         return new GuiItem(removeButtonItem);
     }

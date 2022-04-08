@@ -37,14 +37,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.WRONG_DATE_FORMAT;
 import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.parseDate;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.ANVIL_EDIT_TITLE;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_EDIT_DATE_INVALID;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_EDIT_DATE_VALID;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_INFO_NOT_FOUND;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_INTERNAL;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_LORE_EDITED;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_NOT_FOUND;
-import static voidpointer.spigot.voidwhitelist.message.GuiMessage.PROFILE_REMOVE_FAIL;
+import static voidpointer.spigot.voidwhitelist.message.GuiMessage.*;
 
 @Getter
 final class ProfileScreen extends AbstractGui {
@@ -215,9 +208,9 @@ final class ProfileScreen extends AbstractGui {
         assert meta != null : "Resulting item meta cannot be null";
         boolean isValid = expiresAtTimestamp != WRONG_DATE_FORMAT;
         if (isValid)
-            meta.setDisplayName(locale.localize(PROFILE_EDIT_DATE_VALID).getRawMessage());
+            meta.setDisplayName(locale.localize(ANVIL_EDIT_DATE_VALID).getRawMessage());
         else
-            meta.setDisplayName(locale.localize(PROFILE_EDIT_DATE_INVALID).getRawMessage());
+            meta.setDisplayName(locale.localize(ANVIL_EDIT_DATE_INVALID).getRawMessage());
         result.setItemMeta(meta);
         return isValid;
     }
