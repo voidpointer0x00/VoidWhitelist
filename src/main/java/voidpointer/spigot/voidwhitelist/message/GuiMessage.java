@@ -41,6 +41,7 @@ public enum GuiMessage implements Message {
     ANVIL_EDIT_DATE_INVALID("&cInvalid date"),
     ANVIL_EDIT_DATE_VALID("&aValid date"),
     ANVIL_CLOCK_NAME("&eEnter new date"),
+    WHITELIST_LOADING("&8&oLoading {percentage}%"),
     WHITELIST_NEXT("&eNext page"),
     WHITELIST_PREVIOUS("&ePrevious page"),
     WHITELIST_REFRESH("&eRefresh"),
