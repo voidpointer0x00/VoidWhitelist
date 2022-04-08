@@ -72,7 +72,7 @@ public final class AddProfileSkullTask extends BukkitRunnable {
     private void updateLoading() {
         long percentage = round((profilesRequested - countDownLatch.getCount()) / (double) profilesRequested * 100);
         gui.getScreen().setTitle(format("§6VoidWhitelist %s",
-                locale.localize(GuiMessage.WHITELIST_LOADING).set("percentage", percentage)));
+                locale.localize(GuiMessage.WHITELIST_LOADING).set("percentage", percentage).getRawMessage()));
     }
 
     private void stopLoading() {
