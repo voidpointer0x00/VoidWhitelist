@@ -15,6 +15,7 @@
 package voidpointer.spigot.voidwhitelist.gui;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.AnvilGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import static org.bukkit.Material.BOOK;
 import static org.bukkit.Material.ENCHANTED_BOOK;
+import static org.bukkit.Material.NAME_TAG;
 import static org.bukkit.Material.WRITABLE_BOOK;
 
 class GuiPanes {
@@ -111,6 +113,32 @@ class GuiPanes {
         controlPane.flipVertically(true);
 
         return controlPane;
+    }
+
+    public static void setupEditDateAnvil(final AnvilGui anvilGui) {
+        setDateHintItem(anvilGui);
+        setDateResultingItem(anvilGui);
+    }
+
+    private static void setDateHintItem(final AnvilGui anvilGui) {
+        ItemStack nameTag = new ItemStack(NAME_TAG);
+        ItemMeta meta = nameTag.getItemMeta();
+        assert meta != null : "ItemMeta for name tag item cannot be null";
+        meta.setDisplayName("1mon");
+        nameTag.setItemMeta(meta);
+        StaticPane hintPane = new StaticPane(1, 1);
+        anvilGui.getFirstItemComponent().addPane(hintPane);
+        hintPane.addItem(new GuiItem(nameTag), 0, 0);
+    }
+
+    private static void setDateResultingItem(final AnvilGui anvilGui) {
+        ItemStack clock = new ItemStack(Material.CLOCK);
+        ItemMeta meta = clock.getItemMeta();
+        assert meta != null : "ItemMeta for clock item cannot be null";
+        meta.setDisplayName("§eEnter new date");
+        StaticPane resultingPane = new StaticPane(1, 1);
+        resultingPane.addItem(new GuiItem(clock), 0, 0);
+        anvilGui.getResultComponent().addPane(resultingPane);
     }
 
     public static StaticPane createProfilePane(final ProfileScreen profileScreen) {

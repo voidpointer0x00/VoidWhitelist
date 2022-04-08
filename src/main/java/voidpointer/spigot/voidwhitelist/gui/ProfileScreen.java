@@ -107,7 +107,8 @@ final class ProfileScreen extends AbstractGui {
     }
 
     public void onEditButtonClick(final InventoryClickEvent event) {
-        InputGui.ask("§eEnter new date", "1mon", getViewer().get(), this::testInputDate, this::onEdited);
+        InputGui.ask("§eEdit", getViewer().get(),
+                GuiPanes::setupEditDateAnvil, this::testInputDate, this::onEdited);
     }
 
     private void onEdited(final String newDate, final HumanEntity human) {
