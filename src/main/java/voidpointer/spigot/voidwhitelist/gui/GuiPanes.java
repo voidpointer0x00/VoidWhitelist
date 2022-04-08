@@ -192,7 +192,7 @@ class GuiPanes {
     private static List<String> getLoreFor(final Whitelistable whitelistable) {
         List<String> lore = new ArrayList<>(2);
         LocalizedMessage loreMessage = locale.localize(PROFILE_DETAILS_LORE);
-        if (Whitelistable.isDateExpirable(whitelistable.getExpiresAt()))
+        if (!Whitelistable.isDateExpirable(whitelistable.getExpiresAt()))
             loreMessage.set("date", locale.localize(PROFILE_DETAILS_NEVER).getRawMessage());
         else
             loreMessage.set("date", locale.localize(PROFILE_DETAILS_DATE).set("date", whitelistable.getExpiresAt()));
