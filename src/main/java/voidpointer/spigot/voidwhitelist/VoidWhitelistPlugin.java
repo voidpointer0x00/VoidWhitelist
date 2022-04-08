@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import voidpointer.spigot.framework.di.Dependency;
 import voidpointer.spigot.framework.di.Injector;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationResolver;
 import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
@@ -51,7 +52,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @PluginLocale(defaultMessages=WhitelistMessage.class)
     private static TranslatedLocaleFile locale;
     @Dependency private static WhitelistConfig whitelistConfig;
-    @Dependency private static GuiConfig guiConfig;
+    @Dependency private static LocaleLog guiLocale;
     @Dependency private static WhitelistService whitelistService;
     @Dependency private static EventManager eventManager;
     @Dependency(id="plugin")
@@ -65,7 +66,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Override public void onLoad() {
         instance = this;
         whitelistConfig = new WhitelistConfig(this);
-        guiConfig = new GuiConfig(this, whitelistConfig);
+        guiLocale = new GuiConfig(this, whitelistConfig).getLocaleLog();
         eventManager = new EventManager(this);
         DefaultUUIDFetcher.updateMode(whitelistConfig.isUUIDModeOnline());
 

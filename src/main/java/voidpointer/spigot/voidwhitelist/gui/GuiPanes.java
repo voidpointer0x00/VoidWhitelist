@@ -23,8 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.Locale;
-import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 
@@ -42,7 +41,7 @@ class GuiPanes {
     public static final int REFRESH_INDEX = 2;
     public static final int STATUS_INDEX = 3;
 
-    @AutowiredLocale private static Locale locale;
+    @Autowired private static LocaleLog locale;
     private static StaticPane delimiter;
     private static ItemStack backgroundItem;
     @Autowired private static WhitelistConfig whitelistConfig;
