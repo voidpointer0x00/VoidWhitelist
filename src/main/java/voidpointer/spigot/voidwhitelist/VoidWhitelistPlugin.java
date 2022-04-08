@@ -25,6 +25,7 @@ import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationReso
 import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
 import voidpointer.spigot.voidwhitelist.command.WhitelistCommand;
+import voidpointer.spigot.voidwhitelist.config.GuiConfig;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
@@ -49,8 +50,9 @@ import java.util.WeakHashMap;
 public final class VoidWhitelistPlugin extends JavaPlugin {
     @PluginLocale(defaultMessages=WhitelistMessage.class)
     private static TranslatedLocaleFile locale;
-    @Dependency private static WhitelistService whitelistService;
     @Dependency private static WhitelistConfig whitelistConfig;
+    @Dependency private static GuiConfig guiConfig;
+    @Dependency private static WhitelistService whitelistService;
     @Dependency private static EventManager eventManager;
     @Dependency(id="plugin")
     private static JavaPlugin instance;
@@ -63,6 +65,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Override public void onLoad() {
         instance = this;
         whitelistConfig = new WhitelistConfig(this);
+        guiConfig = new GuiConfig(this);
         eventManager = new EventManager(this);
         DefaultUUIDFetcher.updateMode(whitelistConfig.isUUIDModeOnline());
 

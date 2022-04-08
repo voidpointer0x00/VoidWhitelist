@@ -18,7 +18,6 @@ import lombok.Getter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.config.LocaleSection;
 import voidpointer.spigot.voidwhitelist.message.GuiMessage;
@@ -32,13 +31,13 @@ import static voidpointer.spigot.framework.localemodule.config.LocaleFile.MESSAG
 public final class GuiConfig {
     public static final String FILENAME = "gui.yml";
 
-    @Autowired(mapId="plugin")
-    private static Plugin plugin;
+    private final Plugin plugin;
     private final File configFile;
     private YamlConfiguration config;
     @Getter private LocaleLog localeLog;
 
-    public GuiConfig() {
+    public GuiConfig(final Plugin plugin) {
+        this.plugin = plugin;
         configFile = new File(plugin.getDataFolder(), FILENAME);
         load();
     }
