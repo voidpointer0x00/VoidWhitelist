@@ -164,6 +164,7 @@ final class ProfileScreen extends AbstractGui {
         displayEditInternalException();
         return Optional.empty();
     }
+
     private void displayEditInternalException() {
         ItemMeta meta = editButton.getItem().getItemMeta();
         assert meta != null : "ItemMeta for edit button cannot be null";
