@@ -65,7 +65,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Override public void onLoad() {
         instance = this;
         whitelistConfig = new WhitelistConfig(this);
-        guiConfig = new GuiConfig(this);
+        guiConfig = new GuiConfig(this, whitelistConfig);
         eventManager = new EventManager(this);
         DefaultUUIDFetcher.updateMode(whitelistConfig.isUUIDModeOnline());
 
