@@ -15,19 +15,18 @@
 package voidpointer.spigot.voidwhitelist.command;
 
 import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.LocaleLog;
-import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.gui.WhitelistGui;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 public final class GuiCommand extends Command {
     private static final String NAME = "gui";
+    private static final String PERMISSION = "whitelist.gui";
 
-    @AutowiredLocale private static LocaleLog log;
     @Autowired static WhitelistService whitelistService;
 
     public GuiCommand() {
         super(NAME);
+        super.setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {
