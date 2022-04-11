@@ -14,9 +14,9 @@
  */
 package voidpointer.spigot.voidwhitelist.storage.db;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,19 +28,20 @@ import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
+@DatabaseTable
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded=true, callSuper=false)
 @NoArgsConstructor
 @AllArgsConstructor
-public final class HibernateWhitelistable extends AbstractWhitelistable {
-    @Id
+public final class WhitelistableModel extends AbstractWhitelistable {
+    @DatabaseField(id=true, dataType=DataType.UUID)
     @EqualsAndHashCode.Include
-    @Column(nullable=false, unique=true, columnDefinition="BINARY(16)")
     private UUID uniqueId;
-    @Column private String name;
-    @Column private Date expiresAt;
+    @DatabaseField
+    private String name;
+    @DatabaseField(dataType=DataType.DATE)
+    private Date expiresAt;
 
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);

@@ -14,18 +14,20 @@
  */
 package voidpointer.spigot.voidwhitelist.config;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.hibernate.HibernateException;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.storage.db.WhitelistableModel;
 
 import java.io.File;
-import java.util.Properties;
+import java.sql.SQLException;
+import java.util.UUID;
 
-public final class HibernateConfig {
+public final class OrmliteConfig {
     public static final String FILENAME = "database.yml";
     private static final String DEFAULT_DBMS = "h2";
     private static final String DEFAULT_HOST = "localhost";
@@ -40,52 +42,34 @@ public final class HibernateConfig {
     private final Plugin plugin;
     private final File configFile;
     private YamlConfiguration config;
-    private Configuration hibernateConfig;
-    private SessionFactory sessionFactory;
+    private ConnectionSource connectionSource;
 
-    public HibernateConfig(final Plugin plugin) {
+    public OrmliteConfig(final Plugin plugin) {
         this.plugin = plugin;
         configFile = new File(plugin.getDataFolder(), FILENAME);
         load();
     }
 
-    public void addEntity(final Class<?> entity) {
-        hibernateConfig.addAnnotatedClass(entity);
-    }
-
-    public SessionFactory getSessionFactory() {
-        assert hibernateConfig != null : "Hibernate config should've been initialized when the config was loaded";
-        if (sessionFactory != null)
-            return sessionFactory;
-        buildSessionFactory();
-        return sessionFactory;
-    }
-
-    private void buildSessionFactory() {
+    public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
         try {
-            buildSessionFactory0();
-        } catch (final HibernateException hibernateException) {
-            log.warn("Unable to create database connection", hibernateException);
+            return DaoManager.createDao(connectionSource, WhitelistableModel.class);
+        } catch (SQLException sqlException) {
+            log.warn("Unable to create Dao object", sqlException);
+            return null;
         }
-    }
-
-    private void buildSessionFactory0() throws HibernateException {
-        sessionFactory = hibernateConfig.buildSessionFactory();
     }
 
     private void load() {
         if (!configFile.exists())
             plugin.saveResource(FILENAME, true);
         config = YamlConfiguration.loadConfiguration(configFile);
-        initializeHibernateConfig();
+        createConnectionSource();
     }
 
-    private void initializeHibernateConfig() {
+    private void createConnectionSource() {
         DbmsFactory dbmsFactory = new DbmsFactory(plugin);
-        DbmsProperties dbmsProps = dbmsFactory.matchingOrDefault(getDbms());
-        Properties hibernateProps = dbmsProps.of(this);
-        hibernateConfig = new Configuration();
-        hibernateConfig.addProperties(hibernateProps);
+        Dbms dbms = dbmsFactory.matchingOrDefault(getDbms());
+        connectionSource = dbms.newConnectionSource(this);
     }
 
     private String getDbms() {

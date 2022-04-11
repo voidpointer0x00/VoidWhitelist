@@ -14,6 +14,8 @@
  */
 package voidpointer.spigot.voidwhitelist.config;
 
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -21,9 +23,7 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
-
-import static java.lang.Boolean.FALSE;
+import java.sql.SQLException;
 
 @RequiredArgsConstructor
 final class DbmsFactory {
@@ -34,7 +34,7 @@ final class DbmsFactory {
 
     private final Plugin plugin;
 
-    public DbmsProperties matchingOrDefault(final String dbmsName) {
+    public Dbms matchingOrDefault(final String dbmsName) {
         switch (dbmsName.toLowerCase()) {
             case "h2":
                 return this::h2;
@@ -44,21 +44,17 @@ final class DbmsFactory {
         }
     }
 
-    private void applyDefaults(final Properties props) {
-        props.setProperty("hibernate.show_sql", FALSE.toString());
-        props.setProperty("hibernate.hbm2ddl.auto", "update");
-    }
-
-    private Properties h2(final HibernateConfig hibernateConfig) {
-        Properties props = new Properties();
+    private ConnectionSource h2(final OrmliteConfig ormliteConfig) {
         File h2File = new File(plugin.getDataFolder(), "h2");
         if (!h2File.exists())
             createFile(h2File);
         assert h2File.exists() : "Cannot continue without database file";
-        props.setProperty(DRIVER_KEY, "org.h2.Driver");
-        props.setProperty(URL_KEY, "jdbc:h2:" + h2File.getAbsolutePath());
-        applyDefaults(props);
-        return props;
+        try {
+            return new JdbcConnectionSource("jdbc:h2:" + h2File.getAbsolutePath());
+        } catch (SQLException sqlException) {
+            log.warn("Unable to connect to database", sqlException);
+        }
+        return null;
     }
 
     private void createFile(final File file) {

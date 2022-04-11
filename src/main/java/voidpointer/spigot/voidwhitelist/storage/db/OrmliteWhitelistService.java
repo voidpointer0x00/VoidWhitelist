@@ -14,23 +14,31 @@
  */
 package voidpointer.spigot.voidwhitelist.storage.db;
 
+import com.j256.ormlite.dao.Dao;
 import org.bukkit.plugin.Plugin;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.config.HibernateConfig;
+import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public final class HibernateWhitelistService implements WhitelistService {
-    private final HibernateConfig hibernateConfig;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-    public HibernateWhitelistService(final Plugin plugin) {
-        hibernateConfig = new HibernateConfig(plugin);
-        hibernateConfig.addEntity(HibernateWhitelistable.class);
+public final class OrmliteWhitelistService implements WhitelistService {
+    @AutowiredLocale private static LocaleLog log;
+    private final OrmliteConfig ormliteConfig;
+    private final Dao<WhitelistableModel, UUID> dao;
+
+    public OrmliteWhitelistService(final Plugin plugin) {
+        ormliteConfig = new OrmliteConfig(plugin);
+        dao = ormliteConfig.getWhitelistableDao();
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
@@ -42,7 +50,12 @@ public final class HibernateWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return supplyAsync(() -> query(this::find0, uuid));
+    }
+
+    private Whitelistable find0(final UUID uuid) throws SQLException {
+        assert dao != null : "Cannot perform SQL query because DAO is null";
+        return dao.queryForId(uuid);
     }
 
     @Override public CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt) {
@@ -55,5 +68,14 @@ public final class HibernateWhitelistService implements WhitelistService {
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private <T, R> Optional<R> query(final CheckedFunction<T, R> function, T argument) {
+        try {
+            return Optional.of(function.apply(argument));
+        } catch (Exception exception) {
+            log.warn("Unable to perform a database query", exception);
+            return Optional.empty();
+        }
     }
 }

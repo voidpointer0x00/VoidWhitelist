@@ -156,8 +156,8 @@
                                     <shadedPattern>voidpointer.spigot.voidwhitelist.inventoryframework</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.hibernate</pattern>
-                                    <shadedPattern>voidpointer.spigot.voidwhitelist.hibernate</shadedPattern>
+                                    <pattern>com.j256.ormlite</pattern>
+                                    <shadedPattern>voidpointer.spigot.voidwhitelist.ormlite</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -254,9 +254,14 @@
             <version>0.10.5</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>6.0.0.Final</version>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-core</artifactId>
+            <version>6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-jdbc</artifactId>
+            <version>6.1</version>
         </dependency>
     </dependencies>
 </project>

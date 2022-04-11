@@ -12,11 +12,9 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.config;
-
-import java.util.Properties;
+package voidpointer.spigot.voidwhitelist.storage.db;
 
 @FunctionalInterface
-interface DbmsProperties {
-    Properties of(final HibernateConfig hibernateConfig);
+public interface CheckedFunction<T, R> {
+    R apply(T t) throws Exception;
 }
