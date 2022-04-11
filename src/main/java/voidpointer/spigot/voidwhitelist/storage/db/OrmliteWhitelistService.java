@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static java.util.Collections.EMPTY_SET;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -67,7 +67,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
 
     private Set<Whitelistable> onFindAllException(final Throwable thrown) {
         log.warn("Couldn't execute find all query: {0}", thrown.getMessage());
-        return EMPTY_SET;
+        return emptySet();
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
