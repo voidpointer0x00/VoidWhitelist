@@ -14,7 +14,9 @@
  */
 package voidpointer.spigot.voidwhitelist.storage.db;
 
+import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.config.HibernateConfig;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.util.Date;
@@ -24,6 +26,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public final class HibernateWhitelistService implements WhitelistService {
+    private final HibernateConfig hibernateConfig;
+
+    public HibernateWhitelistService(final Plugin plugin) {
+        hibernateConfig = new HibernateConfig(plugin);
+    }
+
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
