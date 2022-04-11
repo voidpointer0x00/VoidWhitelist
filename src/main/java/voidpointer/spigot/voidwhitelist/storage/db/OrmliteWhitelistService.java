@@ -79,7 +79,15 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Whitelistable> update(final Whitelistable whitelistable) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return supplyAsync(() -> query(this::update0, whitelistable));
+    }
+
+    private Whitelistable update0(final Whitelistable whitelistable) throws SQLException {
+        if (whitelistable instanceof WhitelistableModel)
+            dao.update((WhitelistableModel) whitelistable);
+        else
+            dao.update(WhitelistableModel.copyOf(whitelistable));
+        return whitelistable;
     }
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {

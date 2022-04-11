@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.entity.Player;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
 
 import java.util.Date;
@@ -45,5 +46,9 @@ public final class WhitelistableModel extends AbstractWhitelistable {
 
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);
+    }
+
+    public static WhitelistableModel copyOf(final Whitelistable whitelistable) {
+        return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(), whitelistable.getExpiresAt());
     }
 }
