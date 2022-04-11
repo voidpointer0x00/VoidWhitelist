@@ -56,10 +56,6 @@ public final class CachedProfileFetcher {
     public static CompletableFuture<Profile> fetchProfile(final UUID uuid) {
         if (profilesCache.asMap().containsKey(uuid))
             return completedFuture(profilesCache.getIfPresent(uuid));
-        return fetchProfileOffCache(uuid);
-    }
-
-    public static CompletableFuture<Profile> fetchProfileOffCache(final UUID uuid) {
         return supplyAsync(() -> {
             Profile profile = requestApi(uuid);
             if (profile.getTexturesBase64().isPresent())
