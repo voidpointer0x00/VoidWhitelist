@@ -91,7 +91,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
-        return supplyAsync(() -> query(this::remove0, whitelistable)).exceptionally(this::onRemoveException);
+        return supplyAsync(() -> queryBool(this::remove0, whitelistable)).exceptionally(this::onRemoveException);
     }
 
     private Boolean remove0(final Whitelistable whitelistable) throws Exception {
@@ -113,6 +113,15 @@ public final class OrmliteWhitelistService implements WhitelistService {
         } catch (Exception exception) {
             log.warn("Unable to perform a database query", exception);
             return null;
+        }
+    }
+
+    private <T> Boolean queryBool(final CheckedFunction<T, Boolean> function, T argument) {
+        try {
+            return function.apply(argument);
+        } catch (Exception exception) {
+            log.warn("Unable to perform a database query", exception);
+            return Boolean.FALSE;
         }
     }
 
