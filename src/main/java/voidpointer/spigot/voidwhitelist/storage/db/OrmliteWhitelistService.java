@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static java.util.Collections.EMPTY_SET;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -47,11 +48,13 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
-        return supplyAsync(() -> query(this::findAll0, null, (long) limit));
+        return supplyAsync(() -> query(this::findAll0, null, (long) limit))
+                .exceptionally(this::onFindAllException);
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit) {
-        return supplyAsync(() -> query(this::findAll0, offset + 1L, (long) limit));
+        return supplyAsync(() -> query(this::findAll0, offset + 1L, (long) limit))
+                .exceptionally(this::onFindAllException);
     }
 
     private Set<Whitelistable> findAll0(final Long offset, final Long limit) throws Exception {
@@ -62,8 +65,14 @@ public final class OrmliteWhitelistService implements WhitelistService {
         return unmodifiableSet(new HashSet<>(result));
     }
 
+    private Set<Whitelistable> onFindAllException(final Throwable thrown) {
+        log.warn("Couldn't execute find all query: {0}", thrown.getMessage());
+        return EMPTY_SET;
+    }
+
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
-        return supplyAsync(() -> ofNullable(query(this::find0, uuid)));
+        return supplyAsync(() -> ofNullable(query(this::find0, uuid)))
+                .exceptionally(this::onFindException);
     }
 
     private Whitelistable find0(final UUID uuid) throws SQLException {
@@ -71,17 +80,29 @@ public final class OrmliteWhitelistService implements WhitelistService {
         return dao.queryForId(uuid);
     }
 
-    @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
-        return supplyAsync(() -> ofNullable(query(this::add0, new WhitelistableModel(uuid, name, expiresAt))));
+    private Optional<Whitelistable> onFindException(final Throwable thrown) {
+        log.warn("Couldn't find whitelistable: {0}", thrown.getMessage());
+        return Optional.empty();
     }
 
-    private WhitelistableModel add0(final WhitelistableModel whitelistable) throws SQLException {
+    @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
+        return supplyAsync(() -> ofNullable(query(this::add0, new WhitelistableModel(uuid, name, expiresAt))))
+                .exceptionally(this::onAddException);
+    }
+
+    private Whitelistable add0(final WhitelistableModel whitelistable) throws SQLException {
         dao.createOrUpdate(whitelistable);
         return whitelistable;
     }
 
+    private Optional<Whitelistable> onAddException(final Throwable thrown) {
+        log.warn("Couldn't add whitelistable: {0}", thrown.getMessage());
+        return Optional.empty();
+    }
+
     @Override public CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable) {
-        return supplyAsync(() -> ofNullable(query(this::update0, whitelistable)));
+        return supplyAsync(() -> ofNullable(query(this::update0, whitelistable)))
+                .exceptionally(this::onUpdateException);
     }
 
     private Whitelistable update0(final Whitelistable whitelistable) throws SQLException {
@@ -90,6 +111,11 @@ public final class OrmliteWhitelistService implements WhitelistService {
         else
             dao.update(WhitelistableModel.copyOf(whitelistable));
         return whitelistable;
+    }
+
+    private Optional<Whitelistable> onUpdateException(final Throwable thrown) {
+        log.warn("Couldn't update whitelistable: {0}", thrown.getMessage());
+        return Optional.empty();
     }
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
@@ -105,7 +131,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     private Boolean onRemoveException(final Throwable thrown) {
-        log.info("Couldn't remove whitelistable: {0}", thrown.getMessage());
+        log.warn("Couldn't remove whitelistable: {0}", thrown.getMessage());
         return false;
     }
 
