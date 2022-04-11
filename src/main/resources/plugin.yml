@@ -1,5 +1,5 @@
 name: VoidWhitelist
-version: ${project.version}
+version: ${project.version}_b${buildNumber}
 main: voidpointer.spigot.voidwhitelist.VoidWhitelistPlugin
 api-version: 1.17
 authors: [ _voidpointer ]
