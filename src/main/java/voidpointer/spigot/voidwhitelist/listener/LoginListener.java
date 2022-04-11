@@ -59,7 +59,10 @@ public final class LoginListener implements Listener {
             return;
 
         whitelistService.find(event.getPlayer().getUniqueId()).thenAcceptAsync(whitelistable -> {
-            if ((!whitelistable.isPresent()) || !whitelistable.get().isExpirable())
+            if (!whitelistable.isPresent())
+                return;
+            updateWhitelistableName(event.getPlayer(), whitelistable.get());
+            if (!whitelistable.get().isExpirable())
                 return;
 
             KickTask kickTask = new KickTask(event.getPlayer(), getKickReason());
@@ -79,4 +82,9 @@ public final class LoginListener implements Listener {
         return locale.localize(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
     }
 
+    private void updateWhitelistableName(final Player player, final Whitelistable whitelistable) {
+        assert player.getUniqueId().equals(whitelistable.getUniqueId()) : "UUID of player a whitelistable must match";
+        whitelistable.setName(player.getName());
+        whitelistService.update(whitelistable);
+    }
 }
