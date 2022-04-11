@@ -30,6 +30,7 @@ public final class HibernateWhitelistService implements WhitelistService {
 
     public HibernateWhitelistService(final Plugin plugin) {
         hibernateConfig = new HibernateConfig(plugin);
+        hibernateConfig.addEntity(HibernateWhitelistable.class);
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
