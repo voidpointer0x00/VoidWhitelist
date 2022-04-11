@@ -57,7 +57,7 @@ public final class HibernateConfig {
         assert hibernateConfig != null : "Hibernate config should've been initialized when the config was loaded";
         if (sessionFactory != null)
             return sessionFactory;
-        sessionFactory = hibernateConfig.buildSessionFactory();
+        buildSessionFactory();
         return sessionFactory;
     }
 
