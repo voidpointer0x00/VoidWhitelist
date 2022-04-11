@@ -91,7 +91,20 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return supplyAsync(() -> query(this::remove0, whitelistable)).exceptionally(this::onRemoveException);
+    }
+
+    private Boolean remove0(final Whitelistable whitelistable) throws Exception {
+        if (whitelistable instanceof WhitelistableModel)
+            dao.delete((WhitelistableModel) whitelistable);
+        else
+            dao.delete(WhitelistableModel.copyOf(whitelistable));
+        return true;
+    }
+
+    private Boolean onRemoveException(final Throwable thrown) {
+        log.info("Couldn't remove whitelistable: {0}", thrown.getMessage());
+        return false;
     }
 
     private <T, U, R> R query(final CheckedBiFunction<T, U, R> function, T first, U second) {
