@@ -55,5 +55,7 @@ public interface WhitelistService {
 
     CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt);
 
+    CompletableFuture<Whitelistable> update(final Whitelistable whitelistable);
+
     CompletableFuture<Boolean> remove(final Whitelistable whitelistable);
 }

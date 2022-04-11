@@ -111,6 +111,14 @@ public abstract class CachedWhitelistService implements WhitelistService {
         });
     }
 
+    @Override public CompletableFuture<Whitelistable> update(final Whitelistable whitelistable) {
+        return supplyAsync(() -> {
+            cachedWhitelist.remove(whitelistable);
+            cachedWhitelist.add(whitelistable);
+            return whitelistable;
+        });
+    }
+
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
         return supplyAsync(() -> {
             cachedWhitelist.remove(whitelistable);
