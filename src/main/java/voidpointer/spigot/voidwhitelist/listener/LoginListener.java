@@ -51,7 +51,7 @@ public final class LoginListener implements Listener {
 
         Optional<Whitelistable> whitelistable = whitelistService.find(event.getUniqueId()).join();
 
-        if ((!whitelistable.isPresent()) || !whitelistable.get().isAllowedToJoin())
+        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin())
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, getKickReason());
     }
 
