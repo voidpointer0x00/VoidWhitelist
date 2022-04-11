@@ -136,6 +136,12 @@
                                         <exclude>META-INF/*.MF</exclude>
                                     </excludes>
                                 </filter>
+                                <filter>
+                                    <artifact>com.j256.ormlite:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.MF</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
                             <artifactSet>
                                 <excludes>
@@ -158,6 +164,10 @@
                                 <relocation>
                                     <pattern>com.j256.ormlite</pattern>
                                     <shadedPattern>voidpointer.spigot.voidwhitelist.ormlite</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.h2</pattern>
+                                    <shadedPattern>voidpointer.spigot.voidwhitelist.h2</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -255,13 +265,13 @@
         </dependency>
         <dependency>
             <groupId>com.j256.ormlite</groupId>
-            <artifactId>ormlite-core</artifactId>
+            <artifactId>ormlite-jdbc</artifactId>
             <version>6.1</version>
         </dependency>
         <dependency>
-            <groupId>com.j256.ormlite</groupId>
-            <artifactId>ormlite-jdbc</artifactId>
-            <version>6.1</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.1.212</version>
         </dependency>
     </dependencies>
 </project>
