@@ -79,7 +79,7 @@ public final class AddCommand extends Command {
                             notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);
                         else
                             notifyAdded(args, null, uuidOptional.get(), WhitelistMessage.ADDED);
-                        callWhitelistAddedEvent(res);
+                        res.ifPresent(this::callWhitelistAddedEvent);
                     });
         }).whenCompleteAsync((res, th) -> {
             if (th != null)

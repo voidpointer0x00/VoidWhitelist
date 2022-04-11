@@ -16,6 +16,7 @@ package voidpointer.spigot.voidwhitelist.storage.db;
 
 import com.j256.ormlite.dao.Dao;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -32,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.Collections.unmodifiableSet;
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public final class OrmliteWhitelistService implements WhitelistService {
@@ -61,7 +63,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
-        return supplyAsync(() -> Optional.ofNullable(query(this::find0, uuid)));
+        return supplyAsync(() -> ofNullable(query(this::find0, uuid)));
     }
 
     private Whitelistable find0(final UUID uuid) throws SQLException {
@@ -69,8 +71,8 @@ public final class OrmliteWhitelistService implements WhitelistService {
         return dao.queryForId(uuid);
     }
 
-    @Override public CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt) {
-        return supplyAsync(() -> query(this::add0, new WhitelistableModel(uuid, name, expiresAt)));
+    @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
+        return supplyAsync(() -> ofNullable(query(this::add0, new WhitelistableModel(uuid, name, expiresAt))));
     }
 
     private WhitelistableModel add0(final WhitelistableModel whitelistable) throws SQLException {
@@ -78,8 +80,8 @@ public final class OrmliteWhitelistService implements WhitelistService {
         return whitelistable;
     }
 
-    @Override public CompletableFuture<Whitelistable> update(final Whitelistable whitelistable) {
-        return supplyAsync(() -> query(this::update0, whitelistable));
+    @Override public CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable) {
+        return supplyAsync(() -> ofNullable(query(this::update0, whitelistable)));
     }
 
     private Whitelistable update0(final Whitelistable whitelistable) throws SQLException {

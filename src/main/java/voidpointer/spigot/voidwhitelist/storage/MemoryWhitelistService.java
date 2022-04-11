@@ -17,6 +17,7 @@ package voidpointer.spigot.voidwhitelist.storage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Collections;
@@ -83,7 +84,7 @@ public abstract class MemoryWhitelistService implements WhitelistService {
         });
     }
 
-    @Override public CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt) {
+    @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
         return supplyAsync(() -> {
             Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt);
             if (!cachedWhitelist.add(whitelistable)) {
@@ -91,15 +92,15 @@ public abstract class MemoryWhitelistService implements WhitelistService {
                 cachedWhitelist.add(whitelistable);
             }
             saveWhitelist();
-            return whitelistable;
+            return Optional.of(whitelistable);
         });
     }
 
-    @Override public CompletableFuture<Whitelistable> update(final Whitelistable whitelistable) {
+    @Override public CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable) {
         return supplyAsync(() -> {
             cachedWhitelist.remove(whitelistable);
             cachedWhitelist.add(whitelistable);
-            return whitelistable;
+            return Optional.of(whitelistable);
         });
     }
 
