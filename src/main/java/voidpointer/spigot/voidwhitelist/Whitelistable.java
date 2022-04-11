@@ -40,17 +40,6 @@ public interface Whitelistable {
 
     void setName(final String name);
 
-    /* TODO:
-     *  Consider adding a String name property.
-     *  This would require changing WhitelistService#add() method to accept
-     *      name as well as required UUID and non-required date. It seems like
-     *      the name is available for all method executors.
-     *  This way the API will allow showing Whitelistable's in-game name avoiding
-     *      a search through Bukkit API or Mojang web requests.
-     *  Though, it will require automatic name updates on Join events. Perhaps,
-     *      some notifications & configuration needed.
-     */
-
     /**
      * Checks whether this entity is associated with provided player or not.
      *
