@@ -19,10 +19,17 @@ import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
+
+import static java.lang.Boolean.FALSE;
 
 @RequiredArgsConstructor
 final class DbmsFactory {
+    private static final String DRIVER_KEY = "hibernate.connection.driver_class";
+    private static final String URL_KEY = "hibernate.connection.url";
+
     @AutowiredLocale private static LocaleLog log;
 
     private final Plugin plugin;
@@ -37,7 +44,29 @@ final class DbmsFactory {
         }
     }
 
+    private void applyDefaults(final Properties props) {
+        props.setProperty("hibernate.show_sql", FALSE.toString());
+        props.setProperty("hibernate.hbm2ddl.auto", "update");
+    }
+
     private Properties h2(final HibernateConfig hibernateConfig) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        Properties props = new Properties();
+        File h2File = new File(plugin.getDataFolder(), "h2");
+        if (!h2File.exists())
+            createFile(h2File);
+        assert h2File.exists() : "Cannot continue without database file";
+        props.setProperty(DRIVER_KEY, "org.h2.Driver");
+        props.setProperty(URL_KEY, "jdbc:h2:" + h2File.getAbsolutePath());
+        applyDefaults(props);
+        return props;
+    }
+
+    private void createFile(final File file) {
+        try {
+            if (!file.createNewFile())
+                log.warn("Unable to create " + file.getAbsolutePath());
+        } catch (final IOException ioException) {
+            log.warn("Unable to create " + file.getAbsolutePath(), ioException);
+        }
     }
 }
