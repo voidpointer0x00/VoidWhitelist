@@ -24,11 +24,14 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static java.util.Collections.unmodifiableSet;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public final class OrmliteWhitelistService implements WhitelistService {
@@ -42,11 +45,19 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return supplyAsync(() -> query(this::findAll0, null, (long) limit));
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return supplyAsync(() -> query(this::findAll0, offset + 1L, (long) limit));
+    }
+
+    private Set<Whitelistable> findAll0(final Long offset, final Long limit) throws Exception {
+        List<WhitelistableModel> result = dao.queryBuilder()
+                .offset(offset)
+                .limit(limit)
+                .query();
+        return unmodifiableSet(new HashSet<>(result));
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
@@ -73,6 +84,15 @@ public final class OrmliteWhitelistService implements WhitelistService {
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private <T, U, R> R query(final CheckedBiFunction<T, U, R> function, T first, U second) {
+        try {
+            return function.apply(first, second);
+        } catch (Exception exception) {
+            log.warn("Unable to perform a database query", exception);
+            return null;
+        }
     }
 
     private <T, R> R query(final CheckedFunction<T, R> function, T argument) {
