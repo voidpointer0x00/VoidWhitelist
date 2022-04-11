@@ -26,7 +26,7 @@ import com.google.gson.reflect.TypeToken;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.storage.CachedWhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.MemoryWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
 import voidpointer.spigot.voidwhitelist.storage.update.JsonUpdate;
 import voidpointer.spigot.voidwhitelist.storage.update.JsonUpdateFactory;
@@ -44,7 +44,7 @@ import java.util.Optional;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static voidpointer.spigot.voidwhitelist.storage.StorageVersion.CURRENT;
 
-public final class JsonWhitelistService extends CachedWhitelistService {
+public final class JsonWhitelistService extends MemoryWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
     private static final String VERSION_PROPERTY = "version";
     private static final String WHITELIST_PROPERTY = "whitelist";

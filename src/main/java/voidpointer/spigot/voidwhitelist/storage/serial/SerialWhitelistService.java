@@ -19,7 +19,7 @@ import lombok.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.storage.CachedWhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.MemoryWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
 
 import java.io.File;
@@ -31,7 +31,7 @@ import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Set;
 
-public final class SerialWhitelistService extends CachedWhitelistService {
+public final class SerialWhitelistService extends MemoryWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
 
     @AutowiredLocale private static LocaleLog log;
