@@ -50,7 +50,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
-        return supplyAsync(() -> query(this::find0, uuid));
+        return supplyAsync(() -> Optional.ofNullable(query(this::find0, uuid)));
     }
 
     private Whitelistable find0(final UUID uuid) throws SQLException {
@@ -59,7 +59,12 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return supplyAsync(() -> query(this::add0, new WhitelistableModel(uuid, name, expiresAt)));
+    }
+
+    private WhitelistableModel add0(final WhitelistableModel whitelistable) throws SQLException {
+        dao.createOrUpdate(whitelistable);
+        return whitelistable;
     }
 
     @Override public CompletableFuture<Whitelistable> update(final Whitelistable whitelistable) {
@@ -70,12 +75,12 @@ public final class OrmliteWhitelistService implements WhitelistService {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private <T, R> Optional<R> query(final CheckedFunction<T, R> function, T argument) {
+    private <T, R> R query(final CheckedFunction<T, R> function, T argument) {
         try {
-            return Optional.of(function.apply(argument));
+            return function.apply(argument);
         } catch (Exception exception) {
             log.warn("Unable to perform a database query", exception);
-            return Optional.empty();
+            return null;
         }
     }
 }
