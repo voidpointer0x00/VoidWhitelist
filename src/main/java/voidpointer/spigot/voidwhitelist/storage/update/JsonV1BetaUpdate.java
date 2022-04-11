@@ -16,43 +16,27 @@ package voidpointer.spigot.voidwhitelist.storage.update;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import voidpointer.spigot.framework.localemodule.LocaleLog;
-import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
+import voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher;
+import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistablePojo;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.UUID;
 
-final class JsonV1BetaUpdate implements JsonUpdate {
-    @AutowiredLocale private static LocaleLog log;
+import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.EXPIRES_AT_FIELD;
+import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.UNIQUE_ID_FIELD;
 
-    @Override public Collection<Whitelistable> performUpdate(final JsonElement root) {
-        try {
-            Collection<Whitelistable> updated = parseJson(root);
-            root.getAsJsonObject().addProperty("version", StorageVersion.CURRENT.toString());
-            return updated;
-        } catch (final NullPointerException nullPointerException) {
-            log.warn("Invalid JSON data for the specified version", nullPointerException);
-            return null;
-        }
-    }
-
-    private Collection<Whitelistable> parseJson(final JsonElement root) throws NullPointerException {
-        LinkedList<Whitelistable> parsed = new LinkedList<>();
-        root.getAsJsonObject().getAsJsonArray("whitelist").forEach(whitelistableElement -> {
-            JsonObject whitelistableObject = whitelistableElement.getAsJsonObject();
-            UUID uniqueId = UUID.fromString(whitelistableObject.get("uniqueId").getAsString());
-            JsonElement expiresAtElement = whitelistableObject.get("expiresAt");
-            parsed.add(JsonWhitelistablePojo.builder()
-                    .uniqueId(uniqueId)
-                    .expiresAt(expiresAtElement.isJsonNull() ? null : new Date(expiresAtElement.getAsLong()))
-                    .createdAt(new Date())
-                    .build());
-        });
-        return parsed;
+final class JsonV1BetaUpdate extends AbstractJsonUpdate {
+    @Override protected Whitelistable update(final JsonElement jsonElement) {
+        JsonObject whitelistableObject = jsonElement.getAsJsonObject();
+        UUID uniqueId = UUID.fromString(whitelistableObject.get(UNIQUE_ID_FIELD).getAsString());
+        JsonElement expiresAtElement = whitelistableObject.get(EXPIRES_AT_FIELD);
+        Profile profile = CachedProfileFetcher.fetchProfile(uniqueId).join();
+        return JsonWhitelistablePojo.builder()
+                .uniqueId(uniqueId)
+                .name(profile.getName())
+                .expiresAt(expiresAtElement.isJsonNull() ? null : new Date(expiresAtElement.getAsLong()))
+                .build();
     }
 }

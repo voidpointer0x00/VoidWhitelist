@@ -24,7 +24,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
@@ -37,35 +39,34 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @RequiredArgsConstructor(access=AccessLevel.PACKAGE)
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
+@ToString(onlyExplicitlyIncluded=true)
 public final class Profile {
     @AutowiredLocale private static LocaleLog log;
     @Autowired(mapId="plugin")
     private static Plugin plugin;
 
     @EqualsAndHashCode.Include
+    @ToString.Include
     private final UUID uuid;
+    @Nullable
+    @ToString.Include
     private String name;
     private Optional<String> texturesBase64 = Optional.empty();
 
     public GameProfile toGameProfile() {
         GameProfile gameProfile = new GameProfile(uuid, name);
-        if (texturesBase64.isPresent())
-            gameProfile.getProperties().put("textures", new Property("textures", texturesBase64.get()));
+        texturesBase64.ifPresent(s -> gameProfile.getProperties().put("textures", new Property("textures", s)));
         return gameProfile;
     }
 
-    protected void fromJson(final JsonElement json) {
-        try {
-            name = getNameFromJson(json).orElse(uuid.toString() + " offline?");
-            texturesBase64 = Optional.ofNullable(getEncodedTexturesFromJson(json.getAsJsonObject()));
-        } catch (RuntimeException runtimeException) {
-            log.warn("Unable to parse Profile", runtimeException);
-        }
+    void fromJson(final JsonElement json) {
+        name = getNameFromJson(json).orElse(null);
+        texturesBase64 = getEncodedTexturesFromJson(json);
     }
 
     private Optional<String> getNameFromJson(final JsonElement json) {
         try {
-            return Optional.of(json.getAsJsonObject().get("name").toString());
+            return Optional.of(json.getAsJsonObject().get("name").getAsString());
         } catch (final IllegalStateException notAJsonObject) {
             return Optional.empty();
         } catch (final NullPointerException invalidUuid) {
@@ -74,12 +75,16 @@ public final class Profile {
         }
     }
 
-    private String getEncodedTexturesFromJson(final JsonObject json) throws RuntimeException {
-        JsonArray properties = json.get("properties").getAsJsonArray();
-        Optional<JsonObject> texturesProperty = StreamSupport.stream(properties.spliterator(), false)
-                .map(JsonElement::getAsJsonObject)
-                .filter(property -> property.get("name").getAsString().equals("textures"))
-                .findFirst();
-        return texturesProperty.get().get("value").getAsString();
+    private Optional<String> getEncodedTexturesFromJson(final JsonElement json) throws RuntimeException {
+        try {
+            JsonArray properties = json.getAsJsonObject().get("properties").getAsJsonArray();
+            Optional<JsonObject> texturesProperty = StreamSupport.stream(properties.spliterator(), false)
+                    .map(JsonElement::getAsJsonObject)
+                    .filter(property -> property.get("name").getAsString().equals("textures"))
+                    .findFirst();
+            return texturesProperty.map(jsonObject -> jsonObject.get("value").getAsString());
+        } catch (IllegalStateException | NullPointerException ignoreInvalidJson) {
+            return Optional.empty();
+        }
     }
 }

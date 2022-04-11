@@ -19,7 +19,7 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,19 +33,17 @@ public interface WhitelistService {
      * @return {@code limit} number of elements starting from the {@code first} exclusively.
      *          If none found an empty set will be returned. {@link Collections#emptySortedSet()}.
      */
-    CompletableFuture<SortedSet<Whitelistable>> findAll(int limit);
+    CompletableFuture<Set<Whitelistable>> findAll(int limit);
 
     /**
      * Finds {@code limit} elements starting from the {@code first} exclusively.
      *
-     * @param first an element to start searching with. This element will not be included
-     *              in a resulting {@link SortedSet}.
      * @param limit maximum number of elements to search for.
      *
      * @return {@code limit} number of elements starting from the {@code first} exclusively.
      *          If none found an empty set will be returned. {@link Collections#emptySortedSet()}.
      */
-    CompletableFuture<SortedSet<Whitelistable>> findAll(final Whitelistable first, int limit);
+    CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit);
 
     CompletableFuture<Optional<Whitelistable>> findFirst();
 
@@ -55,9 +53,7 @@ public interface WhitelistService {
 
     CompletableFuture<Optional<Whitelistable>> find(final UUID uuid);
 
-    CompletableFuture<Whitelistable> add(final UUID uuid);
-
-    CompletableFuture<Whitelistable> add(final UUID uuid, final Date expiresAt);
+    CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt);
 
     CompletableFuture<Boolean> remove(final Whitelistable whitelistable);
 }

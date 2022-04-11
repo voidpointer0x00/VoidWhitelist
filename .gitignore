@@ -114,3 +114,7 @@ run/
 
 # Local deploy script
 deploy-local.json
+
+# bash scripts
+*.sh
+

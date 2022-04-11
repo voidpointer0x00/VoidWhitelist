@@ -14,28 +14,17 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.gui.WhitelistGui;
-import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
-
-import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;
 
 public final class GuiCommand extends Command {
     private static final String NAME = "gui";
 
     @AutowiredLocale private static LocaleLog log;
     @Autowired static WhitelistService whitelistService;
-    @Autowired(mapId="plugin")
-    private static JavaPlugin plugin;
 
     public GuiCommand() {
         super(NAME);
@@ -48,14 +37,6 @@ public final class GuiCommand extends Command {
         }
         WhitelistGui gui = new WhitelistGui();
         gui.show(args.getPlayer());
-        whitelistService.findAll(gui.availableProfileSlots()).thenAcceptAsync(whitelistableSet -> {
-            if (whitelistableSet.isEmpty())
-                return;
-            ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(whitelistableSet.stream()
-                    .map(Whitelistable::getUniqueId)
-                    .collect(Collectors.toList()));
-            new AddProfileSkullTask(gui, profiles, whitelistableSet.size())
-                    .runTaskTimerAsynchronously(plugin, 0, 1L);
-        });
+        whitelistService.findAll(gui.availableProfileSlots()).thenAcceptAsync(gui::fillCurrentPage);
     }
 }

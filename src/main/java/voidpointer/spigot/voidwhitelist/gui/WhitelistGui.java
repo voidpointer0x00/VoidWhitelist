@@ -18,49 +18,47 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
-import com.mojang.authlib.GameProfile;
-import lombok.AccessLevel;
+import com.github.stefvanschie.inventoryframework.pane.Pane;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.Plugin;
-import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.framework.localemodule.LocaleLog;
-import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
+import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
 import voidpointer.spigot.voidwhitelist.net.Profile;
-import voidpointer.spigot.voidwhitelist.task.LoadingTask;
+import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.concurrent.CountDownLatch;
+import java.util.ConcurrentModificationException;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
+
+import static lombok.AccessLevel.PROTECTED;
+import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;
 
 @Getter
-public final class WhitelistGui {
-    @Autowired(mapId="plugin")
-    private static Plugin plugin;
-    @AutowiredLocale private static LocaleLog locale;
-    private final ChestGui gui;
+public final class WhitelistGui extends AbstractGui {
     private final PaginatedPane whitelistPane;
-    private WeakReference<HumanEntity> viewer;
-    private LoadingTask loadingTask;
-    @Setter(AccessLevel.PRIVATE)
-    private boolean isUpdating = false;
+    private final ConcurrentHashMap<Profile, ProfileScreen> profileScreens;
+    private final OutlinePane controlPane;
+    private WeakReference<AddProfileSkullTask> loadingTaskRef;
+    @Setter(PROTECTED)
+    private GuiItem enabledButton;
+    @Setter(PROTECTED)
+    private GuiItem disabledButton;
 
     public WhitelistGui() {
-        gui = new ChestGui(6, "§6VoidWhitelist");
-        gui.setOnGlobalClick(this::cancelClickIfNotPlayerInventory);
-        gui.setOnClose(this::clearViewer);
-        whitelistPane = new PaginatedPane(7, 4);
-        whitelistPane.addPane(0, new OutlinePane(7, 4));
-        whitelistPane.setPage(0);
-        gui.addPane(whitelistPane);
+        super(new ChestGui(6, "§6VoidWhitelist"));
+        profileScreens = new ConcurrentHashMap<>();
+        whitelistPane = GuiPanes.createWhitelistPagesPane();
+        addPane(whitelistPane);
+        addPane(GuiPanes.getDelimiter());
+        controlPane = GuiPanes.createControlPane(this);
+        addPane(controlPane);
     }
 
     public int availableProfileSlots() {
@@ -68,77 +66,126 @@ public final class WhitelistGui {
         return currentPage.getHeight() * currentPage.getLength() - currentPage.getItems().size();
     }
 
-    public void stopLoading() {
-        if (loadingTask != null) {
-            loadingTask.cancel();
-            gui.setTitle("§6VoidWhitelist");
+    public void addProfile(final Profile profile) throws ConcurrentModificationException {
+        ProfileSkull profileSkull = ProfileSkull.of(profile).setupDisplayInfo();
+        getCurrentPage().addItem(profileSkull.getGuiItem());
+        ProfileScreen profileScreen = new ProfileScreen(this, profileSkull);
+        profileScreens.put(profile, profileScreen);
+        profileSkull.getGuiItem().setAction(event -> {
+            if (!isLoading())
+                profileScreen.show(event.getWhoClicked());
+        });
+    }
+
+    public void removeProfile(final ProfileSkull profileSkull) {
+        profileScreens.remove(profileSkull.getProfile());
+        getCurrentPage().removeItem(profileSkull.getGuiItem());
+    }
+
+    public void onRefresh(final InventoryClickEvent event) {
+        final int availableSlots = availableProfileSlots();
+        if (availableSlots == 0)
+            return;
+        getWhitelistService().findAll(getCurrentOffset(), availableSlots).thenAcceptAsync(whitelistableSet -> {
+            if (whitelistableSet.isEmpty())
+                return;
+            fillCurrentPage(whitelistableSet);
+        });
+    }
+
+    public void onStatusClick(final InventoryClickEvent event) {
+        assert (enabledButton != null) && (disabledButton != null) : "Enable/disable buttons must be set";
+        if (getWhitelistConfig().isWhitelistEnabled()) {
+            getWhitelistConfig().disableWhitelist();
+            getEventManager().callAsyncEvent(new WhitelistDisabledEvent());
+            controlPane.removeItem(enabledButton);
+            controlPane.insertItem(disabledButton, GuiPanes.STATUS_INDEX);
+        } else {
+            getWhitelistConfig().enableWhitelist();
+            getEventManager().callAsyncEvent(new WhitelistEnabledEvent());
+            controlPane.removeItem(disabledButton);
+            controlPane.insertItem(enabledButton, GuiPanes.STATUS_INDEX);
+        }
+        update();
+    }
+
+    public void onNextPageClick(final InventoryClickEvent event) {
+        if (isLoading())
+            return;
+        Optional<OutlinePane> nextPage = setToNextPageAndGet();
+        if (!nextPage.isPresent())
+            return;
+        int capacity = availableProfileSlots();
+        int offset = getCurrentOffset();
+        getWhitelistService().findAll(offset, capacity).thenAcceptAsync(this::fillCurrentPage);
+    }
+
+    public void onPreviousPageClick(final InventoryClickEvent event) {
+        if (isLoading())
+            return;
+        if (whitelistPane.getPage() == 0)
+            return;
+        whitelistPane.setPage(whitelistPane.getPage() - 1);
+        update();
+    }
+
+    public void fillCurrentPage(final Set<Whitelistable> whitelistable) {
+        if (whitelistable.isEmpty()) {
             update();
+            return;
         }
+        clearNextPages();
+        ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(whitelistable.stream()
+                .map(Whitelistable::getUniqueId)
+                .collect(Collectors.toList()));
+        AddProfileSkullTask loadingTask = new AddProfileSkullTask(this, profiles, whitelistable.size());
+        loadingTask.runTaskTimerAsynchronously(getPlugin(), 0, 1L);
+        loadingTaskRef = new WeakReference<>(loadingTask);
     }
 
-    public void startLoading(final CountDownLatch countDownLatch, final int countDownStart) {
-        loadingTask = new LoadingTask(this, countDownLatch, countDownStart);
-        loadingTask.runTaskTimer(plugin, 0, 3);
-    }
-
-    public void addProfile(final Profile profile) {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
-        if (skullMeta != null) {
-            if (profile.getTexturesBase64().isPresent())
-                setProfile(skullMeta, profile.toGameProfile());
-            skullMeta.setDisplayName("§e" + profile.getName());
+    public Optional<OutlinePane> setToNextPageAndGet() {
+        if (availableProfileSlots() != 0)
+            return Optional.of(getCurrentPage());
+        OutlinePane nextPage;
+        if (isAtLastPage()) {
+            if (getCurrentPage().getItems().isEmpty())
+                return Optional.empty(); // can't create a new page while the current one is empty
+            nextPage = GuiPanes.createWhitelistPagePane();
+            whitelistPane.addPane(whitelistPane.getPages(), nextPage);
+        } else {
+            nextPage = (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage() + 1).iterator().next();
+            if (nextPage.getItems().isEmpty())
+                return Optional.of(getCurrentPage());
         }
-        head.setItemMeta(skullMeta);
-        getCurrentPage().addItem(new GuiItem(head));
-        // TODO: actions on click
+        whitelistPane.setPage(whitelistPane.getPage() + 1);
+        return Optional.of(nextPage);
     }
 
-    private OutlinePane getCurrentPage() {
+    private void clearNextPages() {
+        for (int page = whitelistPane.getPages(); --page > whitelistPane.getPage();)
+            whitelistPane.deletePage(page);
+    }
+
+    private int getCurrentOffset() {
+        Pane currentPage = getCurrentPage();
+        int capacity = availableProfileSlots();
+        int offset = whitelistPane.getPage() * currentPage.getHeight() * currentPage.getLength();
+        offset += (currentPage.getHeight() * currentPage.getLength() - capacity);
+        return offset;
+    }
+
+    private boolean isLoading() {
+        // TODO: drop Java 8 support and use Java 16 API after release
+        //  loadingTaskRef.refersTo(null) instead of (null != loadingTask)
+        AddProfileSkullTask loadingTask = loadingTaskRef.get();
+        return (null != loadingTask) && loadingTask.isLoading();
+    }
+
+    private boolean isAtLastPage() {
+        return whitelistPane.getPage() == (whitelistPane.getPages() - 1);
+    }
+
+    private @NonNull OutlinePane getCurrentPage() {
         return (OutlinePane) whitelistPane.getPanes(whitelistPane.getPage()).iterator().next();
-    }
-
-    private void setProfile(final SkullMeta meta, final GameProfile toGameProfile) {
-        try {
-            setProfile0(meta, toGameProfile);
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException exception) {
-            locale.warn("Unable to set profile for skull", exception);
-        }
-    }
-
-    private void setProfile0(final SkullMeta skullMeta, GameProfile profile)
-            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        Method mtd = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-        mtd.setAccessible(true);
-        mtd.invoke(skullMeta, profile);
-    }
-
-    public void show(final HumanEntity humanEntity) {
-        if ((viewer != null) && (viewer.get() != null))
-            return;
-        gui.show(humanEntity);
-        viewer = new WeakReference<>(humanEntity);
-    }
-
-    public void update() {
-        // we need to ensure that it's executing synchronously
-        if (!isUpdating) {
-            setUpdating(true);
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                gui.update();
-                setUpdating(false);
-            });
-        }
-    }
-
-    private void cancelClickIfNotPlayerInventory(final InventoryClickEvent event) {
-        if (event.getClickedInventory() == null)
-            return;
-        if (event.getClickedInventory().getType() != InventoryType.PLAYER)
-            event.setCancelled(true);
-    }
-
-    private void clearViewer(final InventoryCloseEvent inventoryCloseEvent) {
-        viewer = null;
     }
 }
