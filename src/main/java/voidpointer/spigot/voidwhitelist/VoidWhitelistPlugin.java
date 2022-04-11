@@ -74,7 +74,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     @Override public void onEnable() {
-        whitelistService = new StorageFactory(getDataFolder()).loadStorage(whitelistConfig);
+        whitelistService = new StorageFactory(this).loadStorage(whitelistConfig);
         Injector.inject(this);
         new WhitelistCommand().register(this);
         registerListeners();

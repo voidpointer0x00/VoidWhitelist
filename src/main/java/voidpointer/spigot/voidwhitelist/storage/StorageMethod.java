@@ -14,6 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.storage;
 
+import voidpointer.spigot.voidwhitelist.storage.db.HibernateWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService;
 
@@ -31,5 +32,9 @@ public enum StorageMethod {
      * @see JsonWhitelistService
      */
     JSON,
-    /* TODO: SQL database. */
+    /**
+     * Based on SQL DBMS.
+     * @see HibernateWhitelistService
+     */
+    DATABASE,
 }
