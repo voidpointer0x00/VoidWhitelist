@@ -39,11 +39,10 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public final class OrmliteWhitelistService implements WhitelistService {
     @AutowiredLocale private static LocaleLog log;
-    private final OrmliteConfig ormliteConfig;
     private final Dao<WhitelistableModel, UUID> dao;
 
     public OrmliteWhitelistService(final Plugin plugin) {
-        ormliteConfig = new OrmliteConfig(plugin);
+        OrmliteConfig ormliteConfig = new OrmliteConfig(plugin);
         dao = ormliteConfig.getWhitelistableDao();
     }
 
