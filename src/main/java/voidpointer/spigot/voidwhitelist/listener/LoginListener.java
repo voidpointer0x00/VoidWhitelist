@@ -35,6 +35,8 @@ import voidpointer.spigot.voidwhitelist.task.KickTask;
 import java.util.Map;
 import java.util.Optional;
 
+import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.removeCachedProfile;
+
 @RequiredArgsConstructor
 public final class LoginListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
@@ -85,6 +87,6 @@ public final class LoginListener implements Listener {
     private void updateWhitelistableName(final Player player, final Whitelistable whitelistable) {
         assert player.getUniqueId().equals(whitelistable.getUniqueId()) : "UUID of player a whitelistable must match";
         whitelistable.setName(player.getName());
-        whitelistService.update(whitelistable);
+        whitelistService.update(whitelistable).thenAcceptAsync(updated -> removeCachedProfile(updated.getUniqueId()));
     }
 }
