@@ -64,6 +64,10 @@ public final class CachedProfileFetcher {
         });
     }
 
+    public static Profile removeCachedProfile(final UUID uuid) {
+        return profilesCache.asMap().remove(uuid);
+    }
+
     private static Profile requestApi(final UUID uuid) {
         try {
             return requestApi0(uuid);
