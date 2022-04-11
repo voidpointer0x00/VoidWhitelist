@@ -17,6 +17,7 @@ package voidpointer.spigot.voidwhitelist.config;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -52,7 +53,9 @@ public final class OrmliteConfig {
 
     public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
         try {
-            return DaoManager.createDao(connectionSource, WhitelistableModel.class);
+            Dao<WhitelistableModel, UUID> dao = DaoManager.createDao(connectionSource, WhitelistableModel.class);
+            TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
+            return dao;
         } catch (SQLException sqlException) {
             log.warn("Unable to create Dao object", sqlException);
             return null;
