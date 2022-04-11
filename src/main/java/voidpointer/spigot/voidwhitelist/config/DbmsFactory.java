@@ -27,9 +27,6 @@ import java.sql.SQLException;
 
 @RequiredArgsConstructor
 final class DbmsFactory {
-    private static final String DRIVER_KEY = "hibernate.connection.driver_class";
-    private static final String URL_KEY = "hibernate.connection.url";
-
     @AutowiredLocale private static LocaleLog log;
 
     private final Plugin plugin;
