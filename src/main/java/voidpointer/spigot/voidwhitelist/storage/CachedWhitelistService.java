@@ -72,22 +72,6 @@ public abstract class CachedWhitelistService implements WhitelistService {
         return subset;
     }
 
-    @Override public CompletableFuture<Optional<Whitelistable>> findFirst() {
-        if (cachedWhitelist.isEmpty())
-            return completedFuture(Optional.empty());
-        return completedFuture(Optional.of(cachedWhitelist.iterator().next()));
-    }
-
-    @Override public CompletableFuture<Optional<Whitelistable>> findLast() {
-        if (cachedWhitelist.isEmpty())
-            return completedFuture(Optional.empty());
-        return completedFuture(Optional.of(cachedWhitelist.iterator().next()));
-    }
-
-    @Override public CompletableFuture<Integer> size() {
-        return completedFuture(cachedWhitelist.size());
-    }
-
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
         return supplyAsync(() -> {
             // Could've used Map for fast search operations, but who tf cares

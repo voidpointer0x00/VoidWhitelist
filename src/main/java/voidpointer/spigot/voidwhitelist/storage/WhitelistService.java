@@ -45,12 +45,6 @@ public interface WhitelistService {
      */
     CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit);
 
-    CompletableFuture<Optional<Whitelistable>> findFirst();
-
-    CompletableFuture<Optional<Whitelistable>> findLast();
-
-    CompletableFuture<Integer> size();
-
     CompletableFuture<Optional<Whitelistable>> find(final UUID uuid);
 
     CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt);
