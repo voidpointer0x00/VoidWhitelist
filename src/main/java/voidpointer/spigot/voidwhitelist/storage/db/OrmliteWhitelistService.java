@@ -89,52 +89,35 @@ public final class OrmliteWhitelistService implements WhitelistService {
     public CompletableFuture<Set<Whitelistable>> addAllIfNotExists(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(emptySet());
-        return supplyAsync(() -> addAllIfNotExists0(all));
-    }
-
-    private Set<Whitelistable> addAllIfNotExists0(final Collection<Whitelistable> all) {
-        Set<WhitelistableModel> added = new HashSet<>();
-        try {
-            return dao.callBatchTasks(() -> {
-                WhitelistableModel currentModel;
-                for (final Whitelistable whitelistable : all) {
-                    if (whitelistable instanceof WhitelistableModel)
-                        currentModel = (WhitelistableModel) whitelistable;
-                    else
-                        currentModel = WhitelistableModel.copyOf(whitelistable);
-                    dao.createIfNotExists(currentModel);
-                    added.add(currentModel);
-                }
-                return unmodifiableSet(added);
-            });
-        } catch (final Exception exception) {
-            return unmodifiableSet(added);
-        }
+        return supplyAsync(() -> addAll((model, addedSet) -> {
+            if (!dao.idExists(model.getUniqueId())) {
+                dao.create(model);
+                addedSet.add(model);
+            }
+        }, all));
     }
 
     public CompletableFuture<Set<Whitelistable>> addAllReplacing(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(emptySet());
-        return supplyAsync(() -> addAllReplacing0(all));
+        return supplyAsync(() -> addAll((model, addedSet) -> dao.createOrUpdate(model), all));
     }
 
-    private Set<Whitelistable> addAllReplacing0(final Collection<Whitelistable> all) {
+    private Set<Whitelistable> addAll(
+            final CheckedBiConsumer<WhitelistableModel, Set<WhitelistableModel>> addFunction,
+            final Collection<Whitelistable> all) {
         Set<WhitelistableModel> added = new HashSet<>();
         try {
             return dao.callBatchTasks(() -> {
-                WhitelistableModel currentModel;
                 for (final Whitelistable whitelistable : all) {
                     if (whitelistable instanceof WhitelistableModel)
-                        currentModel = (WhitelistableModel) whitelistable;
+                        addFunction.consume((WhitelistableModel) whitelistable, added);
                     else
-                        currentModel = WhitelistableModel.copyOf(whitelistable);
-                    dao.createOrUpdate(currentModel);
-                    added.add(currentModel);
+                        addFunction.consume(WhitelistableModel.copyOf(whitelistable), added);
                 }
                 return unmodifiableSet(added);
             });
         } catch (final Exception exception) {
-            log.warn("Unable to complete addAllReplacing", exception);
             return unmodifiableSet(added);
         }
     }
