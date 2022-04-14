@@ -67,12 +67,12 @@ public final class Args {
         HashSet<ArgOption> options = new HashSet<>(this.options);
         Iterator<String> optionsIterator = rawOptions.iterator();
         while (optionsIterator.hasNext()) {
-            String arg = optionsIterator.next();
+            String rawOption = optionsIterator.next();
             for (ArgOption option : argOptions) {
-                if (!option.matches(arg))
+                if (!option.matches(rawOption))
                     continue;
                 options.add(option);
-                args.remove(option);
+                args.remove(rawOption);
                 optionsIterator.remove();
             }
         }
