@@ -19,7 +19,6 @@ import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,27 +30,15 @@ import static java.util.Collections.unmodifiableSet;
 
 public final class Args {
     @Getter private final CommandSender sender;
-    private final LinkedList<String> args;
-    private final LinkedList<String> rawOptions;
+    private final LinkedList<Arg> args = new LinkedList<>();
+    private final LinkedList<Arg> undefinedOptions = new LinkedList<>();
+    // TODO: ArgOption -> DefinedOption, options -> definedOptions
     @Getter private Set<ArgOption> options = emptySet();
 
-    public Args(final @NonNull CommandSender sender, final @NonNull String[] args) {
+    public Args(final @NonNull CommandSender sender, final @NonNull String[] rawArgs) {
         this.sender = sender;
-        this.args = new LinkedList<>(Arrays.asList(args));
-        this.rawOptions = removeOptionsFrom(this.args);
-    }
-
-    private LinkedList<String> removeOptionsFrom(final LinkedList<String> args) {
-        LinkedList<String> rawOptions = new LinkedList<>();
-        Iterator<String> argsIterator = args.iterator();
-        while (argsIterator.hasNext()) {
-            String arg = argsIterator.next();
-            if (!arg.startsWith("-"))
-                continue;
-            rawOptions.add(arg);
-            argsIterator.remove();
-        }
-        return rawOptions;
+        for (int index = 0; index < rawArgs.length; index++)
+            new Arg(index, rawArgs[index]).ifOptionOrElse(undefinedOptions::add, args::add);
     }
 
     public Player getPlayer() {
@@ -65,11 +52,11 @@ public final class Args {
         if (argOptions.isEmpty())
             return;
         HashSet<ArgOption> options = new HashSet<>(this.options);
-        Iterator<String> optionsIterator = rawOptions.iterator();
+        Iterator<Arg> optionsIterator = undefinedOptions.iterator();
         while (optionsIterator.hasNext()) {
-            String rawOption = optionsIterator.next();
+            Arg rawOption = optionsIterator.next();
             for (ArgOption option : argOptions) {
-                if (!option.matches(rawOption))
+                if (!option.matches(rawOption.value))
                     continue;
                 options.add(option);
                 args.remove(rawOption);
@@ -88,15 +75,15 @@ public final class Args {
     }
 
     public String get(int index) {
-        return args.get(index);
+        return args.get(index).value;
     }
 
     public String removeFirst() {
-        return args.removeFirst();
+        return args.removeFirst().value;
     }
 
     public String getLast() {
-        return args.getLast();
+        return args.getLast().value;
     }
 
     public boolean isEmpty() {
