@@ -24,6 +24,7 @@ import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.concurrent.CompletableFuture;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Optional.ofNullable;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public final class OrmliteWhitelistService implements WhitelistService {
@@ -82,6 +84,33 @@ public final class OrmliteWhitelistService implements WhitelistService {
     private Optional<Whitelistable> onFindException(final Throwable thrown) {
         log.warn("Couldn't find whitelistable: {0}", thrown.getMessage());
         return Optional.empty();
+    }
+
+    public CompletableFuture<Set<Whitelistable>> addAllReplacing(final Collection<Whitelistable> all) {
+        if (all.isEmpty())
+            return completedFuture(emptySet());
+        return supplyAsync(() -> addAllReplacing0(all));
+    }
+
+    private Set<Whitelistable> addAllReplacing0(final Collection<Whitelistable> all) {
+        try {
+            return dao.callBatchTasks(() -> {
+                HashSet<WhitelistableModel> models = new HashSet<>();
+                WhitelistableModel currentModel;
+                for (final Whitelistable whitelistable : all) {
+                    if (whitelistable instanceof WhitelistableModel)
+                        currentModel = (WhitelistableModel) whitelistable;
+                    else
+                        currentModel = WhitelistableModel.copyOf(whitelistable);
+                    models.add(currentModel);
+                    dao.createOrUpdate(currentModel);
+                }
+                return unmodifiableSet(models);
+            });
+        } catch (final Exception exception) {
+            log.warn("Unable to complete addAllReplacing", exception);
+            return emptySet();
+        }
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
