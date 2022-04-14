@@ -25,6 +25,7 @@ public class ImportJsonCommand extends Command {
     public ImportJsonCommand() {
         super(NAME);
         super.setPermission(PERMISSION);
+        super.addOptions(ImportOptions.values());
     }
 
     @Override public void execute(final Args args) {
