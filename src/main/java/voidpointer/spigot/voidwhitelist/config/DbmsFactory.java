@@ -43,9 +43,6 @@ final class DbmsFactory {
 
     private ConnectionSource h2(final OrmliteConfig ormliteConfig) {
         File h2File = new File(plugin.getDataFolder(), "h2");
-        if (!h2File.exists())
-            createFile(h2File);
-        assert h2File.exists() : "Cannot continue without database file";
         try {
             return new JdbcConnectionSource("jdbc:h2:" + h2File.getAbsolutePath());
         } catch (SQLException sqlException) {
