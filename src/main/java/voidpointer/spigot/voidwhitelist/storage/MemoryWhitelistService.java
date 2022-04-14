@@ -46,10 +46,10 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public abstract class MemoryWhitelistService implements WhitelistService {
     @Getter
     @Setter(AccessLevel.PROTECTED)
-    private Set<Whitelistable> cachedWhitelist = ConcurrentHashMap.newKeySet();
+    private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
-        if (cachedWhitelist.isEmpty())
+        if (whitelist.isEmpty())
             return completedFuture(Collections.emptySet());
         return supplyAsync(() -> {
             Set<Whitelistable> subset = findAll0(0, limit);
@@ -58,14 +58,14 @@ public abstract class MemoryWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit) {
-        if (cachedWhitelist.isEmpty())
+        if (whitelist.isEmpty())
             return completedFuture(Collections.emptySet());
         return supplyAsync(() -> Collections.unmodifiableSet(findAll0(offset, limit)));
     }
 
     private Set<Whitelistable> findAll0(final int offset, final int limit) {
         Set<Whitelistable> subset = new HashSet<>();
-        Iterator<Whitelistable> iterator = cachedWhitelist.iterator();
+        Iterator<Whitelistable> iterator = whitelist.iterator();
         for (int index = 0; (index < offset) && iterator.hasNext(); index++, iterator.next())
             ;
         for (int index = 0; (index < limit) && iterator.hasNext(); index++, subset.add(iterator.next()))
@@ -76,7 +76,7 @@ public abstract class MemoryWhitelistService implements WhitelistService {
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
         return supplyAsync(() -> {
             // Could've used Map for fast search operations, but who tf cares
-            for (Whitelistable whitelistable : cachedWhitelist) {
+            for (Whitelistable whitelistable : whitelist) {
                 if (whitelistable.getUniqueId().equals(uuid))
                     return Optional.of(whitelistable);
             }
@@ -87,9 +87,9 @@ public abstract class MemoryWhitelistService implements WhitelistService {
     @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
         return supplyAsync(() -> {
             Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt);
-            if (!cachedWhitelist.add(whitelistable)) {
-                cachedWhitelist.remove(whitelistable);
-                cachedWhitelist.add(whitelistable);
+            if (!whitelist.add(whitelistable)) {
+                whitelist.remove(whitelistable);
+                whitelist.add(whitelistable);
             }
             saveWhitelist();
             return Optional.of(whitelistable);
@@ -98,15 +98,15 @@ public abstract class MemoryWhitelistService implements WhitelistService {
 
     @Override public CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable) {
         return supplyAsync(() -> {
-            cachedWhitelist.remove(whitelistable);
-            cachedWhitelist.add(whitelistable);
+            whitelist.remove(whitelistable);
+            whitelist.add(whitelistable);
             return Optional.of(whitelistable);
         });
     }
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
         return supplyAsync(() -> {
-            cachedWhitelist.remove(whitelistable);
+            whitelist.remove(whitelistable);
             saveWhitelist();
             return true;
         });

@@ -51,7 +51,7 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
 
             ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile));
             objOut.writeObject(StorageVersion.CURRENT.toString());
-            objOut.writeObject(this.getCachedWhitelist());
+            objOut.writeObject(this.getWhitelist());
             objOut.close();
         } catch (IOException ioException) {
             log.severe("Cannot save whitelist.");
@@ -69,7 +69,7 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
                 log.severe("Can't load whitelist: serial storage does not support different versions.");
                 return;
             }
-            getCachedWhitelist().addAll(deserializeWhitelist(oin.readObject()));
+            this.getWhitelist().addAll(deserializeWhitelist(oin.readObject()));
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
             log.severe("Cannot deserialize whitelist object from file.", deserializationException);
             return;
