@@ -16,6 +16,10 @@ package voidpointer.spigot.voidwhitelist.command;
 
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.compile;
+
 public enum UuidOptions implements ArgOption {
     ONLINE, OFFLINE;
     private static final String patternFormat = "^--?%s$";
@@ -23,7 +27,11 @@ public enum UuidOptions implements ArgOption {
     private final Pattern pattern;
 
     UuidOptions() {
-        pattern = Pattern.compile(String.format(patternFormat, this), Pattern.CASE_INSENSITIVE);
+        pattern = compile(format(patternFormat, getName()), CASE_INSENSITIVE);
+    }
+
+    @Override public String getName() {
+        return toString().toLowerCase().replace('_', '-');
     }
 
     @Override public boolean matches(final CharSequence sequence) {

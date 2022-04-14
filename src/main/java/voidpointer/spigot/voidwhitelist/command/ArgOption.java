@@ -15,5 +15,12 @@
 package voidpointer.spigot.voidwhitelist.command;
 
 public interface ArgOption {
+    /**
+     * <p>Get the name of option.</p>
+     *
+     * <p>The name of {@code --option} would be {@code option}.</p>
+     */
+    String getName();
+
     boolean matches(final CharSequence sequence);
 }

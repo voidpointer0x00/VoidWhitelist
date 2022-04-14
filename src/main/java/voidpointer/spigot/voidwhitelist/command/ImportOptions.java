@@ -27,7 +27,11 @@ public enum ImportOptions implements ArgOption {
     private final Pattern pattern;
 
     ImportOptions() {
-        pattern = compile(format(patternFormat, toString().replace('_', '-')), CASE_INSENSITIVE);
+        pattern = compile(format(patternFormat, getName()), CASE_INSENSITIVE);
+    }
+
+    @Override public String getName() {
+        return toString().toLowerCase().replace('_', '-');
     }
 
     @Override public boolean matches(final CharSequence sequence) {
