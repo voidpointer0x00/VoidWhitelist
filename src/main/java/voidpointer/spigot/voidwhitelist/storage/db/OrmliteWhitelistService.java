@@ -86,6 +86,32 @@ public final class OrmliteWhitelistService implements WhitelistService {
         return Optional.empty();
     }
 
+    public CompletableFuture<Set<Whitelistable>> addAllIfNotExists(final Collection<Whitelistable> all) {
+        if (all.isEmpty())
+            return completedFuture(emptySet());
+        return supplyAsync(() -> addAllIfNotExists0(all));
+    }
+
+    private Set<Whitelistable> addAllIfNotExists0(final Collection<Whitelistable> all) {
+        Set<WhitelistableModel> added = new HashSet<>();
+        try {
+            return dao.callBatchTasks(() -> {
+                WhitelistableModel currentModel;
+                for (final Whitelistable whitelistable : all) {
+                    if (whitelistable instanceof WhitelistableModel)
+                        currentModel = (WhitelistableModel) whitelistable;
+                    else
+                        currentModel = WhitelistableModel.copyOf(whitelistable);
+                    dao.createIfNotExists(currentModel);
+                    added.add(currentModel);
+                }
+                return unmodifiableSet(added);
+            });
+        } catch (final Exception exception) {
+            return unmodifiableSet(added);
+        }
+    }
+
     public CompletableFuture<Set<Whitelistable>> addAllReplacing(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(emptySet());
