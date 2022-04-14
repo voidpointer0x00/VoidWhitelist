@@ -48,9 +48,8 @@ public final class Args {
         if (argOptions.isEmpty())
             return;
         Iterator<String> argsIterator = args.iterator();
-        String arg;
         while (argsIterator.hasNext()) {
-            arg = argsIterator.next();
+            String arg = argsIterator.next();
             for (ArgOption option : argOptions) {
                 if (!option.matches(arg))
                     continue;
