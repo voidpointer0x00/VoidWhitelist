@@ -16,6 +16,7 @@ package voidpointer.spigot.voidwhitelist.command;
 
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
 
 import java.util.ArrayList;
 import java.util.HashMap;

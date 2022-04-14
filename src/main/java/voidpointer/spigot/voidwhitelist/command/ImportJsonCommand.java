@@ -19,6 +19,8 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
+import voidpointer.spigot.voidwhitelist.command.arg.ImportOptions;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistImportEvent;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
@@ -31,7 +33,7 @@ import java.util.Set;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyList;
-import static voidpointer.spigot.voidwhitelist.command.ImportOptions.REPLACE;
+import static voidpointer.spigot.voidwhitelist.command.arg.ImportOptions.REPLACE;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
 import static voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService.WHITELIST_FILE_NAME;

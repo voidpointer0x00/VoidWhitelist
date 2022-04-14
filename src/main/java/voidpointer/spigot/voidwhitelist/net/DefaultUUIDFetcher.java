@@ -14,8 +14,8 @@
  */
 package voidpointer.spigot.voidwhitelist.net;
 
-import voidpointer.spigot.voidwhitelist.command.ArgOption;
-import voidpointer.spigot.voidwhitelist.command.UuidOptions;
+import voidpointer.spigot.voidwhitelist.command.arg.ArgOption;
+import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 
 import java.util.Collection;
 import java.util.Optional;

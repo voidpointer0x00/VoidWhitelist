@@ -17,6 +17,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import java.util.List;
