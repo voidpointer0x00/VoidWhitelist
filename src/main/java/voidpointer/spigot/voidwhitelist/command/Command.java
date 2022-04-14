@@ -16,7 +16,6 @@ package voidpointer.spigot.voidwhitelist.command;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang.NotImplementedException;
@@ -25,6 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Getter
 @RequiredArgsConstructor
 public abstract class Command implements CommandExecutor, TabCompleter {
     public static final String EMPTY_PERMISSION = "";
@@ -42,26 +43,20 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     private static final List<String> EMPTY_ALIASES = Collections.emptyList();
     @AutowiredLocale private static LocaleLog localeLog;
 
-    @Getter
     @Setter(AccessLevel.PROTECTED)
-    @NonNull
-    private String permission = EMPTY_PERMISSION;
+    private @NonNull String permission = EMPTY_PERMISSION;
 
-    @Getter
-    @NonNull
     private final String name;
 
-    @Getter
     @Setter(AccessLevel.PROTECTED)
     private int requiredArgsNumber = DEFAULT_REQUIRED_ARGS_NUMBER;
 
-    @Getter
     private final Set<ArgOption> options = new HashSet<>();
 
     @Override public final boolean onCommand(
-            final CommandSender sender,
-            final org.bukkit.command.Command command,
-            final String label,
+            final @NonNull CommandSender sender,
+            final org.bukkit.command.@NonNull Command command,
+            final @NonNull String label,
             final String[] rawArgs) {
         Args args = new Args(sender, rawArgs);
 
@@ -76,9 +71,9 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     public abstract void execute(final Args args);
 
     @Override public List<String> onTabComplete(
-            final CommandSender sender,
-            final org.bukkit.command.Command command,
-            final String alias,
+            final @NonNull CommandSender sender,
+            final org.bukkit.command.@NonNull Command command,
+            final @NonNull String alias,
             final String[] rawArgs) {
         Args args = new Args(sender, rawArgs);
 
@@ -124,7 +119,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     }
 
     protected void onNoPermission(final CommandSender sender) {
-        locale.localize(WhitelistMessage.NO_PERMISSION).send(sender);
+        localeLog.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 
     protected final void addOptions(ArgOption[] options) {
