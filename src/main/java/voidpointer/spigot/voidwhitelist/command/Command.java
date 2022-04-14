@@ -126,7 +126,6 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     }
 
     protected final void addOptions(ArgOption[] options) {
-        for (ArgOption option : options)
-            this.options.add(option);
+        Collections.addAll(this.options, options);
     }
 }
