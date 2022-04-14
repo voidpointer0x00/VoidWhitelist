@@ -73,6 +73,10 @@ public final class Args {
         return args.get(index);
     }
 
+    public String getLast() {
+        return args.getLast();
+    }
+
     public boolean isEmpty() {
         return args.isEmpty();
     }
