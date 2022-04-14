@@ -93,9 +93,9 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     private Set<Whitelistable> addAllReplacing0(final Collection<Whitelistable> all) {
+        Set<WhitelistableModel> models = new HashSet<>();
         try {
             return dao.callBatchTasks(() -> {
-                HashSet<WhitelistableModel> models = new HashSet<>();
                 WhitelistableModel currentModel;
                 for (final Whitelistable whitelistable : all) {
                     if (whitelistable instanceof WhitelistableModel)
@@ -109,7 +109,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
             });
         } catch (final Exception exception) {
             log.warn("Unable to complete addAllReplacing", exception);
-            return emptySet();
+            return unmodifiableSet(models);
         }
     }
 
