@@ -21,17 +21,19 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableSet;
+
 public final class Args {
     @Getter private final CommandSender sender;
     private final LinkedList<String> args;
     private final LinkedList<String> rawOptions;
-    @Getter private final Set<ArgOption> options = Collections.synchronizedSet(new HashSet<>());
+    @Getter private Set<ArgOption> options = emptySet();
 
     public Args(final @NonNull CommandSender sender, final @NonNull String[] args) {
         this.sender = sender;
@@ -62,6 +64,7 @@ public final class Args {
     public void parseOptions(final Collection<ArgOption> argOptions) {
         if (argOptions.isEmpty())
             return;
+        HashSet<ArgOption> options = new HashSet<>(this.options);
         Iterator<String> optionsIterator = rawOptions.iterator();
         while (optionsIterator.hasNext()) {
             String arg = optionsIterator.next();
@@ -73,6 +76,7 @@ public final class Args {
                 optionsIterator.remove();
             }
         }
+        this.options = unmodifiableSet(options);
     }
 
     public boolean hasOption(final ArgOption option) {
