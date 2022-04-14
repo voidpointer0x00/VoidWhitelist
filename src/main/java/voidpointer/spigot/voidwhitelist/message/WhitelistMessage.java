@@ -26,7 +26,7 @@ public enum WhitelistMessage implements Message {
     CONSOLE_WHITELISTED("&eКонсоль не может быть в whitelist, введите ник игрока для проверки."),
     DISABLED("&eWhitelist &cвыключен&e."),
     ENABLED("&eWhitelist &aвключен&e."),
-    IMPORT_LOADED("&eЗагружено &e{loaded} записей из &6{storage}&e, импорт начат."),
+    IMPORT_LOADED("&eЗагружено &6{loaded}&e записей из &6{storage}&e, импорт начат."),
     IMPORT_ONLY_TO_DATABASE("&eИмпорт работает только из JSON в базу данных."),
     IMPORT_RESULT("&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e."),
     INFO_NOT_WHITELISTED("&eИгрок &6«&c{player-details}&6» &cотсутствует &eв whitelist."),
