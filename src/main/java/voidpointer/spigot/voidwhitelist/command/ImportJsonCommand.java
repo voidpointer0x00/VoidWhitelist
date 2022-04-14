@@ -24,9 +24,12 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 
+import java.util.List;
 import java.util.Set;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static voidpointer.spigot.voidwhitelist.command.ImportOptions.REPLACE;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
@@ -75,5 +78,11 @@ public class ImportJsonCommand extends Command {
                 .set("loaded", json.getWhitelist().size())
                 .set("ms-spent", end - start)
                 .send(args.getSender());
+    }
+
+    @Override public List<String> tabComplete(final Args args) {
+        if (args.isEmpty())
+            return emptyList();
+        return singletonList("-" + REPLACE.toString().toLowerCase());
     }
 }
