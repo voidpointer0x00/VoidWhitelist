@@ -24,8 +24,6 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import static java.lang.System.currentTimeMillis;
@@ -37,7 +35,6 @@ import static voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService
 public class ImportJsonCommand extends Command {
     public static final String NAME = "import-json";
     public static final String PERMISSION = "permission";
-    public static final List<String> ALIASES = Collections.singletonList("importjson");
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static WhitelistService whitelistService;
@@ -78,9 +75,5 @@ public class ImportJsonCommand extends Command {
                 .set("loaded", json.getWhitelist().size())
                 .set("ms-spent", end - start)
                 .send(args.getSender());
-    }
-
-    @Override public List<String> getAliases() {
-        return ALIASES;
     }
 }
