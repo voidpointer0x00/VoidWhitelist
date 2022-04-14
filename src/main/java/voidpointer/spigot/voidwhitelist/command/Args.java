@@ -38,11 +38,10 @@ public final class Args {
     }
 
     public Player getPlayer() {
-        if (sender instanceof Player) {
+        if (sender instanceof Player)
             return (Player) sender;
-        } else {
+        else
             throw new ClassCastException("CommandSender isn't a Player instance.");
-        }
     }
 
     public void parseOptions(final Collection<ArgOption> argOptions) {
