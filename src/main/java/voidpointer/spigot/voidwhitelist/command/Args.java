@@ -23,10 +23,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class Args {
     @Getter private final CommandSender sender;
@@ -49,16 +48,17 @@ public final class Args {
     public void parseOptions(final Collection<ArgOption> argOptions) {
         if (argOptions.isEmpty())
             return;
-        List<String> matchingArgs = args.parallelStream().filter(arg -> {
+        Iterator<String> argsIterator = args.iterator();
+        String arg;
+        while (argsIterator.hasNext()) {
+            arg = argsIterator.next();
             for (ArgOption option : argOptions) {
                 if (!option.matches(arg))
                     continue;
                 options.add(option);
-                return true;
+                argsIterator.remove();
             }
-            return false;
-        }).collect(Collectors.toList());
-        args.removeAll(matchingArgs);
+        }
     }
 
     public boolean hasOption(final ArgOption option) {
