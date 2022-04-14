@@ -22,9 +22,10 @@ import lombok.Setter;
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
-import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
@@ -39,7 +40,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     public static final Integer DEFAULT_REQUIRED_ARGS_NUMBER = 0;
 
     private static final List<String> EMPTY_ALIASES = Collections.emptyList();
-    @AutowiredLocale private static Locale locale;
+    @AutowiredLocale private static LocaleLog localeLog;
 
     @Getter
     @Setter(AccessLevel.PROTECTED)
@@ -96,12 +97,13 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     }
 
     public final void register(final JavaPlugin plugin) {
-        try {
-            plugin.getCommand(name).setExecutor(this);
-            plugin.getCommand(name).setTabCompleter(this);
-        } catch (NullPointerException npe) {
-            throw new UnsupportedOperationException("Plugin doesn't define command: " + name);
+        PluginCommand command = plugin.getCommand(name);
+        if (command == null) {
+            localeLog.warn("Plugin does not define a required \"{0}\" command.", name);
+            return;
         }
+        command.setExecutor(this);
+        command.setTabCompleter(this);
     }
 
     protected final boolean isValidForExecution(final Args args) {
