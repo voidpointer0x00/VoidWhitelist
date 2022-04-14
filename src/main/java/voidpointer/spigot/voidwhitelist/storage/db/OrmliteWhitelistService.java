@@ -102,8 +102,8 @@ public final class OrmliteWhitelistService implements WhitelistService {
                         currentModel = (WhitelistableModel) whitelistable;
                     else
                         currentModel = WhitelistableModel.copyOf(whitelistable);
-                    models.add(currentModel);
                     dao.createOrUpdate(currentModel);
+                    models.add(currentModel);
                 }
                 return unmodifiableSet(models);
             });
