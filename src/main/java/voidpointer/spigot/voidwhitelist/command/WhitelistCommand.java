@@ -43,8 +43,7 @@ public final class WhitelistCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        final String subCommandName = args.get(0);
-        args.getArgs().removeFirst();
+        final String subCommandName = args.removeFirst();
 
         if (!whitelistCommands.executeCommand(subCommandName, args))
             locale.localize(WhitelistMessage.WHITELIST_HELP).send(args.getSender());

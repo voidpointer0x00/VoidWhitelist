@@ -29,7 +29,7 @@ import java.util.Set;
 
 public final class Args {
     @Getter private final CommandSender sender;
-    @Getter private final LinkedList<String> args;
+    private final LinkedList<String> args;
     @Getter private final Set<ArgOption> options = Collections.synchronizedSet(new HashSet<>());
 
     public Args(final @NonNull CommandSender sender, final @NonNull String[] args) {
@@ -70,6 +70,10 @@ public final class Args {
 
     public String get(int index) {
         return args.get(index);
+    }
+
+    public String removeFirst() {
+        return args.removeFirst();
     }
 
     public String getLast() {

@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+
 public final class CommandManager {
     @AutowiredLocale private static LocaleLog log;
     private final Map<String, Command> commands = new HashMap<>();
@@ -74,10 +76,9 @@ public final class CommandManager {
                     .collect(Collectors.toList());
         }
 
-        final String commandName = args.get(0);
+        final String commandName = args.removeFirst();
         if (!commands.containsKey(commandName))
-            return null;
-        args.getArgs().removeFirst();
+            return emptyList();
         return commands.get(commandName).tabComplete(args);
     }
 }
