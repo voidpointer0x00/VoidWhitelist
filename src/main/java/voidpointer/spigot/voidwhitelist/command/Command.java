@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -31,8 +30,13 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+
+import static java.util.Collections.emptyList;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @RequiredArgsConstructor
@@ -40,15 +44,15 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     public static final String EMPTY_PERMISSION = "";
     public static final Integer DEFAULT_REQUIRED_ARGS_NUMBER = 0;
 
-    private static final List<String> EMPTY_ALIASES = Collections.emptyList();
+    private static final List<String> EMPTY_ALIASES = emptyList();
     @AutowiredLocale private static LocaleLog localeLog;
 
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(PROTECTED)
     private @NonNull String permission = EMPTY_PERMISSION;
 
     private final String name;
 
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(PROTECTED)
     private int requiredArgsNumber = DEFAULT_REQUIRED_ARGS_NUMBER;
 
     private final Set<ArgOption> options = new HashSet<>();
@@ -124,5 +128,36 @@ public abstract class Command implements CommandExecutor, TabCompleter {
 
     protected final void addOptions(ArgOption[] options) {
         Collections.addAll(this.options, options);
+    }
+
+    protected final List<String> completeOptionOrElse(final String optionStart,
+                                                      final Function<String, List<String>> noPrefixAction) {
+        if (!optionStart.startsWith("-"))
+            return noPrefixAction.apply(optionStart);
+        return completeOption0(optionStart);
+    }
+
+    protected final List<String> completeOption(final String optionStart) {
+        if (!optionStart.startsWith("-"))
+            throw new IllegalArgumentException("Option must start with \"-\" prefix");
+        return completeOption0(optionStart);
+    }
+
+    private List<String> completeOption0(final String optionStart) {
+        if (options.isEmpty())
+            return emptyList();
+        final StringBuilder optionBuilder = new StringBuilder(optionStart);
+        final StringBuilder prefix = new StringBuilder(2);
+        for (int index = 0; (index < 2) && (index < optionStart.length()) && (optionStart.charAt(index) == '-');) {
+            optionBuilder.deleteCharAt(0);
+            prefix.append('-');
+            index++;
+        }
+        List<String> completed = new LinkedList<>();
+        final String optionWithoutPrefix = optionBuilder.toString();
+        for (final ArgOption availableOption : options)
+            if (availableOption.getName().startsWith(optionWithoutPrefix))
+                completed.add(prefix + availableOption.getName());
+        return completed;
     }
 }

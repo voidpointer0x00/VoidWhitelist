@@ -31,7 +31,6 @@ import java.util.Set;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static voidpointer.spigot.voidwhitelist.command.ImportOptions.REPLACE;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
@@ -87,6 +86,6 @@ public class ImportJsonCommand extends Command {
     @Override public List<String> tabComplete(final Args args) {
         if (args.isEmpty())
             return emptyList();
-        return singletonList("-" + REPLACE.toString().toLowerCase());
+        return completeOption(args.getLast());
     }
 }

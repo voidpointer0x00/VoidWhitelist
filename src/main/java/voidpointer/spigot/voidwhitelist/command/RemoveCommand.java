@@ -14,6 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -25,7 +26,12 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
+import static org.bukkit.Bukkit.getOfflinePlayers;
 
 public class RemoveCommand extends Command {
     public static final String NAME = "remove";
@@ -75,6 +81,19 @@ public class RemoveCommand extends Command {
             if (th != null)
                 locale.warn("Couldn't remove a player from the whitelist", th);
         });
+    }
+
+    @Override public List<String> tabComplete(final Args args) {
+        if (args.isEmpty()) {
+            return stream(getOfflinePlayers())
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        return completeOptionOrElse(args.getLast(), presumptiveName -> stream(getOfflinePlayers())
+                .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                        && offlinePlayer.getName().startsWith(presumptiveName))
+                .map(OfflinePlayer::getName)
+                .collect(Collectors.toList()));
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

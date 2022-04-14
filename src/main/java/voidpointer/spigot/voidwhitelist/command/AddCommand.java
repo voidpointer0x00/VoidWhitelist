@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
@@ -29,14 +28,14 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
+import static org.bukkit.Bukkit.getOfflinePlayers;
 import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
 
 public final class AddCommand extends Command {
@@ -113,19 +112,16 @@ public final class AddCommand extends Command {
     }
 
     @Override public List<String> tabComplete(final Args args) {
-        if (args.size() == 1) {
-            String presumptiveName = args.get(0);
-            return Arrays.stream(Bukkit.getOfflinePlayers())
-                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
-                            && offlinePlayer.getName().startsWith(presumptiveName))
+        if (args.isEmpty()) {
+            return stream(getOfflinePlayers())
                     .map(OfflinePlayer::getName)
                     .collect(Collectors.toList());
-        } else if (args.size() > 1) {
-            return Collections.emptyList();
         }
-        return Arrays.stream(Bukkit.getOfflinePlayers())
+        return completeOptionOrElse(args.getLast(), presumptiveName -> stream(getOfflinePlayers())
+                .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                        && offlinePlayer.getName().startsWith(presumptiveName))
                 .map(OfflinePlayer::getName)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

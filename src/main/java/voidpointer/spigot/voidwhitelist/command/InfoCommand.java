@@ -14,6 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
+import org.bukkit.OfflinePlayer;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.LocalizedMessage;
@@ -23,14 +24,15 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.INFO_NOT_WHITELISTED;
-import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.INFO_WHITELISTED;
-import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.INFO_WHITELISTED_TEMP;
-import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.PLAYER_DETAILS;
+import static java.util.Arrays.stream;
+import static org.bukkit.Bukkit.getOfflinePlayers;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class InfoCommand extends Command {
     public static final String NAME = "info";
@@ -89,5 +91,18 @@ public final class InfoCommand extends Command {
                 .set("player", args.get(0))
                 .set("uuid", uuid.toString())
                 .send(args.getSender());
+    }
+
+    @Override public List<String> tabComplete(final Args args) {
+        if (args.isEmpty()) {
+            return stream(getOfflinePlayers())
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        return completeOptionOrElse(args.getLast(), presumptiveName -> stream(getOfflinePlayers())
+                .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                        && offlinePlayer.getName().startsWith(presumptiveName))
+                .map(OfflinePlayer::getName)
+                .collect(Collectors.toList()));
     }
 }
