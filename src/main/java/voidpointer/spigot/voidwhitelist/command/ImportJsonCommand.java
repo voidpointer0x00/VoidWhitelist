@@ -19,6 +19,8 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.event.EventManager;
+import voidpointer.spigot.voidwhitelist.event.WhitelistImportEvent;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
@@ -40,6 +42,7 @@ public class ImportJsonCommand extends Command {
     public static final String PERMISSION = "permission";
 
     @AutowiredLocale private static Locale locale;
+    @Autowired private static EventManager eventManager;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static StorageFactory storageFactory;
     @Autowired(mapId="plugin")
@@ -78,6 +81,7 @@ public class ImportJsonCommand extends Command {
                 .set("loaded", json.getWhitelist().size())
                 .set("ms-spent", end - start)
                 .send(args.getSender());
+        eventManager.callAsyncEvent(new WhitelistImportEvent(imported));
     }
 
     @Override public List<String> tabComplete(final Args args) {
