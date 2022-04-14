@@ -20,7 +20,9 @@ public interface ArgOption {
      *
      * <p>The name of {@code --option} would be {@code option}.</p>
      */
-    String getName();
+    default String getName() {
+        return toString().toLowerCase().replace('_', '-');
+    }
 
     boolean matches(final CharSequence sequence);
 }

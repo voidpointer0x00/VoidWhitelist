@@ -30,10 +30,6 @@ public enum UuidOptions implements ArgOption {
         pattern = compile(format(patternFormat, getName()), CASE_INSENSITIVE);
     }
 
-    @Override public String getName() {
-        return toString().toLowerCase().replace('_', '-');
-    }
-
     @Override public boolean matches(final CharSequence sequence) {
         return pattern.matcher(sequence).matches();
     }
