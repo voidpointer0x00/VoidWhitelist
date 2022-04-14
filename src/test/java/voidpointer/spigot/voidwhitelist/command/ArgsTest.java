@@ -21,8 +21,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import voidpointer.spigot.voidwhitelist.command.arg.ArgOption;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
+import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class ArgsTest {
-    private static final Collection<ArgOption> options = asList(UuidOptions.ONLINE, UuidOptions.OFFLINE);
+    private static final Collection<DefinedOption> options = asList(UuidOptions.ONLINE, UuidOptions.OFFLINE);
     private static ConsoleCommandSender sender;
 
     @BeforeAll static void setUp() {
@@ -49,9 +49,9 @@ class ArgsTest {
 
     @ParameterizedTest
     @MethodSource("testParseOptionsSource")
-    void testParseOptions(Args args, Collection<ArgOption> expectedOptions, Collection<String> expectedArgs) {
+    void testParseOptions(Args args, Collection<DefinedOption> expectedOptions, Collection<String> expectedArgs) {
         args.parseOptions(options);
-        assertTrue(collectionsEquals(expectedOptions, args.getOptions()));
+        assertTrue(collectionsEquals(expectedOptions, args.getDefinedOptions()));
         assertTrue(collectionsEquals(args.getArgs(), expectedArgs));
     }
 

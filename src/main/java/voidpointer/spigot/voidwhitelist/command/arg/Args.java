@@ -32,8 +32,7 @@ public final class Args {
     @Getter private final CommandSender sender;
     private final LinkedList<Arg> args = new LinkedList<>();
     private final LinkedList<Arg> undefinedOptions = new LinkedList<>();
-    // TODO: ArgOption -> DefinedOption, options -> definedOptions
-    @Getter private Set<ArgOption> options = emptySet();
+    @Getter private Set<DefinedOption> definedOptions = emptySet();
 
     public Args(final @NonNull CommandSender sender, final @NonNull String[] rawArgs) {
         this.sender = sender;
@@ -48,14 +47,14 @@ public final class Args {
             throw new ClassCastException("CommandSender isn't a Player instance.");
     }
 
-    public void parseOptions(final Collection<ArgOption> argOptions) {
-        if (argOptions.isEmpty())
+    public void parseOptions(final Collection<DefinedOption> definedOptions) {
+        if (definedOptions.isEmpty())
             return;
-        HashSet<ArgOption> options = new HashSet<>(this.options);
+        HashSet<DefinedOption> options = new HashSet<>(this.definedOptions);
         Iterator<Arg> optionsIterator = undefinedOptions.iterator();
         while (optionsIterator.hasNext()) {
             Arg rawOption = optionsIterator.next();
-            for (ArgOption option : argOptions) {
+            for (DefinedOption option : definedOptions) {
                 if (!option.matches(rawOption.value))
                     continue;
                 options.add(option);
@@ -63,11 +62,11 @@ public final class Args {
                 optionsIterator.remove();
             }
         }
-        this.options = unmodifiableSet(options);
+        this.definedOptions = unmodifiableSet(options);
     }
 
-    public boolean hasOption(final ArgOption option) {
-        return options.contains(option);
+    public boolean hasOption(final DefinedOption option) {
+        return definedOptions.contains(option);
     }
 
     public boolean isPlayer() {

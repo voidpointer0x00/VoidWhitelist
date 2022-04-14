@@ -61,7 +61,7 @@ public final class AddCommand extends Command {
         if (expiresAt == null)
             return;
 
-        DefaultUUIDFetcher.of(args.getOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
+        DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())

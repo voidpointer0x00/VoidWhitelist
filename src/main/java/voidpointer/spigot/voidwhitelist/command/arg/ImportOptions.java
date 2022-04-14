@@ -20,7 +20,7 @@ import static java.lang.String.format;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 
-public enum ImportOptions implements ArgOption {
+public enum ImportOptions implements DefinedOption {
     REPLACE;
     private static final String patternFormat = "^--?%s$";
 

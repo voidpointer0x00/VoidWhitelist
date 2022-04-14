@@ -26,8 +26,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.command.arg.ArgOption;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
+import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import java.util.Collections;
@@ -57,7 +57,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     @Setter(PROTECTED)
     private int requiredArgsNumber = DEFAULT_REQUIRED_ARGS_NUMBER;
 
-    private final Set<ArgOption> options = new HashSet<>();
+    private final Set<DefinedOption> options = new HashSet<>();
 
     @Override public final boolean onCommand(
             final @NonNull CommandSender sender,
@@ -128,7 +128,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
         localeLog.localize(WhitelistMessage.NO_PERMISSION).send(sender);
     }
 
-    protected final void addOptions(ArgOption[] options) {
+    protected final void addOptions(DefinedOption[] options) {
         Collections.addAll(this.options, options);
     }
 
@@ -157,7 +157,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
         }
         List<String> completed = new LinkedList<>();
         final String optionWithoutPrefix = optionBuilder.toString();
-        for (final ArgOption availableOption : options)
+        for (final DefinedOption availableOption : options)
             if (availableOption.getName().startsWith(optionWithoutPrefix))
                 completed.add(prefix + availableOption.getName());
         return completed;

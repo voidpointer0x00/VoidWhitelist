@@ -74,7 +74,7 @@ public final class InfoCommand extends Command {
         if (args.isEmpty())
             return CompletableFuture.completedFuture(Optional.of(args.getPlayer().getUniqueId()));
         else
-            return DefaultUUIDFetcher.of(args.getOptions()).getUUID(args.get(0));
+            return DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(args.get(0));
     }
 
     private boolean isSelfConsole(final Args args) {

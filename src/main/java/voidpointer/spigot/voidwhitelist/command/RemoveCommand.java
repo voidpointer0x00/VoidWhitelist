@@ -53,7 +53,7 @@ public class RemoveCommand extends Command {
 
     @Override public void execute(final Args args) {
         final String name = args.get(0);
-        DefaultUUIDFetcher.of(args.getOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
+        DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())

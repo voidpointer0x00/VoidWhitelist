@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import voidpointer.spigot.voidwhitelist.command.arg.ArgOption;
+import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 
 import java.util.stream.Stream;
@@ -29,7 +29,7 @@ class UuidOptionsTest {
 
     @ParameterizedTest
     @MethodSource({"onlineMatches", "onlineDoesNotMatch", "offlineMatches", "offlineDoesNotMatch"})
-    void testGetPattern(final ArgOption option, final String arg, final boolean expected) {
+    void testGetPattern(final DefinedOption option, final String arg, final boolean expected) {
         Assertions.assertEquals(expected, option.matches(arg));
     }
 

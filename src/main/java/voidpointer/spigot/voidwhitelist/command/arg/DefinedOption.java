@@ -14,7 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.command.arg;
 
-public interface ArgOption {
+public interface DefinedOption {
     /**
      * <p>Get the name of option.</p>
      *
