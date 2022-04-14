@@ -100,7 +100,10 @@ public final class OrmliteWhitelistService implements WhitelistService {
     public CompletableFuture<Set<Whitelistable>> addAllReplacing(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(emptySet());
-        return supplyAsync(() -> addAll((model, addedSet) -> dao.createOrUpdate(model), all));
+        return supplyAsync(() -> addAll((model, addedSet) -> {
+            dao.createOrUpdate(model);
+            addedSet.add(model);
+        }, all));
     }
 
     private Set<Whitelistable> addAll(
