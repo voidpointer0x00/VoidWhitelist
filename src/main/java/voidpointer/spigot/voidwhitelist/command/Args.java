@@ -30,11 +30,26 @@ import java.util.Set;
 public final class Args {
     @Getter private final CommandSender sender;
     private final LinkedList<String> args;
+    private final LinkedList<String> rawOptions;
     @Getter private final Set<ArgOption> options = Collections.synchronizedSet(new HashSet<>());
 
     public Args(final @NonNull CommandSender sender, final @NonNull String[] args) {
         this.sender = sender;
         this.args = new LinkedList<>(Arrays.asList(args));
+        this.rawOptions = removeOptionsFrom(this.args);
+    }
+
+    private LinkedList<String> removeOptionsFrom(final LinkedList<String> args) {
+        LinkedList<String> rawOptions = new LinkedList<>();
+        Iterator<String> argsIterator = args.iterator();
+        while (argsIterator.hasNext()) {
+            String arg = argsIterator.next();
+            if (!arg.startsWith("-"))
+                continue;
+            rawOptions.add(arg);
+            argsIterator.remove();
+        }
+        return rawOptions;
     }
 
     public Player getPlayer() {
@@ -47,14 +62,15 @@ public final class Args {
     public void parseOptions(final Collection<ArgOption> argOptions) {
         if (argOptions.isEmpty())
             return;
-        Iterator<String> argsIterator = args.iterator();
-        while (argsIterator.hasNext()) {
-            String arg = argsIterator.next();
+        Iterator<String> optionsIterator = rawOptions.iterator();
+        while (optionsIterator.hasNext()) {
+            String arg = optionsIterator.next();
             for (ArgOption option : argOptions) {
                 if (!option.matches(arg))
                     continue;
                 options.add(option);
-                argsIterator.remove();
+                args.remove(option);
+                optionsIterator.remove();
             }
         }
     }
