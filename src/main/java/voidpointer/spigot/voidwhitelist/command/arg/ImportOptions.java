@@ -12,18 +12,22 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.arg;
 
 import java.util.regex.Pattern;
 
-public enum UuidOptions implements ArgOption {
-    ONLINE, OFFLINE;
+import static java.lang.String.format;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.compile;
+
+public enum ImportOptions implements DefinedOption {
+    REPLACE;
     private static final String patternFormat = "^--?%s$";
 
     private final Pattern pattern;
 
-    UuidOptions() {
-        pattern = Pattern.compile(String.format(patternFormat, this), Pattern.CASE_INSENSITIVE);
+    ImportOptions() {
+        pattern = compile(format(patternFormat, getName()), CASE_INSENSITIVE);
     }
 
     @Override public boolean matches(final CharSequence sequence) {

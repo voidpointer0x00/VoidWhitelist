@@ -16,25 +16,25 @@ package voidpointer.spigot.voidwhitelist.storage;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
+import org.bukkit.plugin.Plugin;
+import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService;
 
-import java.io.File;
-
 @RequiredArgsConstructor
 public final class StorageFactory {
-    @NonNull private final File dataFolder;
+    @NonNull private final Plugin plugin;
 
-    public WhitelistService loadStorage(final WhitelistConfig whitelistConfig) {
-        switch (whitelistConfig.getStorageMethod()) {
+    public WhitelistService loadStorage(final StorageMethod storageMethod) {
+        switch (storageMethod) {
             case JSON:
-                return new JsonWhitelistService(dataFolder);
+                return new JsonWhitelistService(plugin.getDataFolder());
             case SERIAL:
-                return new SerialWhitelistService(dataFolder);
+                return new SerialWhitelistService(plugin.getDataFolder());
+            case DATABASE:
+                return new OrmliteWhitelistService(plugin);
             default:
-                throw new UnsupportedOperationException("Unknown storage method: "
-                                                        + whitelistConfig.getStorageMethod());
+                throw new UnsupportedOperationException("Unknown storage method: " + storageMethod);
         }
     }
 }

@@ -6,6 +6,9 @@ messages:
     проверки.'
   disabled: '&eWhitelist &cвыключен&e.'
   enabled: '&eWhitelist &aвключен&e.'
+  import-loaded: '&eЗагружено &6{loaded}&e записей из &6{storage}&e, импорт начат.'
+  import-only-to-database: '&eИмпорт работает только из JSON в базу данных.'
+  import-result: '&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e.'
   info-not-whitelisted: '&eИгрок &6«&c{player-details}&6» &cотсутствует &eв whitelist.'
   info-whitelisted: '&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist.'
   info-whitelisted-temp: '&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist, истекает

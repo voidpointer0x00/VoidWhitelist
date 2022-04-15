@@ -21,6 +21,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import voidpointer.spigot.voidwhitelist.command.arg.Arg;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
+import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
+import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class ArgsTest {
-    private static final Collection<ArgOption> options = asList(UuidOptions.ONLINE, UuidOptions.OFFLINE);
+    private static final Collection<DefinedOption> options = asList(UuidOptions.ONLINE, UuidOptions.OFFLINE);
     private static ConsoleCommandSender sender;
 
     @BeforeAll static void setUp() {
@@ -46,42 +50,46 @@ class ArgsTest {
 
     @ParameterizedTest
     @MethodSource("testParseOptionsSource")
-    void testParseOptions(Args args, Collection<ArgOption> expectedOptions, Collection<String> expectedArgs) {
+    void testParseOptions(Args args, Collection<DefinedOption> expectedOptions, Collection<String> expectedArgs) {
         args.parseOptions(options);
-        assertTrue(collectionsEquals(expectedOptions, args.getOptions()));
-        assertTrue(collectionsEquals(args.getArgs(), expectedArgs));
+        assertTrue(collectionsEquals(expectedOptions, args.getDefinedOptions()));
+        assertTrue(collectionsEquals(args.jailbreak().args, expectedArgs));
     }
 
     static Stream<Arguments> testParseOptionsSource() {
         return Stream.of(
                 arguments(new Args(sender, new String[] {"player","online"}), Collections.EMPTY_LIST,
-                        asList("player","online")),
+                        asList(new Arg(0, "player"),new Arg(0, "online"))),
                 arguments(new Args(sender, new String[] {"player","-online"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--online"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-oNlInE"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--oNlInE"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","offline"}), Collections.EMPTY_LIST,
-                        asList("player","offline")),
+                        asList(new Arg(0, "player"),new Arg(0, "offline"))),
                 arguments(new Args(sender, new String[] {"player","-offline"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--offline"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-oFfLiNe"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--oFfLiNe"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-offline","-online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player")),
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--offline","-online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player")),
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-offline","--online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player")),
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--offline","--online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player"))
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player")))
         );
     }
 

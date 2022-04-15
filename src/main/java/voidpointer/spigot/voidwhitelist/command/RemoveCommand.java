@@ -14,18 +14,28 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.arg.Arg;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
+import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static org.bukkit.Bukkit.getOfflinePlayers;
 
 public class RemoveCommand extends Command {
     public static final String NAME = "remove";
@@ -45,7 +55,7 @@ public class RemoveCommand extends Command {
 
     @Override public void execute(final Args args) {
         final String name = args.get(0);
-        DefaultUUIDFetcher.of(args.getOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
+        DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
@@ -75,6 +85,25 @@ public class RemoveCommand extends Command {
             if (th != null)
                 locale.warn("Couldn't remove a player from the whitelist", th);
         });
+    }
+
+    @Override public List<String> tabComplete(final Args args) {
+        Optional<Arg> last = args.getLastArg();
+        if (last.isPresent() && last.get().isOption())
+            return completeOption(last.get().value);
+        if (args.isEmpty()) {
+            return stream(getOfflinePlayers())
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        if (args.size() == MIN_ARGS) {
+            return stream(getOfflinePlayers())
+                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                            && offlinePlayer.getName().startsWith(args.getLast()))
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        return emptyList();
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

@@ -15,6 +15,7 @@
 package voidpointer.spigot.voidwhitelist.command;
 
 import voidpointer.spigot.framework.di.Autowired;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.gui.WhitelistGui;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 

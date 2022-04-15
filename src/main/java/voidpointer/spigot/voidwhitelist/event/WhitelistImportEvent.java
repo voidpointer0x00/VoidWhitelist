@@ -19,29 +19,33 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.command.AddCommand;
+import voidpointer.spigot.voidwhitelist.command.ImportJsonCommand;
+
+import java.util.Set;
 
 /**
- * <p>Called asynchronously when someone adds a {@link Whitelistable} entity.</p>
+ * <p>Called asynchronously when someone imported a whitelist storage.</p>
  *
- * <p><b>Notice:</b> this event doesn't get called if someone imported the whitelist.</p>
+ * <p>Import actions do not call {@link WhitelistAddedEvent} for any
+ *      imported entity.</p>
  *
- * @see AddCommand
- * @see WhitelistImportEvent
+ * @see ImportJsonCommand
  */
-public final class WhitelistAddedEvent extends Event {
+public final class WhitelistImportEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-
-    /** The added {@link Whitelistable} entity. */
-    private @Getter @NonNull final Whitelistable whitelistable;
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public WhitelistAddedEvent(final @NonNull Whitelistable whitelistable) {
+    /**
+     * An unmodifiable {@link Set} of imported {@link Whitelistable} entities.
+     */
+    private @NonNull @Getter final Set<Whitelistable> imported;
+
+    public WhitelistImportEvent(final @NonNull Set<Whitelistable> imported) {
         super(true);
-        this.whitelistable = whitelistable;
+        this.imported = imported;
     }
 
     @Override

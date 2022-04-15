@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
@@ -22,6 +21,9 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.Message;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.arg.Arg;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
+import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
@@ -29,20 +31,21 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static org.bukkit.Bukkit.getOfflinePlayers;
 import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
 
 public final class AddCommand extends Command {
     public static final String NAME = "add";
     public static final String PERMISSION = "whitelist.add";
-    public static final int MIN_REQUIRED_ARGS = 1;
+    public static final int MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
@@ -50,7 +53,7 @@ public final class AddCommand extends Command {
 
     public AddCommand() {
         super(NAME);
-        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
+        super.setRequiredArgsNumber(MIN_ARGS);
         super.setPermission(PERMISSION);
         super.addOptions(UuidOptions.values());
     }
@@ -60,7 +63,7 @@ public final class AddCommand extends Command {
         if (expiresAt == null)
             return;
 
-        DefaultUUIDFetcher.of(args.getOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
+        DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
@@ -79,7 +82,7 @@ public final class AddCommand extends Command {
                             notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);
                         else
                             notifyAdded(args, null, uuidOptional.get(), WhitelistMessage.ADDED);
-                        callWhitelistAddedEvent(res);
+                        res.ifPresent(this::callWhitelistAddedEvent);
                     });
         }).whenCompleteAsync((res, th) -> {
             if (th != null)
@@ -100,7 +103,7 @@ public final class AddCommand extends Command {
     }
 
     private boolean hasExpiresAtArgument(int argsNumber) {
-        return MIN_REQUIRED_ARGS < argsNumber;
+        return MIN_ARGS < argsNumber;
     }
 
     private void notifyAdded(final Args args, final Date expiresAt, final UUID uuid, final Message message) {
@@ -113,19 +116,22 @@ public final class AddCommand extends Command {
     }
 
     @Override public List<String> tabComplete(final Args args) {
-        if (args.size() == 1) {
-            String presumptiveName = args.get(0);
-            return Arrays.stream(Bukkit.getOfflinePlayers())
-                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
-                            && offlinePlayer.getName().startsWith(presumptiveName))
+        Optional<Arg> last = args.getLastArg();
+        if (last.isPresent() && last.get().isOption())
+            return completeOption(last.get().value);
+        if (args.isEmpty()) {
+            return stream(getOfflinePlayers())
                     .map(OfflinePlayer::getName)
                     .collect(Collectors.toList());
-        } else if (args.size() > 1) {
-            return Collections.emptyList();
         }
-        return Arrays.stream(Bukkit.getOfflinePlayers())
-                .map(OfflinePlayer::getName)
-                .collect(Collectors.toList());
+        if (args.size() == MIN_ARGS) {
+            return stream(getOfflinePlayers())
+                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                            && offlinePlayer.getName().startsWith(args.getLast()))
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        return emptyList();
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

@@ -55,6 +55,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Dependency private static LocaleLog guiLocale;
     @Dependency private static WhitelistService whitelistService;
     @Dependency private static EventManager eventManager;
+    @Dependency private static StorageFactory storageFactory;
     @Dependency(id="plugin")
     private static JavaPlugin instance;
 
@@ -74,7 +75,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     @Override public void onEnable() {
-        whitelistService = new StorageFactory(getDataFolder()).loadStorage(whitelistConfig);
+        storageFactory = new StorageFactory(this);
+        whitelistService = storageFactory.loadStorage(whitelistConfig.getStorageMethod());
         Injector.inject(this);
         new WhitelistCommand().register(this);
         registerListeners();

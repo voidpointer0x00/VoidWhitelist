@@ -17,6 +17,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import java.util.List;
@@ -38,12 +39,12 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new InfoCommand());
         whitelistCommands.addCommand(new StatusCommand());
         whitelistCommands.addCommand(new GuiCommand());
+        whitelistCommands.addCommand(new ImportJsonCommand());
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 
     @Override public void execute(final Args args) {
-        final String subCommandName = args.get(0);
-        args.getArgs().removeFirst();
+        final String subCommandName = args.removeFirst();
 
         if (!whitelistCommands.executeCommand(subCommandName, args))
             locale.localize(WhitelistMessage.WHITELIST_HELP).send(args.getSender());

@@ -16,12 +16,15 @@ package voidpointer.spigot.voidwhitelist.command;
 
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.command.arg.Args;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
 
 public final class CommandManager {
     @AutowiredLocale private static LocaleLog log;
@@ -67,17 +70,16 @@ public final class CommandManager {
         if (args.isEmpty())
             return new ArrayList<>(commands.keySet());
 
-        if (1 == args.size()) {
+        if (1 == args.sizeWithOptions()) {
             final String supposedCommand = args.get(0);
             return commands.keySet().stream()
                     .filter(command -> command.startsWith(supposedCommand))
                     .collect(Collectors.toList());
         }
 
-        final String commandName = args.get(0);
+        final String commandName = args.removeFirst();
         if (!commands.containsKey(commandName))
-            return null;
-        args.getArgs().removeFirst();
+            return emptyList();
         return commands.get(commandName).tabComplete(args);
     }
 }

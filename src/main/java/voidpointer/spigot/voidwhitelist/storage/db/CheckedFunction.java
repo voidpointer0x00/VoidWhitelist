@@ -12,8 +12,9 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.storage.db;
 
-public interface ArgOption {
-    boolean matches(final CharSequence sequence);
+@FunctionalInterface
+public interface CheckedFunction<T, R> {
+    R apply(T t) throws Exception;
 }

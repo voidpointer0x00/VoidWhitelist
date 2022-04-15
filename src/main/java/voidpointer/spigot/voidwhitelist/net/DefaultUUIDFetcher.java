@@ -14,8 +14,8 @@
  */
 package voidpointer.spigot.voidwhitelist.net;
 
-import voidpointer.spigot.voidwhitelist.command.ArgOption;
-import voidpointer.spigot.voidwhitelist.command.UuidOptions;
+import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
+import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -36,7 +36,7 @@ public final class DefaultUUIDFetcher {
         return defaultMethod.apply(name);
     }
 
-    public static UUIDFetcher of(final Collection<ArgOption> options) {
+    public static UUIDFetcher of(final Collection<DefinedOption> options) {
         if (options.contains(UuidOptions.ONLINE))
             return OnlineUUIDFetcher::getUUID;
         else if (options.contains(UuidOptions.OFFLINE))

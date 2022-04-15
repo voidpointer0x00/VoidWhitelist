@@ -14,6 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.storage;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Collections;
@@ -47,9 +48,9 @@ public interface WhitelistService {
 
     CompletableFuture<Optional<Whitelistable>> find(final UUID uuid);
 
-    CompletableFuture<Whitelistable> add(final UUID uuid, final String name, final Date expiresAt);
+    CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt);
 
-    CompletableFuture<Whitelistable> update(final Whitelistable whitelistable);
+    CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable);
 
     CompletableFuture<Boolean> remove(final Whitelistable whitelistable);
 }

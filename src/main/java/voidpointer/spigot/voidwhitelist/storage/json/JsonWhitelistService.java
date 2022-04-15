@@ -78,7 +78,7 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
 
         Collection<Whitelistable> whitelistedPlayers = readAndParseWhitelistFileContents(whitelistFile);
         for (Whitelistable whitelistable : whitelistedPlayers)
-            this.getCachedWhitelist().add(whitelistable);
+            this.getWhitelist().add(whitelistable);
         if (wasUpdated) {
             saveWhitelist();
             wasUpdated = false;
@@ -88,7 +88,7 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
     @Override protected void saveWhitelist() {
         JsonObject whitelistObject = new JsonObject();
         whitelistObject.add(VERSION_PROPERTY, new JsonPrimitive(CURRENT.toString()));
-        whitelistObject.add(WHITELIST_PROPERTY, gson.toJsonTree(getCachedWhitelist()));
+        whitelistObject.add(WHITELIST_PROPERTY, gson.toJsonTree(this.getWhitelist()));
         try {
             Files.write(gson.toJson(whitelistObject), whitelistFile, Charset.defaultCharset());
         } catch (final IOException ioException) {
