@@ -62,6 +62,7 @@ public final class InfoCommand extends Command {
                         .set("player", args.get(0))
                         .set("date", null)
                         .send(args.getSender());
+                return;
             }
             tellInfo(args, whitelistService.find(uuidOptional.get()).join(), uuidOptional.get());
         }).whenCompleteAsync((res, th) -> {
