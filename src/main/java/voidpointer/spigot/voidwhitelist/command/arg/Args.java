@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
@@ -83,6 +84,17 @@ public final class Args {
 
     public String getLast() {
         return args.getLast().value;
+    }
+
+    public Optional<Arg> getLastArg() {
+        if (args.isEmpty()) {
+            if (undefinedOptions.isEmpty())
+                return Optional.empty();
+            return Optional.of(undefinedOptions.getLast());
+        } else if (undefinedOptions.isEmpty()) {
+            return Optional.of(args.getLast());
+        }
+        return Optional.of(args.getLast().max(undefinedOptions.getLast()));
     }
 
     public boolean isEmpty() {
