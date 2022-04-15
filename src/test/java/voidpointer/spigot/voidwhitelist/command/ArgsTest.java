@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
@@ -58,33 +59,37 @@ class ArgsTest {
     static Stream<Arguments> testParseOptionsSource() {
         return Stream.of(
                 arguments(new Args(sender, new String[] {"player","online"}), Collections.EMPTY_LIST,
-                        asList("player","online")),
+                        asList(new Arg(0, "player"),new Arg(0, "online"))),
                 arguments(new Args(sender, new String[] {"player","-online"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--online"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-oNlInE"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--oNlInE"}), singletonList(UuidOptions.ONLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","offline"}), Collections.EMPTY_LIST,
-                        asList("player","offline")),
+                        asList(new Arg(0, "player"),new Arg(0, "offline"))),
                 arguments(new Args(sender, new String[] {"player","-offline"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--offline"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-oFfLiNe"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--oFfLiNe"}), singletonList(UuidOptions.OFFLINE),
-                        singletonList("player")),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-offline","-online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player")),
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--offline","-online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player")),
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","-offline","--online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player")),
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player"))),
                 arguments(new Args(sender, new String[] {"player","--offline","--online"}),
-                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE), singletonList("player"))
+                        asList(UuidOptions.ONLINE, UuidOptions.OFFLINE),
+                        singletonList(new Arg(0, "player")))
         );
     }
 
