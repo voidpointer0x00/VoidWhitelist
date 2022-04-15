@@ -27,4 +27,8 @@ public final class Arg implements Comparable<Arg> {
     @Override public int compareTo(@NonNull final Arg o) {
         return Integer.compare(orderIndex, o.orderIndex);
     }
+
+    public Arg max(@NonNull final Arg o) {
+        return compareTo(o) >= 0 ? this : o;
+    }
 }
