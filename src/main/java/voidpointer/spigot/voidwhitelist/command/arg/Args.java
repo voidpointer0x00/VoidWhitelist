@@ -92,4 +92,8 @@ public final class Args {
     public int size() {
         return args.size();
     }
+
+    public int sizeWithOptions() {
+        return args.size() + undefinedOptions.size();
+    }
 }

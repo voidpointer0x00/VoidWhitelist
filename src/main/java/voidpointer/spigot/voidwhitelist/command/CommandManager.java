@@ -70,7 +70,7 @@ public final class CommandManager {
         if (args.isEmpty())
             return new ArrayList<>(commands.keySet());
 
-        if (1 == args.size()) {
+        if (1 == args.sizeWithOptions()) {
             final String supposedCommand = args.get(0);
             return commands.keySet().stream()
                     .filter(command -> command.startsWith(supposedCommand))
