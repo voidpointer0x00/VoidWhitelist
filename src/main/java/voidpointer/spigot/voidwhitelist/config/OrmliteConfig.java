@@ -28,12 +28,18 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static java.lang.Integer.parseInt;
+
 public final class OrmliteConfig {
     public static final String FILENAME = "database.yml";
     private static final String DEFAULT_DBMS = "h2";
+    private static final String DEFAULT_DATABASE = "database";
     private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_USER = "root";
+    private static final String DEFAULT_PASSWORD = "password";
     private static final String DBMS_PATH = "dbms";
     private static final String HOST_PATH = "host";
+    private static final String DATABASE_PATH = "database";
     private static final String PORT_PATH = "port";
     private static final String USER_PATH = "user";
     private static final String PASSWORD_PATH = "password";
@@ -49,6 +55,39 @@ public final class OrmliteConfig {
         this.plugin = plugin;
         configFile = new File(plugin.getDataFolder(), FILENAME);
         load();
+    }
+
+    String getHost() {
+        if (!config.isSet(HOST_PATH))
+            config.set(HOST_PATH, DEFAULT_HOST);
+        return config.getString(HOST_PATH);
+    }
+
+    int getPort() {
+        try {
+            return parseInt(config.getString(PORT_PATH, "-1"));
+        } catch (final NumberFormatException numberFormatException) {
+            log.warn("Invalid port: {0}", config.getString(PORT_PATH));
+            return -1;
+        }
+    }
+
+    String getDatabase() {
+        if (!config.isSet(DATABASE_PATH))
+            config.set(DATABASE_PATH, DEFAULT_DATABASE);
+        return config.getString(DATABASE_PATH);
+    }
+
+    String getUser() {
+        if (!config.isSet(USER_PATH))
+            config.set(USER_PATH, DEFAULT_USER);
+        return config.getString(USER_PATH);
+    }
+
+    String getPassword() {
+        if (!config.isSet(PASSWORD_PATH))
+            config.set(PASSWORD_PATH, DEFAULT_PASSWORD);
+        return config.getString(PASSWORD_PATH);
     }
 
     public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
