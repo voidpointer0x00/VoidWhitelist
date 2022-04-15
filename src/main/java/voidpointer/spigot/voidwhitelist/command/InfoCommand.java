@@ -20,6 +20,7 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.LocalizedMessage;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -33,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
@@ -97,15 +99,21 @@ public final class InfoCommand extends Command {
     }
 
     @Override public List<String> tabComplete(final Args args) {
+        Optional<Arg> last = args.getLastArg();
+        if (last.isPresent() && last.get().isOption())
+            return completeOption(last.get().value);
         if (args.isEmpty()) {
             return stream(getOfflinePlayers())
                     .map(OfflinePlayer::getName)
                     .collect(Collectors.toList());
         }
-        return completeOptionOrElse(args.getLast(), presumptiveName -> stream(getOfflinePlayers())
-                .filter(offlinePlayer -> (null != offlinePlayer.getName())
-                        && offlinePlayer.getName().startsWith(presumptiveName))
-                .map(OfflinePlayer::getName)
-                .collect(Collectors.toList()));
+        if (args.size() == 1) {
+            return stream(getOfflinePlayers())
+                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                            && offlinePlayer.getName().startsWith(args.getLast()))
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        return emptyList();
     }
 }

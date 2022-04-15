@@ -52,7 +52,7 @@ class ArgsTest {
     void testParseOptions(Args args, Collection<DefinedOption> expectedOptions, Collection<String> expectedArgs) {
         args.parseOptions(options);
         assertTrue(collectionsEquals(expectedOptions, args.getDefinedOptions()));
-        assertTrue(collectionsEquals(args.getArgs(), expectedArgs));
+        assertTrue(collectionsEquals(args.jailbreak().args, expectedArgs));
     }
 
     static Stream<Arguments> testParseOptionsSource() {

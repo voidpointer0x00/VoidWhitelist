@@ -21,6 +21,7 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.Message;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
@@ -37,13 +38,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
 import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
 
 public final class AddCommand extends Command {
     public static final String NAME = "add";
     public static final String PERMISSION = "whitelist.add";
-    public static final int MIN_REQUIRED_ARGS = 1;
+    public static final int MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
@@ -51,7 +53,7 @@ public final class AddCommand extends Command {
 
     public AddCommand() {
         super(NAME);
-        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
+        super.setRequiredArgsNumber(MIN_ARGS);
         super.setPermission(PERMISSION);
         super.addOptions(UuidOptions.values());
     }
@@ -101,7 +103,7 @@ public final class AddCommand extends Command {
     }
 
     private boolean hasExpiresAtArgument(int argsNumber) {
-        return MIN_REQUIRED_ARGS < argsNumber;
+        return MIN_ARGS < argsNumber;
     }
 
     private void notifyAdded(final Args args, final Date expiresAt, final UUID uuid, final Message message) {
@@ -114,16 +116,22 @@ public final class AddCommand extends Command {
     }
 
     @Override public List<String> tabComplete(final Args args) {
+        Optional<Arg> last = args.getLastArg();
+        if (last.isPresent() && last.get().isOption())
+            return completeOption(last.get().value);
         if (args.isEmpty()) {
             return stream(getOfflinePlayers())
                     .map(OfflinePlayer::getName)
                     .collect(Collectors.toList());
         }
-        return completeOptionOrElse(args.getLast(), presumptiveName -> stream(getOfflinePlayers())
-                .filter(offlinePlayer -> (null != offlinePlayer.getName())
-                        && offlinePlayer.getName().startsWith(presumptiveName))
-                .map(OfflinePlayer::getName)
-                .collect(Collectors.toList()));
+        if (args.size() == MIN_ARGS) {
+            return stream(getOfflinePlayers())
+                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                            && offlinePlayer.getName().startsWith(args.getLast()))
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        return emptyList();
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

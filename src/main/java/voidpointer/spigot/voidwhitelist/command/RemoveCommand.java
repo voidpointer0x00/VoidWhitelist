@@ -20,6 +20,7 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
 
 public class RemoveCommand extends Command {
@@ -86,16 +88,22 @@ public class RemoveCommand extends Command {
     }
 
     @Override public List<String> tabComplete(final Args args) {
+        Optional<Arg> last = args.getLastArg();
+        if (last.isPresent() && last.get().isOption())
+            return completeOption(last.get().value);
         if (args.isEmpty()) {
             return stream(getOfflinePlayers())
                     .map(OfflinePlayer::getName)
                     .collect(Collectors.toList());
         }
-        return completeOptionOrElse(args.getLast(), presumptiveName -> stream(getOfflinePlayers())
-                .filter(offlinePlayer -> (null != offlinePlayer.getName())
-                        && offlinePlayer.getName().startsWith(presumptiveName))
-                .map(OfflinePlayer::getName)
-                .collect(Collectors.toList()));
+        if (args.size() == MIN_ARGS) {
+            return stream(getOfflinePlayers())
+                    .filter(offlinePlayer -> (null != offlinePlayer.getName())
+                            && offlinePlayer.getName().startsWith(args.getLast()))
+                    .map(OfflinePlayer::getName)
+                    .collect(Collectors.toList());
+        }
+        return emptyList();
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
