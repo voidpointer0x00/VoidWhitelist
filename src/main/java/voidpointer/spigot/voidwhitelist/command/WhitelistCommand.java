@@ -40,6 +40,7 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new StatusCommand());
         whitelistCommands.addCommand(new GuiCommand());
         whitelistCommands.addCommand(new ImportJsonCommand());
+        whitelistCommands.addCommand(new ExportCommand());
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 
