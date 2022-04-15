@@ -8,10 +8,10 @@ import java.util.function.Consumer;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @RequiredArgsConstructor
-final class Arg implements Comparable<Arg> {
-    final int orderIndex;
+public final class Arg implements Comparable<Arg> {
+    private final int orderIndex;
     @EqualsAndHashCode.Include
-    @NonNull final String value;
+    public @NonNull final String value;
 
     public boolean isOption() {
         return value.startsWith("-");
