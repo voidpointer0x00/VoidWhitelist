@@ -61,7 +61,7 @@ public final class JsonWhitelist {
 
     public static JsonWhitelist of(final Collection<Whitelistable> allWhitelistable) {
         JsonWhitelist jsonWhitelist = new JsonWhitelist();
-        jsonWhitelist.whitelist.add(gson.toJsonTree(allWhitelistable));
+        jsonWhitelist.whitelist.addAll((JsonArray) gson.toJsonTree(allWhitelistable));
         return jsonWhitelist;
     }
 
