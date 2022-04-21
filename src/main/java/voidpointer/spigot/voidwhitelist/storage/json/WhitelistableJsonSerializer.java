@@ -29,12 +29,16 @@ public final class WhitelistableJsonSerializer implements JsonSerializer<Whiteli
     public static final String EXPIRES_AT_FIELD = "expiresAt";
     public static final String NAME_FIELD = "name";
 
-    @Override public JsonElement serialize(final Whitelistable src, final Type typeOfSrc, final JsonSerializationContext context) {
+    public static JsonElement serialize(final Whitelistable src) {
         assert src instanceof AbstractWhitelistable;
         JsonObject jsonObject = new JsonObject();
         jsonObject.add(UNIQUE_ID_FIELD, new JsonPrimitive(src.getUniqueId().toString()));
         jsonObject.add(NAME_FIELD, new JsonPrimitive(src.getName()));
         jsonObject.add(EXPIRES_AT_FIELD, new JsonPrimitive(src.getExpiresAt().getTime()));
         return jsonObject;
+    }
+
+    @Override public JsonElement serialize(final Whitelistable src, final Type typeOfSrc, final JsonSerializationContext context) {
+        return serialize(src);
     }
 }
