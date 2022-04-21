@@ -21,7 +21,7 @@
 
     <groupId>voidpointer.spigot</groupId>
     <artifactId>voidwhitelist</artifactId>
-    <version>0.6.1-unstable</version>
+    <version>0.8.0-stable</version>
     <packaging>jar</packaging>
 
     <name>VoidWhitelist</name>
@@ -152,12 +152,21 @@
                                     <artifact>com.h2database:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*.MF</exclude>
+                                        <exclude>META-INF/services/java.sql.Driver</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>mysql:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*</exclude>
+                                        <exclude>META-INF/services/java.sql.Driver</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
                             <artifactSet>
                                 <excludes>
                                     <exclude>systems.manifold:*</exclude>
+                                    <exclude>com.google.protobuf:protobuf-java</exclude>
                                 </excludes>
                             </artifactSet>
                             <relocations>
@@ -180,6 +189,10 @@
                                 <relocation>
                                     <pattern>org.h2</pattern>
                                     <shadedPattern>voidpointer.spigot.voidwhitelist.h2</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.mysql</pattern>
+                                    <shadedPattern>voidpointer.spigot.voidwhitelist.mysql</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -290,6 +303,11 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.1.212</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.28</version>
         </dependency>
     </dependencies>
 </project>

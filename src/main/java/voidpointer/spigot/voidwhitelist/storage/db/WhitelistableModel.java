@@ -29,9 +29,9 @@ import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
 import java.util.Date;
 import java.util.UUID;
 
-@DatabaseTable
 @Getter
 @Setter
+@DatabaseTable(tableName="whitelist")
 @EqualsAndHashCode(onlyExplicitlyIncluded=true, callSuper=false)
 @NoArgsConstructor
 @AllArgsConstructor
