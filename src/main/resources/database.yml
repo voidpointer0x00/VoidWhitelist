@@ -1,4 +1,4 @@
-# supported DBMS: [ h2 ]
+# supported DBMS: [ h2, mysql ]
 dbms: h2
 host: localhost
 port: 3306
