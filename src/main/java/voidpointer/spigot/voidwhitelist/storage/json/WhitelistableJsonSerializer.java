@@ -20,7 +20,6 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
 
 import java.lang.reflect.Type;
 
@@ -30,7 +29,6 @@ public final class WhitelistableJsonSerializer implements JsonSerializer<Whiteli
     public static final String NAME_FIELD = "name";
 
     public static JsonElement serialize(final Whitelistable src) {
-        assert src instanceof AbstractWhitelistable;
         JsonObject jsonObject = new JsonObject();
         jsonObject.add(UNIQUE_ID_FIELD, new JsonPrimitive(src.getUniqueId().toString()));
         jsonObject.add(NAME_FIELD, new JsonPrimitive(src.getName()));
