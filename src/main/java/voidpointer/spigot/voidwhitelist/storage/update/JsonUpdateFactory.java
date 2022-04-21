@@ -23,7 +23,7 @@ import java.util.Optional;
 public final class JsonUpdateFactory {
     @AutowiredLocale private static LocaleLog log;
 
-    public Optional<JsonUpdate> from(final StorageVersion storageVersion) {
+    public static Optional<JsonUpdate> from(final StorageVersion storageVersion) {
         switch (storageVersion) {
             case V1_BETA:
                 return Optional.of(new JsonV1BetaUpdate());
