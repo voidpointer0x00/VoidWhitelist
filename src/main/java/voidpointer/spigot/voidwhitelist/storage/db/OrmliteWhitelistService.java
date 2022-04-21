@@ -14,6 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.storage.db;
 
+import com.j256.ormlite.dao.CloseableWrappedIterable;
 import com.j256.ormlite.dao.Dao;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -46,6 +47,10 @@ public final class OrmliteWhitelistService implements WhitelistService {
     public OrmliteWhitelistService(final Plugin plugin) {
         OrmliteConfig ormliteConfig = new OrmliteConfig(plugin);
         dao = ormliteConfig.getWhitelistableDao();
+    }
+
+    public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {
+        return supplyAsync(dao::getWrappedIterable);
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
