@@ -26,7 +26,7 @@
 
     <name>VoidWhitelist</name>
 
-    <description>UUID based temporal whitelist. Works on text-based storages.</description>
+    <description>UUID based temporal whitelist. Supports JSON, H2 and MySQL storage.</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
