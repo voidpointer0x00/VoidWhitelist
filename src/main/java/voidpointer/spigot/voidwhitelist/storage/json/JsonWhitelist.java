@@ -146,6 +146,7 @@ public final class JsonWhitelist {
             backupUpdateFailure(jsonFile, root);
             return Collections.emptySet();
         }
+        of(updated).save(jsonFile);
         log.info("Successfully updated JSON storage from {0} to {1} for {2} sec.", version, CURRENT,
                 MILLISECONDS.toSeconds(currentTimeMillis() - start));
         return updated;
