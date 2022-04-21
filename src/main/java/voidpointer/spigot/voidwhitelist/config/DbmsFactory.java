@@ -71,6 +71,6 @@ final class DbmsFactory {
     }
 
     private String mysqlConnectionUrl(final String host, final int port, final String database) {
-        return format("jdbc:mysql:%s:%d/%s", host, port != -1 ? port : MYSQL_PORT, database);
+        return format("jdbc:mysql://%s:%d/%s", host, port != -1 ? port : MYSQL_PORT, database);
     }
 }
