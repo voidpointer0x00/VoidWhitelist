@@ -30,7 +30,7 @@ public class ExportCommand extends Command {
 
     @Override public void execute(final Args args) {
         if (!(whitelistService instanceof OrmliteWhitelistService)) {
-            localeLog.localize(EXPORT_ONLY_FROM_DATABASE);
+            localeLog.localize(EXPORT_ONLY_FROM_DATABASE).send(args.getSender());
             return;
         }
         OrmliteWhitelistService database = (OrmliteWhitelistService) whitelistService;
