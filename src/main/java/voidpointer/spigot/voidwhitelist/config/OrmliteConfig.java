@@ -33,15 +33,15 @@ import static java.lang.Integer.parseInt;
 public final class OrmliteConfig {
     public static final String FILENAME = "database.yml";
     private static final String DEFAULT_DBMS = "h2";
-    private static final String DEFAULT_DATABASE = "database";
     private static final String DEFAULT_HOST = "localhost";
-    private static final String DEFAULT_USER = "root";
+    private static final String DEFAULT_DATABASE = "whitelist";
+    private static final String DEFAULT_USER = "void";
     private static final String DEFAULT_PASSWORD = "password";
     private static final String DBMS_PATH = "dbms";
     private static final String HOST_PATH = "host";
-    private static final String DATABASE_PATH = "database";
     private static final String PORT_PATH = "port";
-    private static final String USER_PATH = "user";
+    private static final String DATABASE_PATH = "database";
+    private static final String USER_PATH = "username";
     private static final String PASSWORD_PATH = "password";
 
     @AutowiredLocale private static LocaleLog log;

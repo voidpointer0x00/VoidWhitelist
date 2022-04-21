@@ -3,5 +3,5 @@ dbms: h2
 host: localhost
 port: 3306
 database: whitelist
-username: root
+username: void
 password: password
