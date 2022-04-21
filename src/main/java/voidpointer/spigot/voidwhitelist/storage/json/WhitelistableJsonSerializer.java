@@ -15,6 +15,7 @@
 package voidpointer.spigot.voidwhitelist.storage.json;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -32,7 +33,10 @@ public final class WhitelistableJsonSerializer implements JsonSerializer<Whiteli
         JsonObject jsonObject = new JsonObject();
         jsonObject.add(UNIQUE_ID_FIELD, new JsonPrimitive(src.getUniqueId().toString()));
         jsonObject.add(NAME_FIELD, new JsonPrimitive(src.getName()));
-        jsonObject.add(EXPIRES_AT_FIELD, new JsonPrimitive(src.getExpiresAt().getTime()));
+        if (src.isExpirable())
+            jsonObject.add(EXPIRES_AT_FIELD, new JsonPrimitive(src.getExpiresAt().getTime()));
+        else
+            jsonObject.add(EXPIRES_AT_FIELD, JsonNull.INSTANCE);
         return jsonObject;
     }
 
