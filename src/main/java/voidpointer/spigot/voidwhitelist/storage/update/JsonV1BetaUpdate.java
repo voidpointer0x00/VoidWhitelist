@@ -18,13 +18,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher;
-import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistablePojo;
 
 import java.util.Date;
 import java.util.UUID;
 
 import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.EXPIRES_AT_FIELD;
+import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.NAME_FIELD;
 import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.UNIQUE_ID_FIELD;
 
 final class JsonV1BetaUpdate extends AbstractJsonUpdate {
@@ -32,10 +32,14 @@ final class JsonV1BetaUpdate extends AbstractJsonUpdate {
         JsonObject whitelistableObject = jsonElement.getAsJsonObject();
         UUID uniqueId = UUID.fromString(whitelistableObject.get(UNIQUE_ID_FIELD).getAsString());
         JsonElement expiresAtElement = whitelistableObject.get(EXPIRES_AT_FIELD);
-        Profile profile = CachedProfileFetcher.fetchProfile(uniqueId).join();
+        String name;
+        if (whitelistableObject.has(NAME_FIELD))
+            name = whitelistableObject.get(NAME_FIELD).getAsString();
+        else
+            name = CachedProfileFetcher.fetchProfile(uniqueId).join().getName();
         return JsonWhitelistablePojo.builder()
                 .uniqueId(uniqueId)
-                .name(profile.getName())
+                .name(name)
                 .expiresAt(expiresAtElement.isJsonNull() ? null : new Date(expiresAtElement.getAsLong()))
                 .build();
     }
