@@ -152,12 +152,14 @@
                                     <artifact>com.h2database:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*.MF</exclude>
+                                        <exclude>META-INF/services/java.sql.Driver</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
                                     <artifact>mysql:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*</exclude>
+                                        <exclude>META-INF/services/java.sql.Driver</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
