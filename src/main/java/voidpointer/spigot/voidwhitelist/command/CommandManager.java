@@ -47,10 +47,6 @@ public final class CommandManager {
         }
     }
 
-    public boolean hasCommand(final String commandName) {
-        return commands.containsKey(commandName);
-    }
-
     /**
      * @return {@code true} if the command is executed successfully,
      *          or {@code false} if command not found.
