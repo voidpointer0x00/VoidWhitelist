@@ -63,7 +63,7 @@ public final class CommandManager {
     }
 
     public List<String> tabComplete(final Args args) throws IllegalArgumentException {
-        if (args.isEmpty())
+        if (args.isEmpty() || args.get(0).isEmpty())
             return new ArrayList<>(commands.keySet());
 
         if (1 == args.sizeWithOptions()) {
