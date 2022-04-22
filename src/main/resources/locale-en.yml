@@ -1,7 +1,7 @@
 messages:
   added: '&6«&c{player-details}&6» &eis now whitelisted.'
   added-temp: '&6«&c{player-details}&6» &eis now whitelisted until &d{date}&e.'
-  add-help: '&eUse &6/whitelist add &cnickname'
+  add-help: '\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— add a player'
   console-whitelisted: '&eConsole cannot be whitelisted, enter a player''s nickname.'
   disabled: '&eWhitelist &eis &cdisabled&e.'
   enabled: '&eWhitelist &eis &aenabled&e.'
@@ -15,7 +15,7 @@ messages:
   no-permission: '&cYou''ve no permission.'
   player-details: '\(&c{player}) [hover{&eUUID: &6{uuid}}] [click.copy{{uuid}}]'
   removed: '&6«&c{player-details}&6» &ehas been removed from the whitelist.'
-  remove-help: '&eUse &6/whitelist remove &cnickname'
+  remove-help: '\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— remove a player'
   remove-not-whitelisted: '&6«&c{player-details}&6» &eis not on the whitelist.'
   uuid-fail-try-offline: '&cCould not request online UUID. Please, try \(&6-offline&c
     flag &8&l(click)) [hover{&6/whitelist {cmd} -offline {player} {date}}] [click.suggest{/whitelist

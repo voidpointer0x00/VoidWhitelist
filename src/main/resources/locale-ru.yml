@@ -12,7 +12,7 @@ messages:
   you-were-removed: '&cВас исключили из whitelist.'
   added: '&eИгрок &6«&c{player-details}&6» &eдобавлен в whitelist.'
   added-temp: '&eИгрок &6«&c{player-details}&6» &eдобавлен до &d{date}&e.'
-  add-help: '&eИспользуйте &6/whitelist add &cnickname'
+  add-help: '\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока'
   console-whitelisted: '&eКонсоль не может быть в whitelist, введите ник игрока для
     проверки.'
   disabled: '&eWhitelist &cвыключен&e.'
@@ -25,7 +25,7 @@ messages:
   no-permission: '&cУ Вас недостаточно прав.'
   player-details: '\(&c{player}) [hover{&eUUID: &6{uuid}}] [click.copy{{uuid}}]'
   removed: '&eИгрок &6«&c{player-details}&6» &eудален из whitelist.'
-  remove-help: '&eИспользуйте &6/whitelist remove &cnickname'
+  remove-help: '\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— исключить игрока'
   remove-not-whitelisted: '&eИгрока &6«&c{player-details}&6» &eнет в whitelist.'
   whitelist-not-enough-args: '&cКоманда не указана. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-unknown-command: '&cНеизвестная команда. \(&6/whitelist help) [click.run{/whitelist help}]'
