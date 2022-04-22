@@ -16,6 +16,8 @@ package voidpointer.spigot.voidwhitelist.storage.db;
 
 import com.j256.ormlite.dao.CloseableWrappedIterable;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -46,6 +48,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
 
     public OrmliteWhitelistService(final Plugin plugin) {
         OrmliteConfig ormliteConfig = new OrmliteConfig(plugin);
+        disableOrmliteLogging();
         dao = ormliteConfig.getWhitelistableDao();
     }
 
@@ -205,5 +208,9 @@ public final class OrmliteWhitelistService implements WhitelistService {
             log.warn("Unable to perform a database query", exception);
             return null;
         }
+    }
+
+    private void disableOrmliteLogging() {
+        Logger.setGlobalLogLevel(Level.OFF);
     }
 }
