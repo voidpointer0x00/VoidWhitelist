@@ -1,4 +1,15 @@
 messages:
+  export-only-from-database: '&eЭкспорт доступен только из базы данных.'
+  export-gathering: '&eСобираем данные на экспорт...'
+  export-processing: '&eЭкспоритруем &6{gathered}&e собранных записей...'
+  export-finished: '&eЭкспорт завершён за &d{ms-spent}ms&e.'
+  export-failure: '&cНе сохранить экспортированные данные.'
+  import-not-replace-experimental: '&e-not-replace — экспериментальная возможность,
+    может занять больше времени.'
+  import-loaded: '&eЗагружено &e{loaded} записей из &6{storage}&e, импорт начат.'
+  import-only-to-database: '&eИмпорт работает только из JSON в базу данных.'
+  import-result: '&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e.'
+  you-were-removed: '&cВас исключили из whitelist.'
   added: '&eИгрок &6«&c{player-details}&6» &eдобавлен в whitelist.'
   added-temp: '&eИгрок &6«&c{player-details}&6» &eдобавлен до &d{date}&e.'
   add-help: '&eИспользуйте &6/whitelist add &cnickname'
@@ -6,9 +17,6 @@ messages:
     проверки.'
   disabled: '&eWhitelist &cвыключен&e.'
   enabled: '&eWhitelist &aвключен&e.'
-  import-loaded: '&eЗагружено &6{loaded}&e записей из &6{storage}&e, импорт начат.'
-  import-only-to-database: '&eИмпорт работает только из JSON в базу данных.'
-  import-result: '&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e.'
   info-not-whitelisted: '&eИгрок &6«&c{player-details}&6» &cотсутствует &eв whitelist.'
   info-whitelisted: '&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist.'
   info-whitelisted-temp: '&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist, истекает
@@ -19,8 +27,15 @@ messages:
   removed: '&eИгрок &6«&c{player-details}&6» &eудален из whitelist.'
   remove-help: '&eИспользуйте &6/whitelist remove &cnickname'
   remove-not-whitelisted: '&eИгрока &6«&c{player-details}&6» &eнет в whitelist.'
-  whitelist-help: '&eИспользуйте &6/whitelist &cadd&6|&cremove&6|&cinfo&6|&con&6|&coff'
+  whitelist-help: |-
+    \(&e/whitelist gui) [click.run{/whitelist gui}] &f— показть графический интерфейс
+    \(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока
+    \(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— исключить игрока
+    \(&e/whitelist info &6<player> &o[-online,-offline]) [click.suggest{/whitelist info }] &f— отобразить информацию об игроке
+    \(&e/whitelist status) [click.run{/whitelist status}] &f— узнать, включен ли whitelist
+    \(&e/whitelist on|off) [click.suggest{/whitelist o}] &f— включить/выключить whitelist
   uuid-fail-try-offline: '&cНе удалось запросить online UUID, попробуйте \(&6-offline&c
     flag &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}] [click.suggest{/whitelist
     {cmd} -offline {player} {date}}]'
-  wrong-date-format: '&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут &a1d15h45m'
+  wrong-date-format: '&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут
+    &a1d15h45m'
