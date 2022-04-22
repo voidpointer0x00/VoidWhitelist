@@ -26,6 +26,9 @@ Essentials form `1mon7d30m`. Requires `whitelist.add` permission.
 - `/whitelist export-db` — exports the connected database into a new `export-${timestamp}.json` json file. Requires `whitelist.export` permission.
 - `/whitelist import-json` — imports whitelist from `whitelist.json` file into the connected database. Requires `whitelist.import` permission.
 
+## Feedback
+<img src="https://user-images.githubusercontent.com/43143315/164715837-cd7b8fbd-0962-48c9-afca-acec792f39fe.png"/> VoidPointer#6184
+
 [TestsBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/tests.yml/badge.svg
 [CodeQLBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/codeql-analysis.yml/badge.svg
 [ReleaseBadge]: https://img.shields.io/github/v/release/NyanGuyMF/VoidWhitelist.svg?color=orange
