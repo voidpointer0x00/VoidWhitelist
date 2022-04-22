@@ -46,7 +46,12 @@ public enum WhitelistMessage implements Message {
     UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить online UUID, попробуйте " +
             "\\(&6-offline &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +
             " [click.suggest{/whitelist {cmd} -offline {player} {date}}] "),
-    WHITELIST_HELP("&eИспользуйте &6/whitelist &cadd&6|&cremove&6|&cinfo&6|&con&6|&coff"),
+    WHITELIST_HELP("\\(&e/whitelist gui) [click.run{/whitelist gui}] &f— показть графический интерфейс\n"
+            + "\\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока\n"
+            + "\\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— исключить игрока\n"
+            + "\\(&e/whitelist info &6<player> &o[-online,-offline]) [click.suggest{/whitelist info }] &f— отобразить информацию об игроке\n"
+            + "\\(&e/whitelist status) [click.run{/whitelist status}] &f— узнать, включен ли whitelist\n"
+            + "\\(&e/whitelist on|off) [click.suggest{/whitelist o}] &f— включить/выключить whitelist"),
     WRONG_DATE_FORMAT("&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут &a1d15h45m"),
     YOU_WERE_REMOVED("&cВас исключили из whitelist."),
     ;
