@@ -57,6 +57,17 @@ public final class OrmliteConfig {
         load();
     }
 
+    public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
+        try {
+            Dao<WhitelistableModel, UUID> dao = DaoManager.createDao(connectionSource, WhitelistableModel.class);
+            TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
+            return dao;
+        } catch (final SQLException sqlException) {
+            log.warn("Unable to create Dao object", sqlException);
+            return null;
+        }
+    }
+
     String getHost() {
         if (!config.isSet(HOST_PATH))
             config.set(HOST_PATH, DEFAULT_HOST);
@@ -88,17 +99,6 @@ public final class OrmliteConfig {
         if (!config.isSet(PASSWORD_PATH))
             config.set(PASSWORD_PATH, DEFAULT_PASSWORD);
         return config.getString(PASSWORD_PATH);
-    }
-
-    public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
-        try {
-            Dao<WhitelistableModel, UUID> dao = DaoManager.createDao(connectionSource, WhitelistableModel.class);
-            TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
-            return dao;
-        } catch (SQLException sqlException) {
-            log.warn("Unable to create Dao object", sqlException);
-            return null;
-        }
     }
 
     private void load() {
