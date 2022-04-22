@@ -1,7 +1,7 @@
 
 <img src="https://user-images.githubusercontent.com/43143315/164706072-0366fc30-c686-4408-9e66-7930eb047273.png" align=right />
 
-# VoidWhitelist [![Tests][TestsBadge]][TestsUrl] [![CodeQL][CodeQLBadge]][CodeQLUrl] [![ReleaseBadge]][ReleaseUrl] [![WTFPL][LicenseBadge]](LICENSE)
+# VoidWhitelist [![Tests][TestsBadge]][TestsUrl] [![CodeQL][CodeQLBadge]][CodeQLUrl] [![ReleaseBadge]][ReleaseUrl]
 
 VoidWhitelist is an enchanced whitelist plugin for v1.14-1.18 Minecraft servers.
 It allows to add both online and offline UUIDs on a white list on a permanent and temporary basis.
@@ -29,7 +29,6 @@ Essentials form `1mon7d30m`. Requires `whitelist.add` permission.
 [TestsBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/tests.yml/badge.svg
 [CodeQLBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/codeql-analysis.yml/badge.svg
 [ReleaseBadge]: https://img.shields.io/github/v/release/NyanGuyMF/VoidWhitelist.svg?color=orange
-[LicenseBadge]: https://img.shields.io/github/license/NyanGuyMF/VoidWhitelist.svg?color=blue
 
 [TestsUrl]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/tests.yml
 [CodeQLUrl]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/codeql.yml
