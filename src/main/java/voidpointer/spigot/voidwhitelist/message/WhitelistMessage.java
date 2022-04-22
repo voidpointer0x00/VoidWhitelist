@@ -46,6 +46,8 @@ public enum WhitelistMessage implements Message {
     UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить online UUID, попробуйте " +
             "\\(&6-offline &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +
             " [click.suggest{/whitelist {cmd} -offline {player} {date}}] "),
+    WHITELIST_NOT_ENOUGH_ARGS("&cНедостаточно аргументов. \\(&6/whitelist help) [click.run{/whitelist help}]"),
+    WHITELIST_UNKNOWN_COMMAND("&cНеизвестная команда. \\(&6/whitelist help) [click.run{/whitelist help}]"),
     WHITELIST_HELP("\\(&e/whitelist gui) [click.run{/whitelist gui}] &f— показть графический интерфейс\n"
             + "\\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока\n"
             + "\\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— исключить игрока\n"

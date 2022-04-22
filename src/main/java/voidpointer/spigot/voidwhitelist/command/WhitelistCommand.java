@@ -18,9 +18,10 @@ import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
-import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import java.util.List;
+
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class WhitelistCommand extends Command {
     public static final String NAME = "whitelist";
@@ -49,7 +50,7 @@ public final class WhitelistCommand extends Command {
         final String subCommandName = args.removeFirst();
 
         if (!whitelistCommands.executeCommand(subCommandName, args))
-            locale.localize(WhitelistMessage.WHITELIST_HELP).send(args.getSender());
+            locale.localize(WHITELIST_UNKNOWN_COMMAND).send(args.getSender());
     }
 
     @Override public List<String> tabComplete(final Args args) {
@@ -57,6 +58,6 @@ public final class WhitelistCommand extends Command {
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
-        locale.localize(WhitelistMessage.WHITELIST_HELP).send(sender);
+        locale.localize(WHITELIST_NOT_ENOUGH_ARGS).send(sender);
     }
 }

@@ -20,6 +20,8 @@ messages:
   uuid-fail-try-offline: '&cCould not request online UUID. Please, try \(&6-offline&c
     flag &8&l(click)) [hover{&6/whitelist {cmd} -offline {player} {date}}] [click.suggest{/whitelist
     {cmd} -offline {player} {date}}]'
+  whitelist-not-enough-args: '&cNo command specified. \(&6/whitelist help) [click.run{/whitelist help}]'
+  whitelist-unknown-command: '&cUnknown command. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-help: |-
     \(&e/whitelist gui) [click.run{/whitelist gui}] &f— display the GUI
     \(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— add a player

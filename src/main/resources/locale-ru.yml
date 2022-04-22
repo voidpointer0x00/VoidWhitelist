@@ -27,6 +27,8 @@ messages:
   removed: '&eИгрок &6«&c{player-details}&6» &eудален из whitelist.'
   remove-help: '&eИспользуйте &6/whitelist remove &cnickname'
   remove-not-whitelisted: '&eИгрока &6«&c{player-details}&6» &eнет в whitelist.'
+  whitelist-not-enough-args: '&cКоманда не указана. \(&6/whitelist help) [click.run{/whitelist help}]'
+  whitelist-unknown-command: '&cНеизвестная команда. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-help: |-
     \(&e/whitelist gui) [click.run{/whitelist gui}] &f— показть графический интерфейс
     \(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока
