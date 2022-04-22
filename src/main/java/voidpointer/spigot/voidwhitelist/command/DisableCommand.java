@@ -23,12 +23,8 @@ import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
-import java.util.Collections;
-import java.util.List;
-
 public final class DisableCommand extends Command {
-    public static final String NAME = "disable";
-    public static final List<String> ALIASES = Collections.singletonList("off");
+    public static final String NAME = "off";
     public static final String PERMISSION = "whitelist.disable";
 
     @AutowiredLocale private static Locale locale;
@@ -44,9 +40,5 @@ public final class DisableCommand extends Command {
         whitelistConfig.disableWhitelist();
         locale.localize(WhitelistMessage.DISABLED).send(args.getSender());
         eventManager.callAsyncEvent(new WhitelistDisabledEvent());
-    }
-
-    @Override public List<String> getAliases() {
-        return ALIASES;
     }
 }
