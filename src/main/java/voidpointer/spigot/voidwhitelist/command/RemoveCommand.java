@@ -35,10 +35,12 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
 
 public class RemoveCommand extends Command {
     public static final String NAME = "remove";
+    public static final List<String> ALIASES = singletonList("rem");
     public static final String PERMISSION = "whitelist.remove";
     public static final Integer MIN_ARGS = 1;
 
@@ -104,6 +106,10 @@ public class RemoveCommand extends Command {
                     .collect(Collectors.toList());
         }
         return emptyList();
+    }
+
+    @Override public List<String> getAliases() {
+        return ALIASES;
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
