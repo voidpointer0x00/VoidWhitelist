@@ -58,7 +58,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Dependency private static EventManager eventManager;
     @Dependency private static StorageFactory storageFactory;
     @Dependency(id="plugin")
-    private static JavaPlugin instance;
+    private static VoidWhitelistPlugin instance;
 
     // for tests
     VoidWhitelistPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
