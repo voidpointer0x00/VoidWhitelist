@@ -47,10 +47,11 @@ import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.DATABASE;
 public final class OrmliteWhitelistService implements WhitelistService {
     @AutowiredLocale private static LocaleLog log;
     private final Dao<WhitelistableModel, UUID> dao;
+    private final OrmliteConfig ormliteConfig;
 
     public OrmliteWhitelistService(final Plugin plugin) {
         log.info("Establishing database connection...");
-        OrmliteConfig ormliteConfig = new OrmliteConfig(plugin);
+        ormliteConfig = new OrmliteConfig(plugin);
         disableOrmliteLogging();
         dao = ormliteConfig.getWhitelistableDao();
         if (dao != null) {
@@ -60,6 +61,10 @@ public final class OrmliteWhitelistService implements WhitelistService {
 
     @Override public StorageMethod getStorageMethod() {
         return DATABASE;
+    }
+
+    @Override public void shutdown() {
+        ormliteConfig.getConnectionSource().closeQuietly();
     }
 
     public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {

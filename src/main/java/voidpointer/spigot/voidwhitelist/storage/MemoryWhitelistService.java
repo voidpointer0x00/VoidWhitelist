@@ -48,6 +48,11 @@ public abstract class MemoryWhitelistService implements WhitelistService {
     @Setter(AccessLevel.PROTECTED)
     private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
 
+    @Override public void shutdown() {
+        saveWhitelist();
+        whitelist.clear();
+    }
+
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
         if (whitelist.isEmpty())
             return completedFuture(Collections.emptySet());

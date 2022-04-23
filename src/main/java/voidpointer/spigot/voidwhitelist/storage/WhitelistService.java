@@ -27,6 +27,8 @@ import java.util.concurrent.CompletableFuture;
 public interface WhitelistService {
     StorageMethod getStorageMethod();
 
+    void shutdown();
+
     /**
      * Finds {@code limit} elements starting from the very first {@link Whitelistable}
      *      in the storage inclusively.
