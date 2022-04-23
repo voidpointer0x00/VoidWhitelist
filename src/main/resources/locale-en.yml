@@ -2,24 +2,32 @@ messages:
   added: '&6«&c{player-details}&6» &eis now whitelisted.'
   added-temp: '&6«&c{player-details}&6» &eis now whitelisted until &d{date}&e.'
   add-help: '\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— add a player'
+  add-fail: '&cAddition of &6{player-details}&c failed.'
   console-whitelisted: '&eConsole cannot be whitelisted, enter a player''s nickname.'
+  config-reloaded: '&aGeneral configuration reloaded.'
   disabled: '&eWhitelist &eis &cdisabled&e.'
   enabled: '&eWhitelist &eis &aenabled&e.'
+  export-only-from-database: '&eYou can export only from database.'
+  export-gathering: '&eGathering export data...'
+  export-processing: '&eExporting &6{gathered}&e gathered entries...'
+  export-finished: '&eExport is finished in &d{ms-spent}ms&e.'
+  export-failure: '&cExport failed.'
   import-loaded: '&eLoaded &6{loaded}&e entries from &6{storage}&e, importing...'
   import-only-to-database: '&eImport is only available from JSON to database.'
   import-result: '&eImported &6{imported}&e of &6{loaded}&e entries in &d{ms-spent}ms&e.'
   info-not-whitelisted: '&6«{player-details}&6» &eis &cnot whitelisted&e.'
   info-whitelisted: '&6«{player-details}&6» &eis &awhitelisted&e.'
   info-whitelisted-temp: '&e&6«{player-details}&6» &eis &awhitelisted&e, expires on &d{date}&e.'
-  login-disallowed: '&cYou are not whitelisted on this server.'
+  login-disallowed: '&cYou are not allowed on this server.'
+  locale-doesnt-support-reload: '&cCurrent locale does not support reload.'
+  locale-reloaded: '&aLocale reloaded.'
   no-permission: '&cYou''ve no permission.'
   player-details: '\(&c{player}) [hover{&eUUID: &6{uuid}}] [click.copy{{uuid}}]'
   removed: '&6«&c{player-details}&6» &ehas been removed from the whitelist.'
   remove-help: '\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— remove a player'
   remove-not-whitelisted: '&6«&c{player-details}&6» &eis not on the whitelist.'
-  uuid-fail-try-offline: '&cCould not request online UUID. Please, try \(&6-offline&c
-    flag &8&l(click)) [hover{&6/whitelist {cmd} -offline {player} {date}}] [click.suggest{/whitelist
-    {cmd} -offline {player} {date}}]'
+  remove-fail: '&cRemove operation of &6{player-details}&c failed.'
+  storage-method-changed: '&eStorage method was changed &6{old}&e->&6{new}&e.'
   whitelist-not-enough-args: '&cNo command specified. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-unknown-command: '&cUnknown command. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-help: |-
@@ -29,5 +37,8 @@ messages:
     \(&e/whitelist info &6<player> &o[-online,-offline]) [click.suggest{/whitelist info }] &f— check whether a player is whitelisted or not
     \(&e/whitelist status) [click.run{/whitelist status}] &f— check whether the whitelsit is enabled or not
     \(&e/whitelist on|off) [click.suggest{/whitelist o}] &f— enable/disable the whitelist
+  uuid-fail-try-offline: '&cCould not request online UUID. Please, try \(&6-offline&c
+    flag &8&l(click)) [hover{&6/whitelist {cmd} -offline {player} {date}}] [click.suggest{/whitelist
+    {cmd} -offline {player} {date}}]'
   wrong-date-format: '&cInvalid date-time format. A valid example for 1 day, 15 hours and 45 minutes &a1d15h45m'
   you-were-removed: '&cYou''ve been removed from a whitelist.'

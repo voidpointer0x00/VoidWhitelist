@@ -24,7 +24,7 @@ public enum WhitelistMessage implements Message {
     ADDED_TEMP("&eИгрок &6«&c{player-details}&6» &eдобавлен до &6«&c{date}&6»&e."),
     ADD_HELP("&eИспользуйте &6/whitelist add &cnickname"),
     ADD_FAIL("&cНе удалось добавить игрока &6{player-details}&c."),
-    CONSOLE_WHITELISTED("&eКонсоль не может быть в whitelist, введите ник игрока для проверки."),
+    CONSOLE_WHITELISTED("&eКонсоль не может быть в whitelist, введите ник игрока."),
     CONFIG_RELOADED("&aОбщие настройки перезагружены."),
     DISABLED("&eWhitelist &cвыключен&e."),
     ENABLED("&eWhitelist &aвключен&e."),
@@ -46,8 +46,7 @@ public enum WhitelistMessage implements Message {
     REMOVE_FAIL("&cНе удалось исключить игрока &6{player-details}&c."),
     REMOVE_HELP("&eИспользуйте &6/whitelist remove &cnickname"),
     REMOVE_NOT_WHITELISTED("&eИгрока &6«&c{player-details}&6» &eнет в whitelist."),
-    STORAGE_METHOD_CHANGED("&eМетод хранения данных был изменён с &6{old}&e на &6{new}&e."),
-    STORAGE_METHOD_RELOAD_FAIL("&cНе удалось загрузить новый метод хранения данных."),
+    STORAGE_METHOD_CHANGED("&eМетод хранения данных был изменён &6{old}&e->&6{new}&e."),
     UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить online UUID, попробуйте " +
             "\\(&6-offline &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +
             " [click.suggest{/whitelist {cmd} -offline {player} {date}}] "),
