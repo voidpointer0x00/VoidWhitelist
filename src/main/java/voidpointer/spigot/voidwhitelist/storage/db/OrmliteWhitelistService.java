@@ -47,9 +47,13 @@ public final class OrmliteWhitelistService implements WhitelistService {
     private final Dao<WhitelistableModel, UUID> dao;
 
     public OrmliteWhitelistService(final Plugin plugin) {
+        log.info("Establishing database connection...");
         OrmliteConfig ormliteConfig = new OrmliteConfig(plugin);
         disableOrmliteLogging();
         dao = ormliteConfig.getWhitelistableDao();
+        if (dao != null) {
+            log.info("Connection established.");
+        }
     }
 
     public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {

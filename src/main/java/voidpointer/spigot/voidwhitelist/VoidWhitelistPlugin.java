@@ -71,7 +71,9 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         eventManager = new EventManager(this);
         DefaultUUIDFetcher.updateMode(whitelistConfig.isUUIDModeOnline());
 
+        getLogger().info("Resolving locale dependencies...");
         LocaleAnnotationResolver.resolve(this);
+        getLogger().info("Plugin loaded.");
     }
 
     @Override public void onEnable() {
@@ -83,6 +85,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
 
         if (whitelistConfig.isWhitelistEnabled())
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
+        getLogger().info("Plugin enabled.");
     }
 
     private void registerListeners() {
