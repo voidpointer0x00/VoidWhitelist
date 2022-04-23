@@ -6,8 +6,6 @@
 VoidWhitelist is an enchanced whitelist plugin for v1.14-1.18 Minecraft servers.
 It allows to add both online and offline UUIDs on a white list on a permanent and temporary basis.
 
-## How to use?
-
 ### GUI
 GUI is accessible through a `/whitelist gui` command. Requires `whitelist.gui` permission. GUI actions _(such as remove or edit)_
 don't require any permission.
