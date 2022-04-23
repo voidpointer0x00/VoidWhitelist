@@ -88,6 +88,10 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         getLogger().info("Plugin enabled.");
     }
 
+    @Override public void onDisable() {
+        whitelistService.shutdown();
+    }
+
     private void registerListeners() {
         Map<Player, KickTask> scheduledKickTasks = Collections.synchronizedMap(new WeakHashMap<>());
         new LoginListener(this, scheduledKickTasks).register();
