@@ -37,7 +37,7 @@ public final class WhitelistAddedListener implements Listener {
     @Autowired(mapId="plugin")
     private static Plugin plugin;
     @Autowired private static WhitelistConfig config;
-    @Autowired private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler(priority=EventPriority.MONITOR)
     public void onAdded(final WhitelistAddedEvent event) {

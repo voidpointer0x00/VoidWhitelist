@@ -27,7 +27,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public final class QuitListener implements Listener {
-    @Autowired private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler public void onQuit(final PlayerQuitEvent event) {
         if (scheduledKickTasks.containsKey(event.getPlayer())) {

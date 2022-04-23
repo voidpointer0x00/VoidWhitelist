@@ -28,7 +28,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public final class WhitelistDisabledListener implements Listener {
-    @Autowired private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler public void onDisabled(final WhitelistDisabledEvent event) {
         scheduledKickTasks.values().forEach(BukkitRunnable::cancel);

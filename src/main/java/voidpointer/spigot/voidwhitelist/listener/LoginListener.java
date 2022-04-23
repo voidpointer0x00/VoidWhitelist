@@ -42,7 +42,7 @@ public final class LoginListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static WhitelistConfig whitelistConfig;
-    @Autowired private static Map<Player, KickTask> scheduledKickTaskMap;
+    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
     @NonNull private final Plugin plugin;
 
     @EventHandler public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
@@ -69,7 +69,7 @@ public final class LoginListener implements Listener {
 
             KickTask kickTask = new KickTask(event.getPlayer(), getKickReason());
             kickTask.scheduleKick(plugin, whitelistable.get().getExpiresAt());
-            scheduledKickTaskMap.put(event.getPlayer(), kickTask);
+            scheduledKickTasks.put(event.getPlayer(), kickTask);
         }).whenCompleteAsync((res, th) -> {
             if (th != null)
                 locale.warn("Couldn't schedule a KickTask on join event", th);

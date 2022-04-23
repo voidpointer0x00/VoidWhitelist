@@ -34,7 +34,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class WhitelistEnabledListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
     @Autowired private static WhitelistService whitelistService;
     @Autowired(mapId="plugin")
     private static Plugin plugin;
