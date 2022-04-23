@@ -26,6 +26,7 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.storage.db.WhitelistableModel;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -64,7 +65,11 @@ public final class OrmliteConfig {
             TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
             return dao;
         } catch (final SQLException sqlException) {
-            log.warn("Unable to create Dao object", sqlException);
+            Throwable rootCause = sqlException;
+            while ((rootCause.getCause() != null) && (rootCause != rootCause.getCause()))
+                rootCause = rootCause.getCause();
+            Throwable reportableCause = (rootCause instanceof ConnectException) ? rootCause : sqlException;
+            log.warn("Unable to establish connection: {0}", reportableCause.getMessage());
             return null;
         }
     }
