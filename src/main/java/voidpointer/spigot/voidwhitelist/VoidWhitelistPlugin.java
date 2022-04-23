@@ -15,6 +15,7 @@
 package voidpointer.spigot.voidwhitelist;
 
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -90,6 +91,11 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
 
     @Override public void onDisable() {
         whitelistService.shutdown();
+    }
+
+    /** Changes the {@link WhitelistService}, but doesn't inject it. */
+    public void changeWhitelistService(final @NonNull WhitelistService whitelistService) {
+        VoidWhitelistPlugin.whitelistService = whitelistService;
     }
 
     private void registerListeners() {
