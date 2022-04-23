@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.listener;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,10 +34,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class WhitelistEnabledListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
+    @Autowired private static Map<Player, KickTask> scheduledKickTasks;
     @Autowired private static WhitelistService whitelistService;
     @Autowired(mapId="plugin")
     private static Plugin plugin;
-    @NonNull private final Map<Player, KickTask> scheduledKickTasks;
 
     /**
      * Kick all non whitelisted online players and schedule kick tasks

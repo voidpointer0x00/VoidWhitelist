@@ -14,13 +14,13 @@
  */
 package voidpointer.spigot.voidwhitelist.listener;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
 
@@ -28,7 +28,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public final class WhitelistDisabledListener implements Listener {
-    @NonNull private final Map<Player, KickTask> scheduledKickTasks;
+    @Autowired private static Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler public void onDisabled(final WhitelistDisabledEvent event) {
         scheduledKickTasks.values().parallelStream().forEach(BukkitRunnable::cancel);

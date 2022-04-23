@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.listener;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +37,7 @@ public final class WhitelistAddedListener implements Listener {
     @Autowired(mapId="plugin")
     private static Plugin plugin;
     @Autowired private static WhitelistConfig config;
-    @NonNull private final Map<Player, KickTask> scheduledKickTasks;
+    @Autowired private static Map<Player, KickTask> scheduledKickTasks;
 
     @EventHandler(priority=EventPriority.MONITOR)
     public void onAdded(final WhitelistAddedEvent event) {

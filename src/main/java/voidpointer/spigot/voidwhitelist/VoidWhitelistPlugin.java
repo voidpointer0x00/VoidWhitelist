@@ -44,9 +44,10 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTask;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import static java.util.Collections.synchronizedMap;
 
 @NoArgsConstructor
 public final class VoidWhitelistPlugin extends JavaPlugin {
@@ -59,6 +60,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Dependency private static StorageFactory storageFactory;
     @Dependency(id="plugin")
     private static VoidWhitelistPlugin instance;
+    @Dependency(id="kick-tasks")
+    private static final Map<Player, KickTask> scheduledKickTasks = synchronizedMap(new WeakHashMap<>());
 
     // for tests
     VoidWhitelistPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
@@ -99,13 +102,12 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Map<Player, KickTask> scheduledKickTasks = Collections.synchronizedMap(new WeakHashMap<>());
-        new LoginListener(this, scheduledKickTasks).register();
-        new WhitelistEnabledListener(scheduledKickTasks).register();
-        new WhitelistDisabledListener(scheduledKickTasks).register(this);
-        new WhitelistAddedListener(scheduledKickTasks).register();
+        new LoginListener(this).register();
+        new WhitelistEnabledListener().register();
+        new WhitelistDisabledListener().register(this);
+        new WhitelistAddedListener().register();
         new WhitelistRemovedListener().register(this);
-        new QuitListener(scheduledKickTasks).register(this);
+        new QuitListener().register(this);
     }
 
     private String getLanguage() {

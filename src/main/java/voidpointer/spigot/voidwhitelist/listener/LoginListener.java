@@ -42,8 +42,8 @@ public final class LoginListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static WhitelistConfig whitelistConfig;
+    @Autowired private static Map<Player, KickTask> scheduledKickTaskMap;
     @NonNull private final Plugin plugin;
-    @NonNull private final Map<Player, KickTask> scheduledKickTaskMap;
 
     @EventHandler public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
