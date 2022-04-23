@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -49,7 +50,7 @@ public final class OrmliteConfig {
     private final Plugin plugin;
     private final File configFile;
     private YamlConfiguration config;
-    private ConnectionSource connectionSource;
+    @Getter private ConnectionSource connectionSource;
 
     public OrmliteConfig(final Plugin plugin) {
         this.plugin = plugin;
