@@ -24,6 +24,7 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
+import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.sql.SQLException;
@@ -41,6 +42,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.DATABASE;
 
 public final class OrmliteWhitelistService implements WhitelistService {
     @AutowiredLocale private static LocaleLog log;
@@ -54,6 +56,10 @@ public final class OrmliteWhitelistService implements WhitelistService {
         if (dao != null) {
             log.info("Connection established.");
         }
+    }
+
+    @Override public StorageMethod getStorageMethod() {
+        return DATABASE;
     }
 
     public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {

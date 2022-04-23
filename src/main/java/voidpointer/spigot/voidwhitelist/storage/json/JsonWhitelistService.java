@@ -16,9 +16,12 @@ package voidpointer.spigot.voidwhitelist.storage.json;
 
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.MemoryWhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
 import java.io.File;
 import java.util.Collection;
+
+import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
 
 public final class JsonWhitelistService extends MemoryWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
@@ -28,6 +31,10 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
     public JsonWhitelistService(final File dataFolder) {
         whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
         load();
+    }
+
+    @Override public StorageMethod getStorageMethod() {
+        return JSON;
     }
 
     private void load() {

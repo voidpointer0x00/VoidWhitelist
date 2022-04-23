@@ -20,6 +20,7 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.MemoryWhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
 
 import java.io.File;
@@ -31,6 +32,8 @@ import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Set;
 
+import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.SERIAL;
+
 public final class SerialWhitelistService extends MemoryWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
 
@@ -41,6 +44,10 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
         this.dataFolder = dataFolder;
         load();
         CacheBuilder.newBuilder().weakValues();
+    }
+
+    @Override public StorageMethod getStorageMethod() {
+        return SERIAL;
     }
 
     @Override protected void saveWhitelist() {
