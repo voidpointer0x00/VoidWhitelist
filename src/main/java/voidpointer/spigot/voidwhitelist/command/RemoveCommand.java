@@ -31,12 +31,14 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public class RemoveCommand extends Command {
     public static final String NAME = "remove";
@@ -70,23 +72,39 @@ public class RemoveCommand extends Command {
             final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
             if (!whitelistable.isPresent()) {
                 locale.localize(WhitelistMessage.REMOVE_NOT_WHITELISTED)
-                        .set("player-details", locale.localize(WhitelistMessage.PLAYER_DETAILS))
+                        .set("player-details", locale.localize(PLAYER_DETAILS))
                         .set("uuid", uuidOptional.get())
                         .set("player", name)
                         .send(args.getSender());
                 return;
             }
-            whitelistService.remove(whitelistable.get());
-            locale.localize(WhitelistMessage.REMOVED)
-                    .set("player-details", locale.localize(WhitelistMessage.PLAYER_DETAILS))
-                    .set("uuid", uuidOptional.get())
-                    .set("player", name)
-                    .send(args.getSender());
-            eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
+            boolean isRemoved = whitelistService.remove(whitelistable.get()).join().booleanValue();
+            if (isRemoved) {
+                notifyRemoved(args.getSender(), uuidOptional.get(), name);
+                eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
+            } else {
+                notifyNotRemoved(args.getSender(), uuidOptional.get(), name);
+            }
         }).whenCompleteAsync((res, th) -> {
             if (th != null)
                 locale.warn("Couldn't remove a player from the whitelist", th);
         });
+    }
+
+    private void notifyRemoved(final CommandSender sender, final UUID uuid, final String name) {
+        locale.localize(REMOVED)
+                .set("player-details", locale.localize(PLAYER_DETAILS))
+                .set("uuid", uuid)
+                .set("player", name)
+                .send(sender);
+    }
+
+    private void notifyNotRemoved(final CommandSender sender, final UUID uuid, final String name) {
+        locale.localize(REMOVE_FAIL)
+                .set("player-details", locale.localize(PLAYER_DETAILS))
+                .set("uuid", uuid)
+                .set("player", name)
+                .send(sender);
     }
 
     @Override public List<String> tabComplete(final Args args) {
