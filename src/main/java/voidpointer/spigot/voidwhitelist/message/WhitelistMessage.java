@@ -24,6 +24,7 @@ public enum WhitelistMessage implements Message {
     ADDED_TEMP("&eИгрок &6«&c{player-details}&6» &eдобавлен до &6«&c{date}&6»&e."),
     ADD_HELP("&eИспользуйте &6/whitelist add &cnickname"),
     CONSOLE_WHITELISTED("&eКонсоль не может быть в whitelist, введите ник игрока для проверки."),
+    CONFIG_RELOADED("&aОбщие настройки перезагружены."),
     DISABLED("&eWhitelist &cвыключен&e."),
     ENABLED("&eWhitelist &aвключен&e."),
     EXPORT_ONLY_FROM_DATABASE("&eЭкспорт доступен только из базы данных."),
@@ -43,9 +44,13 @@ public enum WhitelistMessage implements Message {
     REMOVED("&eИгрок &6«&c{player-details}&6» &eудален из whitelist."),
     REMOVE_HELP("&eИспользуйте &6/whitelist remove &cnickname"),
     REMOVE_NOT_WHITELISTED("&eИгрока &6«&c{player-details}&6» &eнет в whitelist."),
+    STORAGE_METHOD_CHANGED("&eМетод хранения данных был изменён с &6{old}&e на &6{new}&e."),
+    STORAGE_METHOD_RELOAD_FAIL("&cНе удалось загрузить новый метод хранения данных."),
     UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить online UUID, попробуйте " +
             "\\(&6-offline &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +
             " [click.suggest{/whitelist {cmd} -offline {player} {date}}] "),
+    LOCALE_DOESNT_SUPPORT_RELOAD("&cТекущая локаль не поддерживает перезагрузку."),
+    LOCALE_RELOADED("&aЛокаль перезагружена."),
     WHITELIST_NOT_ENOUGH_ARGS("&cНедостаточно аргументов. \\(&6/whitelist help) [click.run{/whitelist help}]"),
     WHITELIST_UNKNOWN_COMMAND("&cНеизвестная команда. \\(&6/whitelist help) [click.run{/whitelist help}]"),
     WHITELIST_HELP("\\(&e/whitelist gui) [click.run{/whitelist gui}] &f— показть графический интерфейс\n"
