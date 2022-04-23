@@ -41,6 +41,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
 import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class AddCommand extends Command {
     public static final String NAME = "add";
@@ -78,7 +79,9 @@ public final class AddCommand extends Command {
                             locale.warn("Couldn't add a player to the whitelist", th);
                             return;
                         }
-                        if (expiresAt.isPresent())
+                        if (!res.isPresent())
+                            notifyFail(args, uuidOptional.get());
+                        else if (expiresAt.isPresent())
                             notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);
                         else
                             notifyAdded(args, null, uuidOptional.get(), WhitelistMessage.ADDED);
@@ -104,6 +107,14 @@ public final class AddCommand extends Command {
 
     private boolean hasExpiresAtArgument(int argsNumber) {
         return MIN_ARGS < argsNumber;
+    }
+
+    private void notifyFail(final Args args, final UUID uuid) {
+        locale.localize(ADD_FAIL)
+                .set("player-details", locale.localize(PLAYER_DETAILS))
+                .set("player", args.get(0))
+                .set("uuid", uuid)
+                .send(args.getSender());
     }
 
     private void notifyAdded(final Args args, final Date expiresAt, final UUID uuid, final Message message) {

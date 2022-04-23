@@ -23,6 +23,7 @@ public enum WhitelistMessage implements Message {
     ADDED("&eИгрок &6«&c{player-details}&6» &eдобавлен в whitelist."),
     ADDED_TEMP("&eИгрок &6«&c{player-details}&6» &eдобавлен до &6«&c{date}&6»&e."),
     ADD_HELP("&eИспользуйте &6/whitelist add &cnickname"),
+    ADD_FAIL("&cНе удалось добавить игрока &6«&c{player-details}&6»."),
     CONSOLE_WHITELISTED("&eКонсоль не может быть в whitelist, введите ник игрока для проверки."),
     CONFIG_RELOADED("&aОбщие настройки перезагружены."),
     DISABLED("&eWhitelist &cвыключен&e."),
