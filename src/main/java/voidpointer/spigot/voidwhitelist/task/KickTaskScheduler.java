@@ -2,7 +2,6 @@ package voidpointer.spigot.voidwhitelist.task;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -14,15 +13,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.lang.System.currentTimeMillis;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class KickTaskScheduler {
     @AutowiredLocale private static LocaleLog locale;
     @Autowired(mapId="plugin") private static Plugin plugin;
     @Autowired private static WhitelistService whitelistService;
-    private final Map<Player, BukkitTask> tasks = new ConcurrentHashMap<>();
+    private final Map<Player, KickTask> tasks = new ConcurrentHashMap<>();
 
     public void schedule(final @NonNull Iterable<? extends Player> players) {
         for (final Player player : players) {
@@ -50,35 +47,28 @@ public final class KickTaskScheduler {
             kickSynchronously(player.get());
             return;
         }
-        long delay = whitelistable.getExpiresAt().getTime() - currentTimeMillis();
-        kickSynchronously(player.get(), (delay > 0) ? (MILLISECONDS.toSeconds(delay) * 20L) : 0);
+        kickSynchronously(player.get(), whitelistable.getExpiresAt().getTime());
     }
 
     private void kickSynchronously(final @NonNull Player player) {
         cancel(player);
-        plugin.getServer().getScheduler().runTask(plugin, () -> kick(player));
+        plugin.getServer().getScheduler().runTask(plugin, () ->
+                player.kickPlayer(locale.localize(LOGIN_DISALLOWED).getRawMessage()));
     }
 
-    private void kickSynchronously(final @NonNull Player player, final long delayInTicks) {
+    private void kickSynchronously(final @NonNull Player player, final long expiresAt) {
         cancel(player);
-        tasks.put(player, plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            kick(player);
-            tasks.remove(player);
-        }, delayInTicks));
-    }
-
-    private void kick(final Player player) {
-        player.kickPlayer(locale.localize(LOGIN_DISALLOWED).getRawMessage());
+        tasks.put(player, KickTask.schedule(player, expiresAt));
     }
 
     public void cancel(final @NonNull Player player) {
-        BukkitTask removed = tasks.remove(player);
+        KickTask removed = tasks.remove(player);
         if (removed != null)
             removed.cancel();
     }
 
     public void cancelAll() {
-        tasks.values().forEach(BukkitTask::cancel);
+        tasks.values().forEach(KickTask::cancel);
         tasks.clear();
     }
 }
