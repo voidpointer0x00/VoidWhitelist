@@ -27,6 +27,8 @@ import java.util.concurrent.CompletableFuture;
 public interface WhitelistService {
     StorageMethod getStorageMethod();
 
+    boolean reconnect();
+
     void shutdown();
 
     /**
