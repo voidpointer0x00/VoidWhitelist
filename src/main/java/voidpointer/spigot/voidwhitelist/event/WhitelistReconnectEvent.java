@@ -9,7 +9,7 @@ import voidpointer.spigot.voidwhitelist.command.ReconnectCommand;
 
 /**
  * <p>Called asynchronously after reconnecting to a database
- *      using new credentials.</p>
+ *      using new credentials or reloading file based storage.</p>
  *
  * @see ReconnectCommand
  */
