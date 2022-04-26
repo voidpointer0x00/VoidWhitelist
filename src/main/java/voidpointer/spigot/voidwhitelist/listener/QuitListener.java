@@ -15,25 +15,19 @@
 package voidpointer.spigot.voidwhitelist.listener;
 
 import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.di.Autowired;
-import voidpointer.spigot.voidwhitelist.task.KickTask;
-
-import java.util.Map;
+import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
 @RequiredArgsConstructor
 public final class QuitListener implements Listener {
-    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired private static KickTaskScheduler kickTaskScheduler;
 
     @EventHandler public void onQuit(final PlayerQuitEvent event) {
-        if (scheduledKickTasks.containsKey(event.getPlayer())) {
-            scheduledKickTasks.get(event.getPlayer()).cancel();
-            scheduledKickTasks.remove(event.getPlayer());
-        }
+        kickTaskScheduler.cancel(event.getPlayer());
     }
 
     public void register(final JavaPlugin plugin) {

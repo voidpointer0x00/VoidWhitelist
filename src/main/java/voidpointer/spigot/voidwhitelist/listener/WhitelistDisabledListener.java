@@ -15,24 +15,19 @@
 package voidpointer.spigot.voidwhitelist.listener;
 
 import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.voidwhitelist.event.WhitelistDisabledEvent;
-import voidpointer.spigot.voidwhitelist.task.KickTask;
-
-import java.util.Map;
+import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
 @RequiredArgsConstructor
 public final class WhitelistDisabledListener implements Listener {
-    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired private static KickTaskScheduler kickTaskScheduler;
 
     @EventHandler public void onDisabled(final WhitelistDisabledEvent event) {
-        scheduledKickTasks.values().forEach(BukkitRunnable::cancel);
-        scheduledKickTasks.clear();
+        kickTaskScheduler.cancelAll();
     }
 
     public void register(final JavaPlugin plugin) {

@@ -1,6 +1,5 @@
 package voidpointer.spigot.voidwhitelist.command;
 
-import org.bukkit.entity.Player;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.di.Injector;
 import voidpointer.spigot.framework.localemodule.Locale;
@@ -15,9 +14,6 @@ import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.task.KickTask;
-
-import java.util.Map;
 
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
@@ -28,8 +24,6 @@ final class ReloadCommand extends Command {
     @AutowiredLocale private static Locale locale;
     @Autowired(mapId="plugin")
     private static VoidWhitelistPlugin plugin;
-    @Autowired(mapId="kick-tasks")
-    private static Map<Player, KickTask> scheduledKickTasks;
     @Autowired private static StorageFactory storageFactory;
     @Autowired private static WhitelistConfig config;
     @Autowired private static EventManager eventManager;
@@ -85,15 +79,7 @@ final class ReloadCommand extends Command {
                 .set("new", config.getStorageMethod())
                 .send(args.getSender());
 
-        if (config.isWhitelistEnabled()) {
-            // TODO: (semantic) make some sort of KickTaskScheduler class that will
-            //  provide an API to cancel all tasks, to schedule for Collection<Player>,
-            //  to add/remove for a specific player.
-            //  It will remove code repetition from whitelist enable/disable listeners
-            //  and will allow firing new WhitelistReloadEvent.
-            scheduledKickTasks.values().forEach(KickTask::cancel);
-            scheduledKickTasks.clear();
+        if (config.isWhitelistEnabled())
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
-        }
     }
 }

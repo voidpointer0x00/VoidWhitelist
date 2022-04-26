@@ -16,7 +16,6 @@ package voidpointer.spigot.voidwhitelist;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -41,13 +40,9 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.task.KickTask;
+import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
 import java.io.File;
-import java.util.Map;
-import java.util.WeakHashMap;
-
-import static java.util.Collections.synchronizedMap;
 
 @NoArgsConstructor
 public final class VoidWhitelistPlugin extends JavaPlugin {
@@ -58,10 +53,9 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Dependency private static WhitelistService whitelistService;
     @Dependency private static EventManager eventManager;
     @Dependency private static StorageFactory storageFactory;
+    @Dependency private static KickTaskScheduler kickTaskScheduler;
     @Dependency(id="plugin")
     private static VoidWhitelistPlugin instance;
-    @Dependency(id="kick-tasks")
-    private static final Map<Player, KickTask> scheduledKickTasks = synchronizedMap(new WeakHashMap<>());
 
     // for tests
     VoidWhitelistPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
@@ -83,6 +77,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Override public void onEnable() {
         storageFactory = new StorageFactory(this);
         whitelistService = storageFactory.loadStorage(whitelistConfig.getStorageMethod());
+        kickTaskScheduler = new KickTaskScheduler();
         Injector.inject(this);
         new WhitelistCommand().register(this);
         registerListeners();

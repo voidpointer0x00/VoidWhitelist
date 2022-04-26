@@ -25,10 +25,8 @@ import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
-import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
-import voidpointer.spigot.voidwhitelist.task.KickTask;
+import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
-import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -37,7 +35,7 @@ public final class WhitelistAddedListener implements Listener {
     @Autowired(mapId="plugin")
     private static Plugin plugin;
     @Autowired private static WhitelistConfig config;
-    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired private static KickTaskScheduler kickTaskScheduler;
 
     @EventHandler(priority=EventPriority.MONITOR)
     public void onAdded(final WhitelistAddedEvent event) {
@@ -47,14 +45,7 @@ public final class WhitelistAddedListener implements Listener {
         if (!player.isPresent())
             return;
 
-        scheduledKickTasks.remove(player.get());
-
-        if (event.getWhitelistable().isExpirable()) {
-            String kickMessage = locale.localize(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
-            KickTask kickTask = new KickTask(player.get(), kickMessage);
-            kickTask.scheduleKick(plugin, event.getWhitelistable().getExpiresAt());
-            scheduledKickTasks.put(player.get(), kickTask);
-        }
+        kickTaskScheduler.schedule(event.getWhitelistable());
     }
 
     public void register() {

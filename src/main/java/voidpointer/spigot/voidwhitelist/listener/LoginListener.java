@@ -30,9 +30,8 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.task.KickTask;
+import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.removeCachedProfile;
@@ -42,7 +41,7 @@ public final class LoginListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static WhitelistConfig whitelistConfig;
-    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired private static KickTaskScheduler kickTaskScheduler;
     @NonNull private final Plugin plugin;
 
     @EventHandler public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
@@ -67,12 +66,7 @@ public final class LoginListener implements Listener {
                 return;
             }
             updateWhitelistableName(event.getPlayer(), whitelistable.get());
-            if (!whitelistable.get().isExpirable())
-                return;
-
-            KickTask kickTask = new KickTask(event.getPlayer(), getKickReason());
-            kickTask.scheduleKick(plugin, whitelistable.get().getExpiresAt());
-            scheduledKickTasks.put(event.getPlayer(), kickTask);
+            kickTaskScheduler.schedule(whitelistable.get());
         }).whenCompleteAsync((res, th) -> {
             if (th != null)
                 locale.warn("Couldn't schedule a KickTask on join event", th);
