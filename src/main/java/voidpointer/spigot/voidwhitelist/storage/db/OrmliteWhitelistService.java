@@ -54,7 +54,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     @AutowiredLocale private static LocaleLog log;
     private Dao<WhitelistableModel, UUID> dao;
     private final OrmliteConfig ormliteConfig;
-    private final DatabaseSyncTask syncTask = new DatabaseSyncTask();
+    private DatabaseSyncTask syncTask;
 
     public OrmliteWhitelistService(final Plugin plugin) {
         log.info("Establishing database connection...");
@@ -63,6 +63,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
         dao = ormliteConfig.getWhitelistableDao();
         if (dao != null) {
             log.info("Connection established.");
+            syncTask = new DatabaseSyncTask();
             syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
         }
     }
@@ -70,6 +71,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     public ReconnectResult reconnect() {
         syncTask.cancel();
         if (ormliteConfig.reload() && ((dao = ormliteConfig.getWhitelistableDao()) != null)) {
+            syncTask = new DatabaseSyncTask();
             syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
             return SUCCESS;
         }
