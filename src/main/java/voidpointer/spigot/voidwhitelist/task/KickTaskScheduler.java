@@ -9,7 +9,6 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,8 +21,8 @@ public final class KickTaskScheduler {
     @Autowired private static WhitelistService whitelistService;
     private final Map<Player, KickTask> tasks = new ConcurrentHashMap<>();
 
-    public Collection<KickTask> getTasks() {
-        return tasks.values();
+    public Optional<KickTask> getTask(final Player player) {
+        return Optional.ofNullable(tasks.get(player));
     }
 
     public void schedule(final @NonNull Iterable<? extends Player> players) {
