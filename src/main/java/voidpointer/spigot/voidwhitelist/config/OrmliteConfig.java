@@ -59,6 +59,16 @@ public final class OrmliteConfig {
         load();
     }
 
+    public boolean reload() {
+        try {
+            load();
+            return true;
+        } catch (final Exception exception) {
+            log.warn("Unable to reload database (ORMLite) configuration: {0}", exception.getMessage());
+            return false;
+        }
+    }
+
     public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
         try {
             Dao<WhitelistableModel, UUID> dao = DaoManager.createDao(connectionSource, WhitelistableModel.class);
