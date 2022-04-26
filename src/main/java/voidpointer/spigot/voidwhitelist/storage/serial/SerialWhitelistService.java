@@ -102,7 +102,7 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
         }
         Set<?> supposedlyWhitelistableSet = (Set<?>) obj;
         if (supposedlyWhitelistableSet.isEmpty())
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         Object supposedlyWhitelistable = supposedlyWhitelistableSet.iterator().next();
         if (supposedlyWhitelistable instanceof Whitelistable)
             return (Set<Whitelistable>) supposedlyWhitelistableSet;
