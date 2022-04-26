@@ -18,9 +18,11 @@ By default the plugin will use configured UUID. _-offline_ and _-online_ paramet
 Essentials form `1mon7d30m`. Requires `whitelist.add` permission.
 - `/whitelist rem [player] (-offline|-online)` — removes a _player_. Requires `whitelist.remove` permission.
 - `/whitelist info [player] (-offline|-online)` — tells whether a _player_ is whitelisted and if so displays the duration.
-- Requires `whitelist.info` permission.
+Requires `whitelist.info` permission.
 - `/whitelist status` — tells whether the whitelist is enabled or not. Requires `whitelist.status` permission.
 - `/whitelist on|off` — enables and disabled the whitelist. Requires `whitelist.enable` and `whitelist.disable` permission.
+- `/whitelist reload` — allows you to reload locale files, config.yml and storage _(from json to database and vice-versa)_.
+Requires `whitelist.reload` permission.
 - `/whitelist export-db` — exports the connected database into a new `export-${timestamp}.json` json file. Requires `whitelist.export` permission.
 - `/whitelist import-json` — imports whitelist from `whitelist.json` file into the connected database. Requires `whitelist.import` permission.
 
