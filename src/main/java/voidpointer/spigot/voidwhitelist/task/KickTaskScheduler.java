@@ -32,10 +32,20 @@ public final class KickTaskScheduler {
         final Optional<Player> player = whitelistable.findAssociatedOnlinePlayer();
         if (!player.isPresent())
             return;
+        if (!whitelistable.isAllowedToJoin()) {
+            kickSynchronously(player.get());
+            return;
+        }
         long delay = whitelistable.getExpiresAt().getTime() - currentTimeMillis();
-        delay = (delay < 0) ? 0 : delay;
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> kick(player.get()),
-                MILLISECONDS.toSeconds(delay) * 20L);
+        kickSynchronously(player.get(), (delay > 0) ? (MILLISECONDS.toSeconds(delay) * 20L) : 0);
+    }
+
+    public void kickSynchronously(final @NonNull Player player) {
+        plugin.getServer().getScheduler().runTask(plugin, () -> kick(player));
+    }
+
+    public void kickSynchronously(final @NonNull Player player, final long delayInTicks) {
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> kick(player), delayInTicks);
     }
 
     private void kick(final Player player) {
