@@ -27,6 +27,8 @@ messages:
   remove-help: '\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— remove a player'
   remove-not-whitelisted: '&6«&c{player-details}&6» &eis not on the whitelist.'
   remove-fail: '&cRemove operation of &6{player-details}&c failed.'
+  reconnect-success: '&aПереподключение прошло успешно.'
+  reconnect-fail: '&cПроизошла ошибка в ходе переподключения. Сервис не будет работать до следующего переподключения.'
   storage-method-changed: '&eStorage method was changed &6{old}&e->&6{new}&e.'
   whitelist-not-enough-args: '&cNo command specified. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-unknown-command: '&cUnknown command. \(&6/whitelist help) [click.run{/whitelist help}]'

@@ -28,6 +28,8 @@ messages:
   remove-help: '\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— исключить игрока'
   remove-not-whitelisted: '&eИгрока &6«&c{player-details}&6» &eнет в whitelist.'
   remove-fail: '&cНе удалось исключить игрока &6{player-details}&c.'
+  reconnect-success: '&aПереподключение прошло успешно.'
+  reconnect-fail: '&cПроизошла ошибка в ходе переподключения. Сервис не будет работать до следующего переподключения.'
   storage-method-changed: '&eМетод хранения данных был изменён &6{old}&e->&6{new}&e.'
   whitelist-not-enough-args: '&cКоманда не указана. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-unknown-command: '&cНеизвестная команда. \(&6/whitelist help) [click.run{/whitelist help}]'
