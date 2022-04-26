@@ -48,6 +48,7 @@ public enum WhitelistMessage implements Message {
     REMOVE_NOT_WHITELISTED("&eИгрока &6«&c{player-details}&6» &eнет в whitelist."),
     RECONNECT_SUCCESS("&aПереподключение прошло успешно."),
     RECONNECT_FAIL("&cПроизошла ошибка в ходе переподключения. Сервис не будет работать до следующего переподключения."),
+    RECONNECT_FAIL_KICK("&cМы больше не можем проверить, есть ли Вы в Whitelist"),
     STORAGE_METHOD_CHANGED("&eМетод хранения данных был изменён &6{old}&e->&6{new}&e."),
     UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить online UUID, попробуйте " +
             "\\(&6-offline &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +

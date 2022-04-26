@@ -29,6 +29,7 @@ messages:
   remove-fail: '&cRemove operation of &6{player-details}&c failed.'
   reconnect-success: '&aПереподключение прошло успешно.'
   reconnect-fail: '&cПроизошла ошибка в ходе переподключения. Сервис не будет работать до следующего переподключения.'
+  reconnect-fail-kick: '&cWe can no longer check whether you are on the whitelist or not.'
   storage-method-changed: '&eStorage method was changed &6{old}&e->&6{new}&e.'
   whitelist-not-enough-args: '&cNo command specified. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-unknown-command: '&cUnknown command. \(&6/whitelist help) [click.run{/whitelist help}]'

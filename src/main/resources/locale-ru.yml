@@ -30,6 +30,7 @@ messages:
   remove-fail: '&cНе удалось исключить игрока &6{player-details}&c.'
   reconnect-success: '&aПереподключение прошло успешно.'
   reconnect-fail: '&cПроизошла ошибка в ходе переподключения. Сервис не будет работать до следующего переподключения.'
+  reconnect-fail-kick: '&cМы больше не можем проверить, есть ли Вы в Whitelist'
   storage-method-changed: '&eМетод хранения данных был изменён &6{old}&e->&6{new}&e.'
   whitelist-not-enough-args: '&cКоманда не указана. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-unknown-command: '&cНеизвестная команда. \(&6/whitelist help) [click.run{/whitelist help}]'
