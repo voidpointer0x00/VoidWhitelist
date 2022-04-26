@@ -79,7 +79,6 @@ public final class ReloadCommand extends Command {
                 .set("new", config.getStorageMethod())
                 .send(args.getSender());
 
-        if (config.isWhitelistEnabled())
-            eventManager.callAsyncEvent(new WhitelistReloadEvent(args.getSender()));
+        eventManager.callAsyncEvent(new WhitelistReloadEvent(args.getSender()));
     }
 }
