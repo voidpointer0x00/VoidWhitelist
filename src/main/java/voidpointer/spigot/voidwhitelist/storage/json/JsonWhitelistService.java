@@ -20,6 +20,8 @@ import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
 
@@ -38,19 +40,19 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
     }
 
     @Override public boolean reconnect() {
-        load();
-        return true;
+        return load();
     }
 
-    private void load() {
+    private boolean load() {
         if (!whitelistFile.exists()) {
             saveWhitelist();
-            return;
+            return true;
         }
 
-        Collection<Whitelistable> whitelistedPlayers = JsonWhitelist.parseJsonFile(whitelistFile);
-        for (Whitelistable whitelistable : whitelistedPlayers)
+        Optional<Collection<Whitelistable>> whitelistedPlayers = JsonWhitelist.parseJsonFile(whitelistFile);
+        for (final Whitelistable whitelistable : whitelistedPlayers.orElseGet(Collections::emptySet))
             this.getWhitelist().add(whitelistable);
+        return whitelistedPlayers.isPresent();
     }
 
     @Override protected void saveWhitelist() {
