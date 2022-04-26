@@ -20,12 +20,14 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.task.DatabaseSyncTask;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -48,9 +50,11 @@ import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.Reconnec
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.SUCCESS;
 
 public final class OrmliteWhitelistService implements WhitelistService {
+    @Autowired(mapId="plugin") private static Plugin plugin;
     @AutowiredLocale private static LocaleLog log;
     private Dao<WhitelistableModel, UUID> dao;
     private final OrmliteConfig ormliteConfig;
+    private final DatabaseSyncTask syncTask = new DatabaseSyncTask();
 
     public OrmliteWhitelistService(final Plugin plugin) {
         log.info("Establishing database connection...");
@@ -59,13 +63,21 @@ public final class OrmliteWhitelistService implements WhitelistService {
         dao = ormliteConfig.getWhitelistableDao();
         if (dao != null) {
             log.info("Connection established.");
+            runSyncTaskTimer();
         }
     }
 
     public ReconnectResult reconnect() {
-        if (ormliteConfig.reload() && ((dao = ormliteConfig.getWhitelistableDao()) != null))
+        syncTask.cancel();
+        if (ormliteConfig.reload() && ((dao = ormliteConfig.getWhitelistableDao()) != null)) {
+            runSyncTaskTimer();
             return SUCCESS;
+        }
         return FAIL;
+    }
+
+    private void runSyncTaskTimer() {
+        syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
     }
 
     @Override public StorageMethod getStorageMethod() {
@@ -73,6 +85,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public void shutdown() {
+        syncTask.cancel();
         ormliteConfig.getConnectionSource().closeQuietly();
     }
 
