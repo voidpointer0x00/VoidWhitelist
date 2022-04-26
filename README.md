@@ -23,6 +23,8 @@ Requires `whitelist.info` permission.
 - `/whitelist on|off` — enables and disabled the whitelist. Requires `whitelist.enable` and `whitelist.disable` permission.
 - `/whitelist reload` — allows you to reload locale files, config.yml and storage _(from json to database and vice-versa)_.
 Requires `whitelist.reload` permission.
+- `/whitelist reconnect` — basically reloads the storage. Reconnects to the database using new credentails from `database.yml` file if the
+selected storage is _DATABASE_ or reloads `whitelist.json` file it it's _JSON_. Requires `whitelist.reconnect` permission.
 - `/whitelist export-db` — exports the connected database into a new `export-${timestamp}.json` json file. Requires `whitelist.export` permission.
 - `/whitelist import-json` — imports whitelist from `whitelist.json` file into the connected database. Requires `whitelist.import` permission.
 
