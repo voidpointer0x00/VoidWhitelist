@@ -21,11 +21,6 @@ public final class KickTaskScheduler {
     @Autowired private static Plugin plugin;
     private final Map<Player, KickTask> tasks = new ConcurrentHashMap<>();
 
-    public void schedule(final @NonNull Iterable<Whitelistable> iterableWhitelistable) {
-        for (final Whitelistable whitelistable : iterableWhitelistable)
-            schedule(whitelistable);
-    }
-
     public void schedule(final @NonNull Whitelistable whitelistable) {
         final Optional<Player> player = whitelistable.findAssociatedOnlinePlayer();
         if (!player.isPresent())
