@@ -35,6 +35,7 @@ import voidpointer.spigot.voidwhitelist.listener.QuitListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistAddedListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistDisabledListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistEnabledListener;
+import voidpointer.spigot.voidwhitelist.listener.WhitelistReconnectListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistReloadListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistRemovedListener;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -102,6 +103,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         new WhitelistEnabledListener().register();
         new WhitelistDisabledListener().register(this);
         new WhitelistReloadListener().register(this);
+        new WhitelistReconnectListener().register(this);
         new WhitelistAddedListener().register();
         new WhitelistRemovedListener().register(this);
         new QuitListener().register(this);
