@@ -22,13 +22,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.System.currentTimeMillis;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptySet;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static voidpointer.spigot.voidwhitelist.storage.StorageVersion.CURRENT;
 import static voidpointer.spigot.voidwhitelist.storage.StorageVersion.UNDEFINED;
@@ -65,21 +65,46 @@ public final class JsonWhitelist {
         return jsonWhitelist;
     }
 
-    public static Collection<Whitelistable> parseJsonFile(final @NonNull File jsonFile) {
+    /**
+     * <p>Reads all {@link Whitelistable} entries from a given JSON file.</p>
+     *
+     * <p>The file <b>must</b> have the following structure:</p>
+     *
+     * <pre>
+     * {
+     *     // see StorageVersion constants
+     *     "version": "V2_BETA",
+     *     "whitelist": [
+     *          // Whitelistable fields for the given version
+     *          {
+     *              "uniqueId": "c55a15b5-896f-4c09-9c07-75ad36572aad",
+     *              "name": "_voidpointer",
+     *              "expiresAt": 1653578855958
+     *          },
+     *          ...
+     *     ]
+     * }
+     * </pre>
+     *
+     * @return an optional collection full of {@link Whitelistable} entities from the given
+     *      file or {@link Optional#empty()} if parsing failed due to any exception.
+     */
+    public static Optional<Collection<Whitelistable>> parseJsonFile(final @NonNull File jsonFile) {
         final String jsonContents = fileToString(jsonFile);
         if (jsonContents == null)
-            return Collections.emptySet();
+            return Optional.empty();
         try {
             JsonElement root = JsonParser.parseString(jsonContents);
             StorageVersion version = parseVersion(root);
             if (version != CURRENT)
-                return performUpdate(version, root, jsonFile);
+                return Optional.ofNullable(performUpdate(version, root, jsonFile));
 
             Type whitelistType = new TypeToken<List<Whitelistable>>() {}.getType();
-            return gson.fromJson(root.getAsJsonObject().get(WHITELIST_PROP), whitelistType);
+            Collection<Whitelistable> parsed = gson.fromJson(root.getAsJsonObject().get(WHITELIST_PROP), whitelistType);
+            return Optional.of(parsed == null ? emptySet() : parsed);
         } catch (final JsonSyntaxException | NullPointerException jsonSyntaxException) {
             log.warn("Invalid JSON syntax in " + jsonFile.getName(), jsonSyntaxException);
-            return Collections.emptySet();
+            return Optional.empty();
         }
     }
 
@@ -138,13 +163,13 @@ public final class JsonWhitelist {
         Optional<JsonUpdate> update = JsonUpdateFactory.from(version);
         if (!update.isPresent()) {
             backupUpdateFailure(jsonFile, root);
-            return Collections.emptySet();
+            return null;
         }
         final long start = currentTimeMillis();
         Collection<Whitelistable> updated = update.get().performUpdate(root);
         if (null == updated) {
             backupUpdateFailure(jsonFile, root);
-            return Collections.emptySet();
+            return null;
         }
         of(updated).save(jsonFile);
         log.info("Successfully updated JSON storage from {0} to {1} for {2} sec.", version, CURRENT,
