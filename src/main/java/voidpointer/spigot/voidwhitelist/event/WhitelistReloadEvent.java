@@ -8,7 +8,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.command.ReloadCommand;
 
 /**
- * <p>Called asynchronously when reloading plugin.</p>
+ * <p>Called asynchronously after reloading plugin.</p>
  *
  * @see ReloadCommand
  */
@@ -20,9 +20,9 @@ public final class WhitelistReloadEvent extends Event {
     }
 
     /** The {@link CommandSender} that ran the reload operation. */
-    @Getter private final @NonNull CommandSender sender;
+    @Getter private final CommandSender sender;
 
-    public WhitelistReloadEvent(final CommandSender sender) {
+    public WhitelistReloadEvent(final @NonNull CommandSender sender) {
         super(true);
         this.sender = sender;
     }
