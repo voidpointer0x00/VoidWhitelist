@@ -56,7 +56,7 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
             if (whitelistFile.createNewFile())
                 log.info("Created {0}", WHITELIST_FILE_NAME);
 
-            ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(whitelistFile));
+            ObjectOutputStream objOut = new ObjectOutputStream(newOutputStream(whitelistFile.toPath()));
             objOut.writeObject(StorageVersion.CURRENT.toString());
             objOut.writeObject(this.getWhitelist());
             objOut.close();
@@ -71,7 +71,7 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
         if (!whitelistFile.exists())
             return; // nothing to load
 
-        try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(whitelistFile))) {
+        try (ObjectInputStream oin = new ObjectInputStream(newInputStream(whitelistFile.toPath()))) {
             if (deserializeVersion(oin.readObject()) != StorageVersion.CURRENT) {
                 log.severe("Can't load whitelist: serial storage does not support different versions.");
                 return;
