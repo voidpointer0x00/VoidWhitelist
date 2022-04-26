@@ -14,7 +14,6 @@
  */
 package voidpointer.spigot.voidwhitelist.listener;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
@@ -42,7 +42,6 @@ public final class LoginListener implements Listener {
     @Autowired private static WhitelistService whitelistService;
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
-    @NonNull private final Plugin plugin;
 
     @EventHandler public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
@@ -73,7 +72,7 @@ public final class LoginListener implements Listener {
         });
     }
 
-    public void register() {
+    public void register(final @NonNull Plugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 

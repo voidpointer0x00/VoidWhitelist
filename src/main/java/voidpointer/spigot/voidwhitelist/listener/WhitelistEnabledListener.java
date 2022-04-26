@@ -19,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
@@ -37,7 +38,7 @@ public final class WhitelistEnabledListener implements Listener {
         kickTaskScheduler.schedule(getOnlinePlayers());
     }
 
-    public void register() {
+    public void register(final @NonNull Plugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 }

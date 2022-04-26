@@ -99,8 +99,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     private void registerListeners() {
-        new LoginListener(this).register();
-        new WhitelistEnabledListener().register();
+        new LoginListener().register(this);
+        new WhitelistEnabledListener().register(this);
         new WhitelistDisabledListener().register(this);
         new WhitelistReloadListener().register(this);
         new WhitelistReconnectListener().register(this);
