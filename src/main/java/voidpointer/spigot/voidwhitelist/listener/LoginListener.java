@@ -61,8 +61,11 @@ public final class LoginListener implements Listener {
             return;
 
         whitelistService.find(event.getPlayer().getUniqueId()).thenAcceptAsync(whitelistable -> {
-            if (!whitelistable.isPresent())
+            if (!whitelistable.isPresent()) {
+                locale.severe("No Whitelistable entity found for a player that passed PreLogin check {0}",
+                        event.getPlayer().getUniqueId());
                 return;
+            }
             updateWhitelistableName(event.getPlayer(), whitelistable.get());
             if (!whitelistable.get().isExpirable())
                 return;
