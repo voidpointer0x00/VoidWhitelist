@@ -24,7 +24,7 @@ public final class KickTaskScheduler {
     @Autowired private static WhitelistService whitelistService;
     private final Map<Player, BukkitTask> tasks = new ConcurrentHashMap<>();
 
-    public void schedule(final @NonNull Iterable<Player> players) {
+    public void schedule(final @NonNull Iterable<? extends Player> players) {
         for (final Player player : players) {
             if (!player.isOnline())
                 continue;
