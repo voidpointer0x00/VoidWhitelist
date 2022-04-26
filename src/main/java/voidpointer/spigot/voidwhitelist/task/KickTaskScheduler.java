@@ -56,12 +56,18 @@ public final class KickTaskScheduler {
 
     private void kickSynchronously(final @NonNull Player player) {
         cancel(player);
-        tasks.put(player, plugin.getServer().getScheduler().runTask(plugin, () -> kick(player)));
+        tasks.put(player, plugin.getServer().getScheduler().runTask(plugin, () -> {
+            kick(player);
+            tasks.remove(player);
+        }));
     }
 
     private void kickSynchronously(final @NonNull Player player, final long delayInTicks) {
         cancel(player);
-        tasks.put(player, plugin.getServer().getScheduler().runTaskLater(plugin, () -> kick(player), delayInTicks));
+        tasks.put(player, plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            kick(player);
+            tasks.remove(player);
+        }, delayInTicks));
     }
 
     private void kick(final Player player) {
