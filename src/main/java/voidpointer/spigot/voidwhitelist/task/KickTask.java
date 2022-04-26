@@ -29,7 +29,7 @@ final class KickTask extends BukkitRunnable {
     public static KickTask schedule(final @NonNull Player player, final long expiresAt) {
         KickTask kickTask = new KickTask(player, expiresAt);
         final long delay = expiresAt - currentTimeMillis();
-        kickTask.runTaskLater(plugin, (delay > 0 ? delay : MILLISECONDS.toSeconds(delay)) * 20L);
+        kickTask.runTaskLater(plugin, (delay > 0 ? MILLISECONDS.toSeconds(delay) : 0) * 20L);
         return kickTask;
     }
 }
