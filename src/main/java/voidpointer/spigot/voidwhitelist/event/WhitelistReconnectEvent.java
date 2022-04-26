@@ -20,11 +20,16 @@ public final class WhitelistReconnectEvent extends Event {
         return handlers;
     }
 
+    public enum ReconnectResult { SUCCESS, FAIL }
+
+    @Getter private final ReconnectResult result;
+
     /** The {@link CommandSender} that ran the reconnect operation. */
     @Getter private final CommandSender sender;
 
-    public WhitelistReconnectEvent(final @NonNull CommandSender sender) {
+    public WhitelistReconnectEvent(final @NonNull ReconnectResult result, final @NonNull CommandSender sender) {
         super(true);
+        this.result = result;
         this.sender = sender;
     }
 
