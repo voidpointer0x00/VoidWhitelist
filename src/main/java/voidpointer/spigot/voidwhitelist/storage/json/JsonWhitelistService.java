@@ -37,6 +37,11 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
         return JSON;
     }
 
+    @Override public boolean reconnect() {
+        load();
+        return true;
+    }
+
     private void load() {
         if (!whitelistFile.exists()) {
             saveWhitelist();
