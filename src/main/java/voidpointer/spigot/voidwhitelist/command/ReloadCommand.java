@@ -9,7 +9,7 @@ import voidpointer.spigot.voidwhitelist.VoidWhitelistPlugin;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
-import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
+import voidpointer.spigot.voidwhitelist.event.WhitelistReloadEvent;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
@@ -17,7 +17,7 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
-final class ReloadCommand extends Command {
+public final class ReloadCommand extends Command {
     public static final String NAME = "reload";
     public static final String PERMISSION = "whitelist.reload";
 
@@ -80,6 +80,6 @@ final class ReloadCommand extends Command {
                 .send(args.getSender());
 
         if (config.isWhitelistEnabled())
-            eventManager.callAsyncEvent(new WhitelistEnabledEvent());
+            eventManager.callAsyncEvent(new WhitelistReloadEvent(args.getSender()));
     }
 }
