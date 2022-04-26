@@ -25,16 +25,13 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
-import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
-import voidpointer.spigot.voidwhitelist.task.KickTask;
-
-import java.util.Map;
+import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
 @RequiredArgsConstructor
 public final class WhitelistEnabledListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired(mapId="kick-tasks") private static Map<Player, KickTask> scheduledKickTasks;
+    @Autowired private static KickTaskScheduler kickTaskScheduler;
     @Autowired private static WhitelistService whitelistService;
     @Autowired(mapId="plugin")
     private static Plugin plugin;
@@ -45,19 +42,15 @@ public final class WhitelistEnabledListener implements Listener {
      */
     @EventHandler(priority=EventPriority.HIGHEST)
     public void onEnabled(final WhitelistEnabledEvent event) {
-        String kickReason = locale.localize(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+        for (final Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             whitelistService.find(onlinePlayer.getUniqueId()).thenAcceptAsync(whitelistable -> {
-                if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin()) {
-                    plugin.getServer().getScheduler().runTask(plugin, () -> onlinePlayer.kickPlayer(kickReason));
-                } else if (whitelistable.get().isExpirable()) {
-                    KickTask task = new KickTask(onlinePlayer, kickReason);
-                    task.scheduleKick(plugin, whitelistable.get().getExpiresAt());
-                    scheduledKickTasks.put(onlinePlayer, task);
-                }
-            }).whenCompleteAsync((res, th) -> {
+                if (whitelistable.isPresent()) // TODO Java 16 migrate to #ifPresetOrElse()
+                    kickTaskScheduler.schedule(whitelistable.get());
+                else
+                    kickTaskScheduler.kickSynchronously(onlinePlayer);
+            }).whenComplete((res, th) -> {
                 if (th != null)
-                    locale.warn("Couldn't schedule a KickTask on whitelist enable event", th);
+                    locale.warn("Couldn't schedule a kick task on whitelist enable event", th);
             });
         }
     }
