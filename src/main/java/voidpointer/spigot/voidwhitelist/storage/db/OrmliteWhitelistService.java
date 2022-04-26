@@ -44,6 +44,8 @@ import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.DATABASE;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.FAIL;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.SUCCESS;
 
 public final class OrmliteWhitelistService implements WhitelistService {
     @AutowiredLocale private static LocaleLog log;
@@ -60,8 +62,10 @@ public final class OrmliteWhitelistService implements WhitelistService {
         }
     }
 
-    public boolean reconnect() {
-        return ormliteConfig.reload() && ((dao = ormliteConfig.getWhitelistableDao()) != null);
+    public ReconnectResult reconnect() {
+        if (ormliteConfig.reload() && ((dao = ormliteConfig.getWhitelistableDao()) != null))
+            return SUCCESS;
+        return FAIL;
     }
 
     @Override public StorageMethod getStorageMethod() {

@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.FAIL;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.SUCCESS;
 
 public final class JsonWhitelistService extends MemoryWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
@@ -39,8 +41,8 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
         return JSON;
     }
 
-    @Override public boolean reconnect() {
-        return load();
+    @Override public ReconnectResult reconnect() {
+        return load() ? SUCCESS : FAIL;
     }
 
     private boolean load() {

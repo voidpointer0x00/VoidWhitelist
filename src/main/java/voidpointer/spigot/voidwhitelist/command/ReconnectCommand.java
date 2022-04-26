@@ -7,6 +7,7 @@ import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult;
 
 public final class ReconnectCommand extends Command {
     public static final String NAME = "reconnect";
@@ -22,7 +23,8 @@ public final class ReconnectCommand extends Command {
 
     @Override public void execute(final Args args) {
         whitelistService.shutdown();
-        if (whitelistService.reconnect())
+        ReconnectResult reconnectResult = whitelistService.reconnect();
+        if (reconnectResult.isSuccess())
             locale.localize(RECONNECT_SUCCESS).send(args.getSender());
         else
             locale.localize(RECONNECT_FAIL).send(args.getSender());

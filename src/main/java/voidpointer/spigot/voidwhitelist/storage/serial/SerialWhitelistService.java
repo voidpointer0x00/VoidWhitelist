@@ -33,6 +33,8 @@ import java.util.Set;
 import static java.nio.file.Files.newInputStream;
 import static java.nio.file.Files.newOutputStream;
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.SERIAL;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.FAIL;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.SUCCESS;
 
 public final class SerialWhitelistService extends MemoryWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.ser";
@@ -50,8 +52,8 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
         return SERIAL;
     }
 
-    @Override public boolean reconnect() {
-        return load();
+    @Override public ReconnectResult reconnect() {
+        return load() ? SUCCESS : FAIL;
     }
 
     @Override protected void saveWhitelist() {
