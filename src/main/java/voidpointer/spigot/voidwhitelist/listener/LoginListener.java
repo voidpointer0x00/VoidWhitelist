@@ -88,7 +88,8 @@ public final class LoginListener implements Listener {
     }
 
     private void updateWhitelistableName(final Player player, final Whitelistable whitelistable) {
-        assert player.getUniqueId().equals(whitelistable.getUniqueId()) : "UUID of player a whitelistable must match";
+        assert player.getUniqueId().equals(whitelistable.getUniqueId())
+                : "UUID of the updating player must match Whitelistable";
         whitelistable.setName(player.getName());
         whitelistService.update(whitelistable).thenAcceptAsync(updatedOptional ->
                 updatedOptional.ifPresent(updated -> removeCachedProfile(updated.getUniqueId())));
