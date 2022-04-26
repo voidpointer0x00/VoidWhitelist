@@ -24,14 +24,14 @@ import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.StorageVersion;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Set;
 
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.SERIAL;
 
 public final class SerialWhitelistService extends MemoryWhitelistService {
@@ -50,6 +50,10 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
         return SERIAL;
     }
 
+    @Override public boolean reconnect() {
+        return load();
+    }
+
     @Override protected void saveWhitelist() {
         try {
             File whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
@@ -66,21 +70,22 @@ public final class SerialWhitelistService extends MemoryWhitelistService {
         }
     }
 
-    protected void load() {
+    private boolean load() {
         File whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
         if (!whitelistFile.exists())
-            return; // nothing to load
+            return true; // nothing to load
 
         try (ObjectInputStream oin = new ObjectInputStream(newInputStream(whitelistFile.toPath()))) {
             if (deserializeVersion(oin.readObject()) != StorageVersion.CURRENT) {
                 log.severe("Can't load whitelist: serial storage does not support different versions.");
-                return;
+                return false;
             }
             this.getWhitelist().addAll(deserializeWhitelist(oin.readObject()));
         } catch (IOException | ClassNotFoundException | ClassCastException deserializationException) {
             log.severe("Cannot deserialize whitelist object from file.", deserializationException);
-            return;
+            return false;
         }
+        return true;
     }
 
     private StorageVersion deserializeVersion(final Object obj) throws ClassCastException {
