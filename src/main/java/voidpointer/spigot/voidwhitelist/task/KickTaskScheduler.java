@@ -27,10 +27,11 @@ public final class KickTaskScheduler {
     }
 
     public void schedule(final @NonNull Whitelistable whitelistable) {
-        if (!whitelistable.isExpirable())
-            return;
         final Optional<Player> player = whitelistable.findAssociatedOnlinePlayer();
         if (!player.isPresent())
+            return;
+        cancel(player.get());
+        if (!whitelistable.isExpirable())
             return;
         if (!whitelistable.isAllowedToJoin()) {
             kickSynchronously(player.get());
