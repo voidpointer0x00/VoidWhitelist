@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import static java.lang.Integer.parseInt;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public final class OrmliteConfig {
     public static final String FILENAME = "database.yml";
@@ -39,12 +40,14 @@ public final class OrmliteConfig {
     private static final String DEFAULT_DATABASE = "whitelist";
     private static final String DEFAULT_USER = "void";
     private static final String DEFAULT_PASSWORD = "password";
+    private static final int DEFAULT_SYNC = 5;
     private static final String DBMS_PATH = "dbms";
     private static final String HOST_PATH = "host";
     private static final String PORT_PATH = "port";
     private static final String DATABASE_PATH = "database";
     private static final String USER_PATH = "username";
     private static final String PASSWORD_PATH = "password";
+    private static final String SYNC_PATH = "sync-every-n-minute";
 
     @AutowiredLocale private static LocaleLog log;
 
@@ -67,6 +70,12 @@ public final class OrmliteConfig {
             log.warn("Unable to reload database (ORMLite) configuration: {0}", exception.getMessage());
             return false;
         }
+    }
+
+    public long getSyncTimerInTicks() {
+        if (!config.isSet(SYNC_PATH))
+            config.set(SYNC_PATH, DEFAULT_SYNC);
+        return MINUTES.toSeconds(config.getLong(SYNC_PATH, DEFAULT_SYNC)) * 20L;
     }
 
     public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
