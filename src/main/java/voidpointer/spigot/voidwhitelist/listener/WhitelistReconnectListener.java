@@ -6,6 +6,7 @@ import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.WhitelistReconnectEvent;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
@@ -14,10 +15,10 @@ import static org.bukkit.Bukkit.getOnlinePlayers;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class WhitelistReconnectListener implements Listener {
+    @AutowiredLocale private static Locale locale;
     @Autowired(mapId="plugin") private static Plugin plugin;
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
-    @Autowired private static Locale locale;
 
     @EventHandler public void onReconnect(final @NonNull WhitelistReconnectEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
