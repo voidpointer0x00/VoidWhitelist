@@ -44,6 +44,7 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new ExportCommand());
         whitelistCommands.addCommand(new HelpCommand());
         whitelistCommands.addCommand(new ReloadCommand());
+        whitelistCommands.addCommand(new ReconnectCommand());
         super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
     }
 
