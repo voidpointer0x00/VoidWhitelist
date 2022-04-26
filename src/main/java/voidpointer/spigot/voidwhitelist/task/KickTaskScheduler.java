@@ -18,7 +18,7 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class KickTaskScheduler {
     @AutowiredLocale private static Locale locale;
-    @Autowired private static Plugin plugin;
+    @Autowired(mapId="plugin") private static Plugin plugin;
     private final Map<Player, KickTask> tasks = new ConcurrentHashMap<>();
 
     public void schedule(final @NonNull Whitelistable whitelistable) {
