@@ -2,6 +2,7 @@ package voidpointer.spigot.voidwhitelist.task;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
@@ -19,13 +20,12 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 public final class KickTaskScheduler {
     @AutowiredLocale private static Locale locale;
     @Autowired(mapId="plugin") private static Plugin plugin;
-    private final Map<Player, KickTask> tasks = new ConcurrentHashMap<>();
+    private final Map<Player, BukkitTask> tasks = new ConcurrentHashMap<>();
 
     public void schedule(final @NonNull Whitelistable whitelistable) {
         final Optional<Player> player = whitelistable.findAssociatedOnlinePlayer();
         if (!player.isPresent())
             return;
-        cancel(player.get());
         if (!whitelistable.isExpirable())
             return;
         if (!whitelistable.isAllowedToJoin()) {
@@ -37,11 +37,13 @@ public final class KickTaskScheduler {
     }
 
     public void kickSynchronously(final @NonNull Player player) {
-        plugin.getServer().getScheduler().runTask(plugin, () -> kick(player));
+        cancel(player);
+        tasks.put(player, plugin.getServer().getScheduler().runTask(plugin, () -> kick(player)));
     }
 
     public void kickSynchronously(final @NonNull Player player, final long delayInTicks) {
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> kick(player), delayInTicks);
+        cancel(player);
+        tasks.put(player, plugin.getServer().getScheduler().runTaskLater(plugin, () -> kick(player), delayInTicks));
     }
 
     private void kick(final Player player) {
@@ -49,13 +51,13 @@ public final class KickTaskScheduler {
     }
 
     public void cancel(final @NonNull Player player) {
-        KickTask removed = tasks.remove(player);
+        BukkitTask removed = tasks.remove(player);
         if (removed != null)
             removed.cancel();
     }
 
     public void cancelAll() {
-        tasks.values().forEach(KickTask::cancel);
+        tasks.values().forEach(BukkitTask::cancel);
         tasks.clear();
     }
 }
