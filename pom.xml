@@ -21,13 +21,14 @@
 
     <groupId>voidpointer.spigot</groupId>
     <artifactId>voidwhitelist</artifactId>
-    <version>0.8.0-stable</version>
+    <version>0.8.0</version>
     <packaging>jar</packaging>
 
     <name>VoidWhitelist</name>
 
     <description>UUID based temporal whitelist. Supports JSON, H2 and MySQL storage.</description>
     <properties>
+        <version.stability>stable</version.stability>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -215,7 +216,7 @@
                 <targetPath>META-INF/</targetPath>
             </resource>
         </resources>
-        <finalName>${project.name}-${project.version}_build${buildNumber}</finalName>
+        <finalName>${project.name}-${project.version}b${buildNumber}-${version.stability}</finalName>
     </build>
 
     <repositories>
