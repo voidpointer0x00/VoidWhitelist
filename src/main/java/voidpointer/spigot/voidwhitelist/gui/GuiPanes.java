@@ -200,8 +200,7 @@ class GuiPanes {
         loreMessage.set("status", whitelistable.isAllowedToJoin()
                 ? locale.localize(PROFILE_DETAILS_TRUE)
                 : locale.localize(PROFILE_DETAILS_FALSE));
-        for (final String loreEntry : loreMessage.getRawMessage().split("\\n"))
-            lore.add(loreEntry);
+        lore.addAll(Arrays.asList(loreMessage.getRawMessage().split("\\n")));
         return lore;
     }
 
