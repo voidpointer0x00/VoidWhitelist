@@ -3,6 +3,7 @@ package voidpointer.spigot.voidwhitelist.command;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.di.Injector;
 import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
 import voidpointer.spigot.voidwhitelist.VoidWhitelistPlugin;
@@ -22,6 +23,7 @@ public final class ReloadCommand extends Command {
     public static final String PERMISSION = "whitelist.reload";
 
     @AutowiredLocale private static Locale locale;
+    @Autowired private static LocaleLog guiLocale;
     @Autowired(mapId="plugin")
     private static VoidWhitelistPlugin plugin;
     @Autowired private static StorageFactory storageFactory;
@@ -39,7 +41,8 @@ public final class ReloadCommand extends Command {
             //noinspection SynchronizeOnNonFinalField
             synchronized (config) {
                 reloadConfig(args);
-                reloadLocale(args);
+                reloadGeneralLocale(args);
+                reloadGuiLocale(args);
                 reloadStorage(args);
             }
         });
@@ -51,17 +54,30 @@ public final class ReloadCommand extends Command {
         locale.localize(CONFIG_RELOADED).send(args.getSender());
     }
 
-    private void reloadLocale(final Args args) {
+    private void reloadGuiLocale(final Args args) {
+        if (!(guiLocale instanceof TranslatedLocaleFile)) {
+            locale.localize(GUI_LOCALE_DOESNT_SUPPORT_RELOAD).send(args.getSender());
+            return;
+        }
+        reloadLocale(guiLocale);
+        locale.localize(GUI_LOCALE_RELOADED).send(args.getSender());
+    }
+
+    private void reloadGeneralLocale(final Args args) {
         if (!(locale instanceof TranslatedLocaleFile)) {
             locale.localize(LOCALE_DOESNT_SUPPORT_RELOAD).send(args.getSender());
             return;
         }
+        reloadLocale(locale);
+        locale.localize(LOCALE_RELOADED).send(args.getSender());
+    }
+
+    private void reloadLocale(final Locale locale) {
         TranslatedLocaleFile translatedLocale = (TranslatedLocaleFile) locale;
         if (translatedLocale.getLanguage().equals(config.getLanguage()))
             translatedLocale.reload();
         else
             translatedLocale.changeLanguage(config.getLanguage());
-        locale.localize(LOCALE_RELOADED).send(args.getSender());
     }
 
     private void reloadStorage(final Args args) {

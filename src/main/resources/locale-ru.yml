@@ -12,6 +12,8 @@ messages:
   export-processing: '&eЭкспоритруем &6{gathered}&e собранных записей...'
   export-finished: '&eЭкспорт завершён за &d{ms-spent}ms&e.'
   export-failure: '&cНе сохранить экспортированные данные.'
+  gui-locale-doesnt-support-reload: '&cТекущая GUI локаль не поддерживает перезагрузку.'
+  gui-locale-reloaded: '&aGUI локаль перезагружена.'
   import-loaded: '&eЗагружено &e{loaded} записей из &6{storage}&e, импорт начат.'
   import-only-to-database: '&eИмпорт работает только из JSON в базу данных.'
   import-result: '&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e.'
