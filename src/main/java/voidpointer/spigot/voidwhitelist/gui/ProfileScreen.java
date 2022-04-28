@@ -208,9 +208,9 @@ final class ProfileScreen extends AbstractGui {
         assert meta != null : "Resulting item meta cannot be null";
         boolean isValid = expiresAtTimestamp != WRONG_DATE_FORMAT;
         if (isValid)
-            meta.setDisplayName(locale.localize(ANVIL_EDIT_DATE_VALID).getRawMessage());
+            meta.setLore(singletonList(locale.localize(ANVIL_EDIT_DATE_VALID).getRawMessage()));
         else
-            meta.setDisplayName(locale.localize(ANVIL_EDIT_DATE_INVALID).getRawMessage());
+            meta.setLore(singletonList(locale.localize(ANVIL_EDIT_DATE_INVALID).getRawMessage()));
         result.setItemMeta(meta);
         return isValid;
     }

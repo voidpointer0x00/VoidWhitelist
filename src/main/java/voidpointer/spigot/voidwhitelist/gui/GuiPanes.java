@@ -29,6 +29,7 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.BOOK;
@@ -114,6 +115,7 @@ class GuiPanes {
 
     public static void setupEditDateAnvil(final AnvilGui anvilGui) {
         setDateHintItem(anvilGui);
+        setRefreshItem(anvilGui);
         setDateResultingItem(anvilGui);
     }
 
@@ -126,6 +128,18 @@ class GuiPanes {
         StaticPane hintPane = new StaticPane(1, 1);
         anvilGui.getFirstItemComponent().addPane(hintPane);
         hintPane.addItem(new GuiItem(nameTag), 0, 0);
+    }
+
+    private static void setRefreshItem(final AnvilGui anvilGui) {
+        ProfileSkull refreshSkull = ControlSkulls.getRefresh();
+        ItemStack refresh = refreshSkull.getGuiItem().getItem();
+        ItemMeta meta = refresh.getItemMeta();
+        assert meta != null : "ItemMeta for refresh item cannot be null";
+        meta.setDisplayName(locale.localize(ANVIL_REFRESH_NAME).getRawMessage());
+        refresh.setItemMeta(meta);
+        StaticPane resultingPage = new StaticPane(1, 1);
+        resultingPage.addItem(refreshSkull.getGuiItem(), 0, 0);
+        anvilGui.getSecondItemComponent().addPane(resultingPage);
     }
 
     private static void setDateResultingItem(final AnvilGui anvilGui) {
