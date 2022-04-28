@@ -25,7 +25,6 @@ public final class ReconnectCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        whitelistService.shutdown();
         ReconnectResult reconnectResult = whitelistService.reconnect();
         if (reconnectResult.isSuccess())
             locale.localize(RECONNECT_SUCCESS).send(args.getSender());

@@ -69,7 +69,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     public ReconnectResult reconnect() {
-        syncTask.cancel();
+        shutdown();
         if (ormliteConfig.reload() && ((dao = ormliteConfig.getWhitelistableDao()) != null)) {
             syncTask = new DatabaseSyncTask();
             syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
@@ -83,8 +83,10 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public void shutdown() {
-        syncTask.cancel();
-        ormliteConfig.getConnectionSource().closeQuietly();
+        if (syncTask != null)
+            syncTask.cancel();
+        if (ormliteConfig.getConnectionSource() != null)
+            ormliteConfig.getConnectionSource().closeQuietly();
     }
 
     public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {
