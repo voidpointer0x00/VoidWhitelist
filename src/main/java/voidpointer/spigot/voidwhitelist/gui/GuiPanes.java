@@ -133,6 +133,7 @@ class GuiPanes {
         ItemMeta meta = clock.getItemMeta();
         assert meta != null : "ItemMeta for clock item cannot be null";
         meta.setDisplayName(locale.localize(ANVIL_CLOCK_NAME).getRawMessage());
+        clock.setItemMeta(meta);
         StaticPane resultingPane = new StaticPane(1, 1);
         resultingPane.addItem(new GuiItem(clock), 0, 0);
         anvilGui.getResultComponent().addPane(resultingPane);
