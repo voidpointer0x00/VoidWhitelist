@@ -7,13 +7,16 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.message.KickReason;
+import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
+import static voidpointer.spigot.voidwhitelist.message.KickReason.EXPIRED;
+import static voidpointer.spigot.voidwhitelist.message.KickReason.NOT_ALLOWED;
 
 public final class KickTaskScheduler {
     @AutowiredLocale private static LocaleLog locale;
@@ -33,7 +36,7 @@ public final class KickTaskScheduler {
                 if (optionalWhitelistable.isPresent())
                     schedule(optionalWhitelistable.get());
                 else
-                    kickSynchronously(player);
+                    kickSynchronously(player, NOT_ALLOWED);
             }).exceptionally(thrown -> {
                 locale.warn("Error on kick schedule: {0}", thrown.getMessage());
                 return null;
@@ -48,16 +51,16 @@ public final class KickTaskScheduler {
         if (!whitelistable.isExpirable())
             return;
         if (!whitelistable.isAllowedToJoin()) {
-            kickSynchronously(player.get());
+            kickSynchronously(player.get(), EXPIRED);
             return;
         }
         kickSynchronously(player.get(), whitelistable.getExpiresAt().getTime());
     }
 
-    public void kickSynchronously(final @NonNull Player player) {
+    public void kickSynchronously(final @NonNull Player player, final KickReason kickReason) {
         cancel(player);
         plugin.getServer().getScheduler().runTask(plugin, () ->
-                player.kickPlayer(locale.localize(LOGIN_DISALLOWED).getRawMessage()));
+                player.kickPlayer(locale.localize(WhitelistMessage.of(kickReason)).getRawMessage()));
     }
 
     private void kickSynchronously(final @NonNull Player player, final long expiresAt) {
@@ -66,7 +69,7 @@ public final class KickTaskScheduler {
     }
 
     public void cancel(final @NonNull Player player) {
-        KickTask removed = tasks.remove(player);
+        final KickTask removed = tasks.remove(player);
         if (removed != null)
             removed.cancel();
     }

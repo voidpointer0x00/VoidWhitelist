@@ -34,6 +34,9 @@ import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
 import java.util.Optional;
 
+import static org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST;
+import static voidpointer.spigot.voidwhitelist.message.KickReason.EXPIRED;
+import static voidpointer.spigot.voidwhitelist.message.KickReason.NOT_ALLOWED;
 import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.removeCachedProfile;
 
 @RequiredArgsConstructor
@@ -49,8 +52,10 @@ public final class LoginListener implements Listener {
 
         Optional<Whitelistable> whitelistable = whitelistService.find(event.getUniqueId()).join();
 
-        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin())
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, getKickReason());
+        if (!whitelistable.isPresent())
+            event.disallow(KICK_WHITELIST, locale.localize(WhitelistMessage.of(NOT_ALLOWED)).getRawMessage());
+        else if (!whitelistable.get().isAllowedToJoin())
+            event.disallow(KICK_WHITELIST, locale.localize(WhitelistMessage.of(EXPIRED)).getRawMessage());
     }
 
     @EventHandler(priority=EventPriority.MONITOR)
@@ -74,10 +79,6 @@ public final class LoginListener implements Listener {
 
     public void register(final @NonNull Plugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    private String getKickReason() {
-        return locale.localize(WhitelistMessage.LOGIN_DISALLOWED).getRawMessage();
     }
 
     private void updateWhitelistableName(final Player player, final Whitelistable whitelistable) {

@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
+import voidpointer.spigot.voidwhitelist.message.KickReason;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import java.util.Optional;
@@ -21,7 +22,7 @@ public final class DatabaseSyncTask extends BukkitRunnable {
         for (final Player onlinePlayer : getOnlinePlayers()) {
             whitelistService.find(onlinePlayer.getUniqueId()).thenAcceptAsync(optionalWhitelistable -> {
                 if (!optionalWhitelistable.isPresent()) {
-                    kickTaskScheduler.kickSynchronously(onlinePlayer);
+                    kickTaskScheduler.kickSynchronously(onlinePlayer, KickReason.NOT_ALLOWED);
                     return;
                 }
                 if (!optionalWhitelistable.get().isExpirable()) {
