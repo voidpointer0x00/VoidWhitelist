@@ -21,6 +21,11 @@ import voidpointer.spigot.framework.localemodule.Message;
 @Getter
 @RequiredArgsConstructor
 public enum GuiMessage implements Message {
+    ANVIL_EDIT_TITLE("&eEnter new date"),
+    ANVIL_EDIT_DATE_INVALID("&cInvalid date"),
+    ANVIL_EDIT_DATE_VALID("&aValid date"),
+    ANVIL_CLOCK_NAME("&eAccept changes"),
+    ANVIL_REFRESH_NAME("&eRefresh"),
     PROFILE_BACK("&eBack to whitelist"),
     PROFILE_TITLE("&6{player}"),
     PROFILE_REMOVE("&cRemove from the whitelist"),
@@ -37,11 +42,6 @@ public enum GuiMessage implements Message {
     PROFILE_REMOVE_FAIL("&cRemove operation failed"),
     PROFILE_INTERNAL("&cInternal error :("),
     PROFILE_INFO_NOT_FOUND("&cNothing found"),
-    ANVIL_EDIT_TITLE("&eEnter new date"),
-    ANVIL_EDIT_DATE_INVALID("&cInvalid date"),
-    ANVIL_EDIT_DATE_VALID("&aValid date"),
-    ANVIL_CLOCK_NAME("&eAccept changes"),
-    ANVIL_REFRESH_NAME("&eRefresh"),
     WHITELIST_LOADING("&8&oLoading {percentage}%"),
     WHITELIST_NEXT("&eNext page"),
     WHITELIST_PREVIOUS("&ePrevious page"),
