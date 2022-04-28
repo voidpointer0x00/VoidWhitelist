@@ -70,9 +70,9 @@ public enum WhitelistMessage implements Message {
 
     public static Message of(final KickReason kickReason) {
         switch (kickReason) {
-            case NOT_ALLOWED:
-                return LOGIN_DISALLOWED_EXPIRED;
             case EXPIRED:
+                return LOGIN_DISALLOWED_EXPIRED;
+            case NOT_ALLOWED:
             default:
                 return LOGIN_DISALLOWED;
         }
