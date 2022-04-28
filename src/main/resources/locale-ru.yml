@@ -20,6 +20,7 @@ messages:
   info-whitelisted-temp: '&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist, истекает
     &d{date}&e.'
   login-disallowed: '&cВас нет в whitelist.'
+  login-disallowed-expired: '&cВаше время в whitelist истекло.'
   locale-doesnt-support-reload: '&cТекущая локаль не поддерживает перезагрузку.'
   locale-reloaded: '&aЛокаль перезагружена.'
   no-permission: '&cУ Вас недостаточно прав.'

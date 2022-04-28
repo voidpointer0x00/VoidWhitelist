@@ -19,6 +19,7 @@ messages:
   info-whitelisted: '&6«{player-details}&6» &eis &awhitelisted&e.'
   info-whitelisted-temp: '&e&6«{player-details}&6» &eis &awhitelisted&e, expires on &d{date}&e.'
   login-disallowed: '&cYou are not allowed on this server.'
+  login-disallowed-expired: '&cYou are no longer allowed on this server.'
   locale-doesnt-support-reload: '&cCurrent locale does not support reload.'
   locale-reloaded: '&aLocale reloaded.'
   no-permission: '&cYou''ve no permission.'

@@ -40,6 +40,7 @@ public enum WhitelistMessage implements Message {
     INFO_WHITELISTED("&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist."),
     INFO_WHITELISTED_TEMP("&eИгрок &6«{player-details}&6» &aесть &eв whitelist, истекает &d{date}&e."),
     LOGIN_DISALLOWED("&cВас нет в whitelist."),
+    LOGIN_DISALLOWED_EXPIRED("&cВаше время в whitelist истекло."),
     NO_PERMISSION("&cУ Вас недостаточно прав."),
     PLAYER_DETAILS("\\(&c{player}) [hover{&eUUID: &6{uuid}}] [click.copy{{uuid}}]"),
     REMOVED("&eИгрок &6«&c{player-details}&6» &eудален из whitelist."),
@@ -66,6 +67,16 @@ public enum WhitelistMessage implements Message {
     WRONG_DATE_FORMAT("&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут &a1d15h45m"),
     YOU_WERE_REMOVED("&cВас исключили из whitelist."),
     ;
+
+    public static Message of(final KickReason kickReason) {
+        switch (kickReason) {
+            case NOT_ALLOWED:
+                return LOGIN_DISALLOWED_EXPIRED;
+            case EXPIRED:
+            default:
+                return LOGIN_DISALLOWED;
+        }
+    }
 
     @Getter private final String defaultMessage;
 
