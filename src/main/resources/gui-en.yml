@@ -4,6 +4,7 @@ messages:
   anvil-edit-date-valid: '&aValid date'
   anvil-clock-name: '&eAccept changes'
   anvil-refresh-name: '&eRefresh'
+  never: 'never'
   profile-back: '&eBack to whitelist'
   profile-title: '&6{player}'
   profile-remove: '&cRemove from the whitelist'

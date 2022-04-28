@@ -4,6 +4,7 @@ messages:
   anvil-edit-date-valid: '&aКорректный формат'
   anvil-clock-name: '&eПрименить изменения'
   anvil-refresh-name: '&eОбновить'
+  never: 'никогда'
   profile-back: '&eВернуться'
   profile-title: '&6{player}'
   profile-remove: '&cИсключить из whitelist'

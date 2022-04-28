@@ -26,6 +26,7 @@ public enum GuiMessage implements Message {
     ANVIL_EDIT_DATE_VALID("&aValid date"),
     ANVIL_CLOCK_NAME("&eAccept changes"),
     ANVIL_REFRESH_NAME("&eRefresh"),
+    NEVER("never"),
     PROFILE_BACK("&eBack to whitelist"),
     PROFILE_TITLE("&6{player}"),
     PROFILE_REMOVE("&cRemove from the whitelist"),

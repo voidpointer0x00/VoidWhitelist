@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
+import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
 import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.WRONG_DATE_FORMAT;
 import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.parseDate;
 import static voidpointer.spigot.voidwhitelist.message.GuiMessage.*;
@@ -151,7 +152,7 @@ final class ProfileScreen extends AbstractGui {
                     getWhitelistService().add(
                             profileSkull.getProfile().getUuid(),
                             profileSkull.getProfile().getName(),
-                            new Date(parseDate(newDate))
+                            isNever(newDate) ? NEVER_EXPIRES : new Date(parseDate(newDate))
                     ).whenComplete((result, thrown) -> {
                         if (thrown == null)
                             notifyEdited();
@@ -206,13 +207,17 @@ final class ProfileScreen extends AbstractGui {
         assert result != null : "Resulting item cannot be null";
         ItemMeta meta = result.getItemMeta();
         assert meta != null : "Resulting item meta cannot be null";
-        boolean isValid = expiresAtTimestamp != WRONG_DATE_FORMAT;
+        boolean isValid = (expiresAtTimestamp != WRONG_DATE_FORMAT) || isNever(anvilGui.getRenameText());
         if (isValid)
             meta.setLore(singletonList(locale.localize(ANVIL_EDIT_DATE_VALID).getRawMessage()));
         else
             meta.setLore(singletonList(locale.localize(ANVIL_EDIT_DATE_INVALID).getRawMessage()));
         result.setItemMeta(meta);
         return isValid;
+    }
+
+    private boolean isNever(final String renameText) {
+        return renameText.equalsIgnoreCase(locale.localize(NEVER).getRawMessage());
     }
 
     private void displayInfo(final Whitelistable whitelistable) {
