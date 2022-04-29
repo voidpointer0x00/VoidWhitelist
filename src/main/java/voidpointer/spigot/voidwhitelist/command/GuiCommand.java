@@ -15,15 +15,20 @@
 package voidpointer.spigot.voidwhitelist.command;
 
 import voidpointer.spigot.framework.di.Autowired;
+import voidpointer.spigot.framework.localemodule.Locale;
+import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.gui.WhitelistGui;
+import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.version.Version;
 
 public final class GuiCommand extends Command {
     private static final String NAME = "gui";
     private static final String PERMISSION = "whitelist.gui";
 
-    @Autowired static WhitelistService whitelistService;
+    @AutowiredLocale private static Locale locale;
+    @Autowired private static WhitelistService whitelistService;
 
     public GuiCommand() {
         super(NAME);
@@ -33,6 +38,12 @@ public final class GuiCommand extends Command {
     @Override public void execute(final Args args) {
         if (!args.isPlayer()) {
             args.getSender().sendMessage("I hate console, you can't use this command! >:C");
+            return;
+        }
+        if (!Version.supportsGui()) {
+            locale.localize(WhitelistMessage.GUI_NOT_SUPPORTED)
+                    .set("major", WhitelistGui.MAJOR_VERSION_REQUIRED)
+                    .send(args.getSender());
             return;
         }
         WhitelistGui gui = new WhitelistGui();

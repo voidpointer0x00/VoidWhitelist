@@ -35,6 +35,7 @@ public enum WhitelistMessage implements Message {
     EXPORT_FAILURE("&cНе сохранить экспортированные данные."),
     GUI_LOCALE_DOESNT_SUPPORT_RELOAD("&cТекущая GUI локаль не поддерживает перезагрузку."),
     GUI_LOCALE_RELOADED("&aGUI локаль перезагружена."),
+    GUI_NOT_SUPPORTED("&cGUI не поддерживается на вашей версии MC. (минимально необходимая major версия: {major})"),
     IMPORT_LOADED("&eЗагружено &6{loaded}&e записей из &6{storage}&e, импорт начат."),
     IMPORT_ONLY_TO_DATABASE("&eИмпорт работает только из JSON в базу данных."),
     IMPORT_RESULT("&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e."),

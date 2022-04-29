@@ -42,6 +42,8 @@ import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchPro
 
 @Getter
 public final class WhitelistGui extends AbstractGui {
+    public static int MAJOR_VERSION_REQUIRED = 14;
+
     private final PaginatedPane whitelistPane;
     private final ConcurrentHashMap<Profile, ProfileScreen> profileScreens;
     private final OutlinePane controlPane;
