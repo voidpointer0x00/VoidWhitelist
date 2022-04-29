@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -94,7 +93,7 @@ public final class JsonWhitelist {
         if (jsonContents == null)
             return Optional.empty();
         try {
-            JsonElement root = JsonParser.parseString(jsonContents);
+            JsonElement root = gson.fromJson(jsonContents, JsonElement.class);
             StorageVersion version = parseVersion(root);
             if (version != CURRENT)
                 return Optional.ofNullable(performUpdate(version, root, jsonFile));
