@@ -14,6 +14,7 @@ messages:
   export-failure: '&cExport failed.'
   gui-locale-doesnt-support-reload: '&cCurrent GUI locale does not support reload.'
   gui-locale-reloaded: '&aGUI locale reloaded.'
+  gui-not-supported: '&cGUI is not supported on your MC version. (required major version: {major})'
   import-loaded: '&eLoaded &6{loaded}&e entries from &6{storage}&gui-e, importing...'
   import-only-to-database: '&eImport is only available from JSON to database.'
   import-result: '&eImported &6{imported}&e of &6{loaded}&e entries in &d{ms-spent}ms&e.'

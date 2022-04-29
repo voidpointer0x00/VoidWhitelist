@@ -14,6 +14,7 @@ messages:
   export-failure: '&cНе сохранить экспортированные данные.'
   gui-locale-doesnt-support-reload: '&cТекущая GUI локаль не поддерживает перезагрузку.'
   gui-locale-reloaded: '&aGUI локаль перезагружена.'
+  gui-not-supported: '&cGUI не поддерживается на вашей версии MC. (минимально необходимая major версия: {major})'
   import-loaded: '&eЗагружено &e{loaded} записей из &6{storage}&e, импорт начат.'
   import-only-to-database: '&eИмпорт работает только из JSON в базу данных.'
   import-result: '&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e.'
