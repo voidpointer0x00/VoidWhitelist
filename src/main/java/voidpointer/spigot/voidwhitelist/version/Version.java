@@ -8,7 +8,7 @@ import static org.bukkit.Bukkit.getBukkitVersion;
 import static voidpointer.spigot.voidwhitelist.gui.WhitelistGui.MAJOR_VERSION_REQUIRED;
 
 public final class Version {
-    public static final Pattern VERSION_PATTERN = Pattern.compile("\\d+\\.(?<major>\\d+)\\.(?<minor>\\d+)");
+    public static final Pattern VERSION_PATTERN = Pattern.compile("\\d+\\.(?<major>\\d+)(\\.(?<minor>\\d+))?");
 
     private static Boolean supportsGui = null;
 
