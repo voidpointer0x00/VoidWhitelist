@@ -3,7 +3,7 @@
 
 # VoidWhitelist [![Tests][TestsBadge]][TestsUrl] [![CodeQL][CodeQLBadge]][CodeQLUrl] [![ReleaseBadge]][ReleaseUrl]
 
-VoidWhitelist is an enchanced whitelist plugin for v1.12-1.18 Minecraft servers.
+VoidWhitelist is an enchanced whitelist plugin for v1.8-1.18 Minecraft servers.
 It allows to add both online and offline UUIDs on a white list on a permanent and temporary basis.
 
 ### GUI
