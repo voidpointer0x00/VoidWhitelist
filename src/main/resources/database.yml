@@ -5,4 +5,9 @@ port: 3306
 database: whitelist
 username: void
 password: password
+# Updates whitelist status for every online player
+#   every N minutes. If a player now doesn't exist
+#   in the database or their time has expired they
+#   will be kicked. If expiresAt date as changed,
+#   a scheduled kick task will be rescheduled.
 sync-every-n-minute: 30
