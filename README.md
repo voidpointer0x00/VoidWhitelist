@@ -33,7 +33,7 @@ selected storage is _DATABASE_ or reloads `whitelist.json` file it it's _JSON_. 
 
 [TestsBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/tests.yml/badge.svg
 [CodeQLBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/codeql-analysis.yml/badge.svg
-[ReleaseBadge]: https://img.shields.io/github/v/release/NyanGuyMF/VoidWhitelist.svg?color=orange
+[ReleaseBadge]: https://img.shields.io/github/v/release/NyanGuyMF/VoidWhitelist.svg?color=blue
 
 [TestsUrl]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/tests.yml
 [CodeQLUrl]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/codeql.yml
