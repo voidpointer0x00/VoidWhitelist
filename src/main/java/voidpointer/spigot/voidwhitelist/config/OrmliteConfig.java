@@ -77,8 +77,6 @@ public final class OrmliteConfig {
     }
 
     public long getSyncTimerInTicks() {
-        if (!config.isSet(SYNC_PATH))
-            config.set(SYNC_PATH, DEFAULT_SYNC);
         return MINUTES.toSeconds(config.getLong(SYNC_PATH, DEFAULT_SYNC)) * 20L;
     }
 
@@ -98,9 +96,7 @@ public final class OrmliteConfig {
     }
 
     String getHost() {
-        if (!config.isSet(HOST_PATH))
-            config.set(HOST_PATH, DEFAULT_HOST);
-        return config.getString(HOST_PATH);
+        return config.getString(HOST_PATH, DEFAULT_HOST);
     }
 
     int getPort() {
@@ -113,21 +109,15 @@ public final class OrmliteConfig {
     }
 
     String getDatabase() {
-        if (!config.isSet(DATABASE_PATH))
-            config.set(DATABASE_PATH, DEFAULT_DATABASE);
-        return config.getString(DATABASE_PATH);
+        return config.getString(DATABASE_PATH, DEFAULT_DATABASE);
     }
 
     String getUser() {
-        if (!config.isSet(USER_PATH))
-            config.set(USER_PATH, DEFAULT_USER);
-        return config.getString(USER_PATH);
+        return config.getString(USER_PATH, DEFAULT_USER);
     }
 
     String getPassword() {
-        if (!config.isSet(PASSWORD_PATH))
-            config.set(PASSWORD_PATH, DEFAULT_PASSWORD);
-        return config.getString(PASSWORD_PATH);
+        return config.getString(PASSWORD_PATH, DEFAULT_PASSWORD);
     }
 
     private void load() {
@@ -144,9 +134,6 @@ public final class OrmliteConfig {
     }
 
     private String getDbms() {
-        if (config.isSet(DBMS_PATH))
-            return config.getString(DBMS_PATH);
-        config.set(DBMS_PATH, DEFAULT_DBMS);
-        return DEFAULT_DBMS;
+        return config.getString(DBMS_PATH, DEFAULT_DBMS);
     }
 }
