@@ -152,15 +152,19 @@
                                 <filter>
                                     <artifact>com.h2database:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/*.MF</exclude>
-                                        <exclude>META-INF/services/java.sql.Driver</exclude>
+                                        <exclude>META-INF/*</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
                                     <artifact>mysql:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*</exclude>
-                                        <exclude>META-INF/services/java.sql.Driver</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.postgresql:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -168,6 +172,7 @@
                                 <excludes>
                                     <exclude>systems.manifold:*</exclude>
                                     <exclude>com.google.protobuf:protobuf-java</exclude>
+                                    <exclude>org.checkerframework:*</exclude>
                                 </excludes>
                             </artifactSet>
                             <relocations>
@@ -194,6 +199,10 @@
                                 <relocation>
                                     <pattern>com.mysql</pattern>
                                     <shadedPattern>voidpointer.spigot.voidwhitelist.mysql</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.postgresql</pattern>
+                                    <shadedPattern>voidpointer.spigot.voidwhitelist.postgresql</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -250,6 +259,12 @@
             <artifactId>spigot-api</artifactId>
             <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>3.12.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
@@ -309,6 +324,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.28</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.3.5</version>
         </dependency>
     </dependencies>
 </project>

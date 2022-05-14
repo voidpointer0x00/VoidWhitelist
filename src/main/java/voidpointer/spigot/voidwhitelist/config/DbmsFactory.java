@@ -29,6 +29,7 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 final class DbmsFactory {
     private static final int MYSQL_PORT = 3306;
+    private static final int PSQL_PORT = 5432;
 
     @AutowiredLocale private static LocaleLog log;
 
@@ -40,6 +41,8 @@ final class DbmsFactory {
                 return this::h2;
             case "mysql":
                 return this::mysql;
+            case "psql":
+                return this::psql;
             default:
                 log.info("Unknown DBMS named {0}, using default H2", dbmsName);
                 return this::h2;
@@ -72,5 +75,23 @@ final class DbmsFactory {
 
     private String mysqlConnectionUrl(final String host, final int port, final String database) {
         return format("jdbc:mysql://%s:%d/%s", host, port != -1 ? port : MYSQL_PORT, database);
+    }
+
+    private ConnectionSource psql(final OrmliteConfig ormliteConfig) {
+        final String host = ormliteConfig.getHost();
+        final int port = ormliteConfig.getPort();
+        final String database = ormliteConfig.getDatabase();
+        final String user = ormliteConfig.getUser();
+        final String password = ormliteConfig.getPassword();
+        try {
+            return new JdbcConnectionSource(psqlConnectionUrl(host, port, database), user, password);
+        } catch (final SQLException sqlException) {
+            log.warn("Unable to establish database connection", sqlException);
+            return null;
+        }
+    }
+
+    private String psqlConnectionUrl(final String host, final int port, final String database) {
+        return format("jdbc:postgresql://%s:%d/%s", host, port != -1 ? port : PSQL_PORT, database);
     }
 }
