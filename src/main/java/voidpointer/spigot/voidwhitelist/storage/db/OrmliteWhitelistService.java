@@ -20,7 +20,6 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
@@ -50,13 +49,14 @@ import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.Reconnec
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.SUCCESS;
 
 public final class OrmliteWhitelistService implements WhitelistService {
-    @Autowired(mapId="plugin") private static Plugin plugin;
+    private final Plugin plugin;
     @AutowiredLocale private static LocaleLog log;
     private Dao<WhitelistableModel, UUID> dao;
     private final OrmliteConfig ormliteConfig;
     private DatabaseSyncTask syncTask;
 
     public OrmliteWhitelistService(final Plugin plugin) {
+        this.plugin = plugin;
         log.info("Establishing database connection...");
         ormliteConfig = new OrmliteConfig(plugin);
         disableOrmliteLogging();
