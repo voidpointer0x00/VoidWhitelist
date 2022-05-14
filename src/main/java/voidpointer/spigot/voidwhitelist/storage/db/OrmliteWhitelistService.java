@@ -63,19 +63,24 @@ public final class OrmliteWhitelistService implements WhitelistService {
         dao = ormliteConfig.getWhitelistableDao();
         if (dao != null) {
             log.info("Connection established.");
-            syncTask = new DatabaseSyncTask();
-            syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
+            scheduleSync();
         }
     }
 
     public ReconnectResult reconnect() {
         shutdown();
         if (ormliteConfig.reload() && ((dao = ormliteConfig.getWhitelistableDao()) != null)) {
-            syncTask = new DatabaseSyncTask();
-            syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
+            scheduleSync();
             return SUCCESS;
         }
         return FAIL;
+    }
+
+    private void scheduleSync() {
+        if (ormliteConfig.isSyncEnabled()) {
+            syncTask = new DatabaseSyncTask();
+            syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
+        }
     }
 
     @Override public StorageMethod getStorageMethod() {

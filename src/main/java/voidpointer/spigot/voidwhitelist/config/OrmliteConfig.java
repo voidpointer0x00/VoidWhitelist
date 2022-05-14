@@ -72,6 +72,10 @@ public final class OrmliteConfig {
         }
     }
 
+    public boolean isSyncEnabled() {
+        return config.getLong(SYNC_PATH, DEFAULT_SYNC) > 0;
+    }
+
     public long getSyncTimerInTicks() {
         if (!config.isSet(SYNC_PATH))
             config.set(SYNC_PATH, DEFAULT_SYNC);
