@@ -10,4 +10,12 @@ password: password
 #   in the database or their time has expired they
 #   will be kicked. If expiresAt date as changed,
 #   a scheduled kick task will be rescheduled.
+#
+# It's useful if you have a website or some other
+#   service that updates whitelist data. For example,
+#   purchasable whitelist sites or chat bots that
+#   add or remove someone from the whitelist.
+#
+# Set it to any integer value less than 1 (minute)
+#   to disable this functionality.
 sync-every-n-minute: 30
