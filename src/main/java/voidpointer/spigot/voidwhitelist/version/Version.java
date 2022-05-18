@@ -15,7 +15,7 @@ public final class Version {
     public static boolean supportsGui() {
         if (supportsGui == null) {
             final Matcher versionMatcher = VERSION_PATTERN.matcher(getBukkitVersion());
-            supportsGui = versionMatcher.find() && parseInt(versionMatcher.group("major")) < MAJOR_VERSION_REQUIRED;
+            supportsGui = versionMatcher.find() && parseInt(versionMatcher.group("major")) >= MAJOR_VERSION_REQUIRED;
         }
         return supportsGui;
     }
