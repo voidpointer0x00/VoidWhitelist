@@ -1,10 +1,10 @@
 name: VoidWhitelist
 version: ${project.version}b${buildNumber}-${version.stability}
 main: voidpointer.spigot.voidwhitelist.VoidWhitelistPlugin
-api-version: 1.17
+api-version: 1.18
 authors: [ _voidpointer ]
 description: Mixedd UUID based whitelist with the possibility of temporary addition.
-website: vk.me/voidpointer
+website: github.com/voidpointer0x00/VoidWhitelist
 
 commands:
   whitelist:
