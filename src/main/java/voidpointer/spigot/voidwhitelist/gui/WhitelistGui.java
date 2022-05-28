@@ -30,12 +30,12 @@ import voidpointer.spigot.voidwhitelist.net.Profile;
 import voidpointer.spigot.voidwhitelist.task.AddProfileSkullTask;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PROTECTED;
 import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;

@@ -36,7 +36,7 @@ final class JsonV1BetaUpdate extends AbstractJsonUpdate {
         if (whitelistableObject.has(NAME_FIELD))
             name = whitelistableObject.get(NAME_FIELD).getAsString();
         else
-            name = CachedProfileFetcher.fetchProfile(uniqueId).join().getName();
+            name = CachedProfileFetcher.fetchName(uniqueId).join();
         return JsonWhitelistablePojo.builder()
                 .uniqueId(uniqueId)
                 .name(name)

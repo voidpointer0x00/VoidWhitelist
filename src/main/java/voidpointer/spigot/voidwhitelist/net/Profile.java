@@ -19,17 +19,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -37,7 +36,6 @@ import java.util.stream.StreamSupport;
 
 @Getter
 @AllArgsConstructor
-@RequiredArgsConstructor(access=AccessLevel.PACKAGE)
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @ToString(onlyExplicitlyIncluded=true)
 public final class Profile {
@@ -53,6 +51,11 @@ public final class Profile {
     private String name;
     private Optional<String> texturesBase64 = Optional.empty();
 
+    Profile(final Whitelistable whitelistable) {
+        uuid = whitelistable.getUniqueId();
+        name = whitelistable.getName();
+    }
+
     public GameProfile toGameProfile() {
         GameProfile gameProfile = new GameProfile(uuid, name);
         texturesBase64.ifPresent(s -> gameProfile.getProperties().put("textures", new Property("textures", s)));
@@ -60,17 +63,18 @@ public final class Profile {
     }
 
     void fromJson(final JsonElement json) {
-        name = getNameFromJson(json).orElse(null);
+        name = getNameFromJson(json).orElse(name);
         texturesBase64 = getEncodedTexturesFromJson(json);
     }
 
     private Optional<String> getNameFromJson(final JsonElement json) {
+        // TODO: use if-statements instead of try-catch blocks as in #fetchName() method
         try {
             return Optional.of(json.getAsJsonObject().get("name").getAsString());
         } catch (final IllegalStateException notAJsonObject) {
             return Optional.empty();
         } catch (final NullPointerException invalidUuid) {
-            log.warn("NPE: {0}", json.getAsJsonObject().get("errorMessage"));
+            log.warn("Invalid UUID: {0}", json.getAsJsonObject().get("errorMessage"));
             return Optional.empty();
         }
     }

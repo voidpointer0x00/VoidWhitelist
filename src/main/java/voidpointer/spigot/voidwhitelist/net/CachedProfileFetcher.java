@@ -16,9 +16,11 @@ package voidpointer.spigot.voidwhitelist.net;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,28 +40,51 @@ public final class CachedProfileFetcher {
             .build();
     @AutowiredLocale private static LocaleLog log;
 
-    public static ConcurrentLinkedQueue<Profile> fetchProfiles(final Iterable<UUID> uuids) {
+    public static ConcurrentLinkedQueue<Profile> fetchProfiles(final Iterable<Whitelistable> whitelistables) {
         ConcurrentLinkedQueue<Profile> profiles = new ConcurrentLinkedQueue<>();
-        for (UUID uuid : uuids) {
-            fetchProfile(uuid).whenComplete((profile, thrown) -> {
+        for (Whitelistable whitelistable : whitelistables) {
+            fetchProfile(whitelistable).whenComplete((profile, thrown) -> {
                 if (thrown == null) {
                     profiles.add(profile);
                 } else {
-                    profiles.add(new Profile(uuid));
-                    log.warn("Couldn't complete profile "+uuid+" fetching", thrown);
+                    profiles.add(new Profile(whitelistable));
+                    log.warn("Couldn't complete profile "+whitelistable.getUniqueId()+" fetching", thrown);
                 }
             });
         }
         return profiles;
     }
 
-    public static CompletableFuture<Profile> fetchProfile(final UUID uuid) {
-        if (profilesCache.asMap().containsKey(uuid))
-            return completedFuture(profilesCache.getIfPresent(uuid));
+    public static CompletableFuture<String> fetchName(final UUID uniqueId) {
+        if (profilesCache.asMap().containsKey(uniqueId))
+            return completedFuture(profilesCache.asMap().get(uniqueId).getName());
         return supplyAsync(() -> {
-            Profile profile = requestApi(uuid);
+            try {
+                JsonElement jsonElement = JsonParser.parseReader(newConnectionReader(uniqueId));
+                if (!jsonElement.isJsonObject()) {
+                    log.warn("Profile with name for UUID {0} not found.", uniqueId);
+                    return null;
+                }
+                if (!jsonElement.getAsJsonObject().has("name")) {
+                    log.warn("Invalid UUID ({0}): {1}", uniqueId,
+                            jsonElement.getAsJsonObject().get("errorMessage").getAsString());
+                    return null;
+                }
+                return jsonElement.getAsJsonObject().get("name").getAsString();
+            } catch (final Exception exception) {
+                log.warn("API name fetch failed", exception);
+                return null;
+            }
+        });
+    }
+
+    public static CompletableFuture<Profile> fetchProfile(final Whitelistable whitelistable) {
+        if (profilesCache.asMap().containsKey(whitelistable.getUniqueId()))
+            return completedFuture(profilesCache.getIfPresent(whitelistable.getUniqueId()));
+        return supplyAsync(() -> {
+            Profile profile = requestApi(whitelistable);
             if (profile.getTexturesBase64().isPresent())
-                profilesCache.put(uuid, profile);
+                profilesCache.put(whitelistable.getUniqueId(), profile);
             return profile;
         });
     }
@@ -68,18 +93,18 @@ public final class CachedProfileFetcher {
         return profilesCache.asMap().remove(uuid);
     }
 
-    private static Profile requestApi(final UUID uuid) {
+    private static Profile requestApi(final Whitelistable whitelistable) {
         try {
-            return requestApi0(uuid);
-        } catch (IOException ioException) {
+            return requestApi0(whitelistable);
+        } catch (final IOException ioException) {
             log.warn("API call failed", ioException);
-            return new Profile(uuid);
+            return new Profile(whitelistable);
         }
     }
 
-    private static Profile requestApi0(final UUID uuid) throws IOException {
-        Profile profile = new Profile(uuid);
-        profile.fromJson(JsonParser.parseReader(newConnectionReader(uuid)));
+    private static Profile requestApi0(final Whitelistable whitelistable) throws IOException {
+        Profile profile = new Profile(whitelistable);
+        profile.fromJson(JsonParser.parseReader(newConnectionReader(whitelistable.getUniqueId())));
         return profile;
     }
 
