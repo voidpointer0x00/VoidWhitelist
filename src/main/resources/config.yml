@@ -19,6 +19,16 @@ language: en
 #   database — connects to database with database.yml configuration.
 storage-method: json
 
+# Adds a player to the whitelist if the player has never played on this server
+#   before. Notice: this feature uses OfflinePlayer#hasPlayedBefore() method, so
+#   if your server does not save player information (players.disable-saving: true
+#   in spigot.yml) it will constantly add every player to the whitelist.
+#
+# It won't work if the whitelist is disabled. (whitelist.enable: false)
+auto-whitelist-new-players: false
+# Any value less than 1 will add the player to the whitelist forever.
+auto-whitelist-time: 1mon
+
 whitelist:
   enabled: false
   # uuid-mode:

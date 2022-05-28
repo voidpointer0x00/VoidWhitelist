@@ -19,16 +19,24 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
 import java.io.File;
+import java.util.Date;
+
+import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
+import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.WRONG_DATE_FORMAT;
 
 public final class WhitelistConfig {
     public static final String DEFAULT_LANGUAGE = "en";
     public static final StorageMethod DEFAULT_STORAGE_METHOD = StorageMethod.JSON;
+    private static final String DEFAULT_AUTO_WHITELIST_TIME = "1mon";
     private static final String WHITELIST_ENABLED_PATH = "whitelist.enabled";
     private static final String UUID_MODE_PATH = "whitelist.uuid-mode";
     private static final String STORAGE_METHOD_PATH = "storage-method";
+    private static final String AUTO_WHITELIST_NEW_PLAYERS = "auto-whitelist-new-players";
+    private static final String AUTO_WHITELIST_TIME = "auto-whitelist-time";
 
     @AutowiredLocale private static LocaleLog log;
     private final JavaPlugin plugin;
@@ -40,6 +48,28 @@ public final class WhitelistConfig {
 
     public void reload() {
         plugin.reloadConfig();
+    }
+
+    public boolean autoWhitelistNewPlayers() {
+        if (!plugin.getConfig().isSet(AUTO_WHITELIST_NEW_PLAYERS)) {
+            plugin.getConfig().set(AUTO_WHITELIST_NEW_PLAYERS, false);
+            plugin.getConfig().addDefault(AUTO_WHITELIST_TIME, "1mon");
+            plugin.saveConfig();
+        }
+        return plugin.getConfig().getBoolean(AUTO_WHITELIST_NEW_PLAYERS);
+    }
+
+    public Date getAutoWhitelistTime() {
+        if (!plugin.getConfig().isSet(AUTO_WHITELIST_TIME)) {
+            plugin.getConfig().set(AUTO_WHITELIST_TIME, DEFAULT_AUTO_WHITELIST_TIME);
+            plugin.saveConfig();
+        }
+        final String autoWhitelistTime = plugin.getConfig().getString(AUTO_WHITELIST_TIME);
+        long autoWhitelistTimestamp = EssentialsDateParser.parseDate(autoWhitelistTime);
+        if ((autoWhitelistTimestamp == WRONG_DATE_FORMAT) || (autoWhitelistTimestamp == 0)) {
+            return NEVER_EXPIRES;
+        }
+        return new Date(autoWhitelistTimestamp);
     }
 
     public boolean isWhitelistEnabled() {
