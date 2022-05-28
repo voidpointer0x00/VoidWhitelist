@@ -137,9 +137,7 @@ public final class WhitelistGui extends AbstractGui {
             return;
         }
         clearNextPages();
-        ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(whitelistable.stream()
-                .map(Whitelistable::getUniqueId)
-                .collect(Collectors.toList()));
+        ConcurrentLinkedQueue<Profile> profiles = fetchProfiles(new ArrayList<>(whitelistable));
         AddProfileSkullTask loadingTask = new AddProfileSkullTask(this, profiles, whitelistable.size());
         loadingTask.runTaskTimerAsynchronously(getPlugin(), 0, 1L);
         loadingTaskRef = new WeakReference<>(loadingTask);
