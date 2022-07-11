@@ -51,6 +51,7 @@ public final class WhitelistConfig {
     }
 
     public boolean autoWhitelistNewPlayers() {
+        // TODO actually implement the feature
         if (!plugin.getConfig().isSet(AUTO_WHITELIST_NEW_PLAYERS)) {
             plugin.getConfig().set(AUTO_WHITELIST_NEW_PLAYERS, false);
             plugin.getConfig().addDefault(AUTO_WHITELIST_TIME, "1mon");
@@ -60,6 +61,7 @@ public final class WhitelistConfig {
     }
 
     public Date getAutoWhitelistTime() {
+        // TODO actually implement the feature
         if (!plugin.getConfig().isSet(AUTO_WHITELIST_TIME)) {
             plugin.getConfig().set(AUTO_WHITELIST_TIME, DEFAULT_AUTO_WHITELIST_TIME);
             plugin.saveConfig();
