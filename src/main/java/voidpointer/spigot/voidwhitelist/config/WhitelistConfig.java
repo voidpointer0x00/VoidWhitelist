@@ -40,14 +40,20 @@ public final class WhitelistConfig {
 
     @AutowiredLocale private static LocaleLog log;
     private final JavaPlugin plugin;
+    private final boolean runtimeSupportsFloodGate;
 
     public WhitelistConfig(final @NonNull JavaPlugin plugin) {
         this.plugin = plugin;
         saveIfNotExists();
+        runtimeSupportsFloodGate = plugin.getServer().getPluginManager().getPlugin("floodgate") != null;
     }
 
     public void reload() {
         plugin.reloadConfig();
+    }
+
+    public boolean runtimeSupportsFloodgate() {
+        return runtimeSupportsFloodGate;
     }
 
     public boolean autoWhitelistNewPlayers() {
