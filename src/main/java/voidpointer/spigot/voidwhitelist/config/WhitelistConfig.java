@@ -50,6 +50,7 @@ public final class WhitelistConfig {
         plugin.reloadConfig();
     }
 
+    // TODO: a planned feature
     public boolean autoWhitelistNewPlayers() {
         if (!plugin.getConfig().isSet(AUTO_WHITELIST_NEW_PLAYERS)) {
             plugin.getConfig().set(AUTO_WHITELIST_NEW_PLAYERS, false);
@@ -59,6 +60,7 @@ public final class WhitelistConfig {
         return plugin.getConfig().getBoolean(AUTO_WHITELIST_NEW_PLAYERS);
     }
 
+    // TODO: a planned feature
     public Date getAutoWhitelistTime() {
         if (!plugin.getConfig().isSet(AUTO_WHITELIST_TIME)) {
             plugin.getConfig().set(AUTO_WHITELIST_TIME, DEFAULT_AUTO_WHITELIST_TIME);
