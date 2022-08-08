@@ -11,6 +11,11 @@ import java.util.Optional;
 
 import static org.bukkit.Bukkit.getOnlinePlayers;
 
+/**
+ * When this task is launched it check every currently
+ *  online player on the server and synchronises
+ *  their scheduled kick tasks with the database.
+ */
 public final class DatabaseSyncTask extends BukkitRunnable {
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
