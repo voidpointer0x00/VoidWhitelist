@@ -65,7 +65,7 @@ public final class AddCommand extends Command {
             return;
 
         DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
-            if (!uuidOptional.isPresent()) {
+            if (uuidOptional.isEmpty()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", args.get(0))
@@ -79,7 +79,7 @@ public final class AddCommand extends Command {
                             locale.warn("Couldn't add a player to the whitelist", th);
                             return;
                         }
-                        if (!res.isPresent())
+                        if (res.isEmpty())
                             notifyFail(args, uuidOptional.get());
                         else if (expiresAt.isPresent())
                             notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);

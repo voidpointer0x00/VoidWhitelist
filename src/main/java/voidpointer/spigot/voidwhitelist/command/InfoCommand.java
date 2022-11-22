@@ -58,7 +58,7 @@ public final class InfoCommand extends Command {
         }
 
         getUniqueId(args).thenAcceptAsync(uuidOptional -> {
-            if (!uuidOptional.isPresent()) {
+            if (uuidOptional.isEmpty()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", args.get(0))
@@ -86,7 +86,7 @@ public final class InfoCommand extends Command {
 
     private void tellInfo(final Args args, final Optional<Whitelistable> whitelistable, final UUID uuid) {
         LocalizedMessage message;
-        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin())
+        if (whitelistable.isEmpty() || !whitelistable.get().isAllowedToJoin())
             message = locale.localize(INFO_NOT_WHITELISTED);
         else if (whitelistable.get().isExpirable())
             message = locale.localize(INFO_WHITELISTED_TEMP).set("date", whitelistable.get().getExpiresAt());

@@ -60,7 +60,7 @@ public class RemoveCommand extends Command {
     @Override public void execute(final Args args) {
         final String name = args.get(0);
         DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
-            if (!uuidOptional.isPresent()) {
+            if (uuidOptional.isEmpty()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", name)
@@ -70,7 +70,7 @@ public class RemoveCommand extends Command {
             }
 
             final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
-            if (!whitelistable.isPresent()) {
+            if (whitelistable.isEmpty()) {
                 locale.localize(WhitelistMessage.REMOVE_NOT_WHITELISTED)
                         .set("player-details", locale.localize(PLAYER_DETAILS))
                         .set("uuid", uuidOptional.get())
@@ -78,7 +78,7 @@ public class RemoveCommand extends Command {
                         .send(args.getSender());
                 return;
             }
-            boolean isRemoved = whitelistService.remove(whitelistable.get()).join().booleanValue();
+            boolean isRemoved = whitelistService.remove(whitelistable.get()).join();
             if (isRemoved) {
                 notifyRemoved(args.getSender(), uuidOptional.get(), name);
                 eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));

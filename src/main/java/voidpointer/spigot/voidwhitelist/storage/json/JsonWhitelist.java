@@ -160,7 +160,7 @@ public final class JsonWhitelist {
     ) {
         log.info("Performing a storage update from {0} to {1}, it might take a while.", version, CURRENT);
         Optional<JsonUpdate> update = JsonUpdateFactory.from(version);
-        if (!update.isPresent()) {
+        if (update.isEmpty()) {
             backupUpdateFailure(jsonFile, root);
             return null;
         }

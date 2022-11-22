@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static java.util.Objects.requireNonNull;
 import static lombok.AccessLevel.PROTECTED;
 import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.fetchProfiles;
 
@@ -115,7 +116,7 @@ public final class WhitelistGui extends AbstractGui {
         if (isLoading())
             return;
         Optional<OutlinePane> nextPage = setToNextPageAndGet();
-        if (!nextPage.isPresent())
+        if (nextPage.isEmpty())
             return;
         int capacity = availableProfileSlots();
         int offset = getCurrentOffset();
@@ -175,10 +176,7 @@ public final class WhitelistGui extends AbstractGui {
     }
 
     private boolean isLoading() {
-        // TODO: drop Java 8 support and use Java 16 API after release
-        //  loadingTaskRef.refersTo(null) instead of (null != loadingTask)
-        AddProfileSkullTask loadingTask = loadingTaskRef.get();
-        return (null != loadingTask) && loadingTask.isLoading();
+        return !loadingTaskRef.refersTo(null) && requireNonNull(loadingTaskRef.get()).isLoading();
     }
 
     private boolean isAtLastPage() {

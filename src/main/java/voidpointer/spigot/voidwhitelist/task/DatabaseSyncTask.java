@@ -26,7 +26,7 @@ public final class DatabaseSyncTask extends BukkitRunnable {
             return;
         for (final Player onlinePlayer : getOnlinePlayers()) {
             whitelistService.find(onlinePlayer.getUniqueId()).thenAcceptAsync(optionalWhitelistable -> {
-                if (!optionalWhitelistable.isPresent()) {
+                if (optionalWhitelistable.isEmpty()) {
                     kickTaskScheduler.kickSynchronously(onlinePlayer, KickReason.NOT_ALLOWED);
                     return;
                 }

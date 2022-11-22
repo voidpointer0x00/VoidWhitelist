@@ -75,7 +75,7 @@ final class ProfileScreen extends AbstractGui {
         getWhitelistService().find(profile.getUuid())
                 .exceptionally(this::onRemoveFindException)
                 .thenAcceptAsync(whitelistableOptional -> {
-                    if (!whitelistableOptional.isPresent()) {
+                    if (whitelistableOptional.isEmpty()) {
                         onRemoveNotFound();
                         return;
                     }
@@ -126,16 +126,16 @@ final class ProfileScreen extends AbstractGui {
     public void onRequestInfoButtonClick(final InventoryClickEvent event) {
         getWhitelistService().find(profileSkull.getProfile().getUuid())
                 .exceptionally(this::onRequestInfoFindException)
-                .thenAcceptAsync(whitelistable -> {
-                    if (whitelistable.isPresent()) /* TODO: Java 1.9 #ifPresetOrElse() */
-                        displayInfo(whitelistable.get());
-                    else
-                        infoNotFound();
-                }).exceptionally(this::onDisplayInfoException);
+                .thenAcceptAsync(whitelistable -> whitelistable.ifPresentOrElse(this::displayInfo, this::infoNotFound))
+                .exceptionally(this::onDisplayInfoException);
         update();
     }
 
     public void onEditButtonClick(final InventoryClickEvent event) {
+        if (getViewer().isEmpty()) {
+            getLocaleLog().warn("#onEditButtonClick() without viewer");
+            return; /* should not be the case, but shit happens */
+        }
         InputGui.ask(locale.localize(ANVIL_EDIT_TITLE).getRawMessage(), getViewer().get(),
                 GuiPanes::setupEditDateAnvil, this::testInputDate, this::onEdited);
     }
@@ -145,7 +145,7 @@ final class ProfileScreen extends AbstractGui {
         getWhitelistService().find(profileSkull.getProfile().getUuid())
                 .exceptionally(this::onEditFindException)
                 .thenAcceptAsync(whitelistable -> {
-                    if (!whitelistable.isPresent()) { /* TODO: Java 1.9 #ifPresetOrElse() */
+                    if (whitelistable.isEmpty()) {
                         notifyEditNotFound();
                         return;
                     }

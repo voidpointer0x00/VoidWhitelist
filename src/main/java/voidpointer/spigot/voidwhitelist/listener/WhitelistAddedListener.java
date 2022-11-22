@@ -42,7 +42,7 @@ public final class WhitelistAddedListener implements Listener {
         if (!config.isWhitelistEnabled())
             return;
         Optional<Player> player = event.getWhitelistable().findAssociatedOnlinePlayer();
-        if (!player.isPresent() || !event.getWhitelistable().isExpirable())
+        if (player.isEmpty() || !event.getWhitelistable().isExpirable())
             return;
 
         kickTaskScheduler.schedule(event.getWhitelistable());
