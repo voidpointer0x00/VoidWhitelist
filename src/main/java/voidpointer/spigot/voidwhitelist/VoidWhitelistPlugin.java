@@ -40,6 +40,7 @@ import voidpointer.spigot.voidwhitelist.listener.WhitelistReloadListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistRemovedListener;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
+import voidpointer.spigot.voidwhitelist.papi.TimeLeftExpansion;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
@@ -83,6 +84,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         Injector.inject(this);
         new WhitelistCommand().register(this);
         registerListeners();
+        hookPapi();
 
         if (whitelistConfig.isWhitelistEnabled())
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
@@ -107,6 +109,11 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         new WhitelistAddedListener().register();
         new WhitelistRemovedListener().register(this);
         new QuitListener().register(this);
+    }
+
+    private void hookPapi() {
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null)
+            new TimeLeftExpansion().register();
     }
 
     private String getLanguage() {
