@@ -47,7 +47,9 @@ public class TimeLeftExpansion extends PlaceholderExpansion {
         if (player == null || !params.equalsIgnoreCase("time-left"))
             return null;
         Optional<Whitelistable> optionalWhitelistable = whitelistService.find(player.getUniqueId()).join();
-        return optionalWhitelistable.map(this::getTimeLeftFor).orElse(null);
+        if (optionalWhitelistable.isPresent())
+            return getTimeLeftFor(optionalWhitelistable.get());
+        return locale.localize("papi-not-whitelisted", "not whitelisted").getRawMessage();
     }
 
     private String getTimeLeftFor(final Whitelistable whitelistable) {
