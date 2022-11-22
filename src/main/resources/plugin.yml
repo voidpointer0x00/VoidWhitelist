@@ -5,6 +5,7 @@ api-version: 1.18
 authors: [ _voidpointer ]
 description: Mixed UUID based whitelist with the possibility of temporary addition.
 website: github.com/voidpointer0x00/VoidWhitelist
+softdepend: [ 'PlaceholderAPI' ]
 
 commands:
   whitelist:
