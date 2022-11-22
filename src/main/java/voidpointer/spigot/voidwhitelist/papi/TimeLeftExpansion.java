@@ -14,6 +14,10 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import java.time.Duration;
 import java.util.Optional;
 
+import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.EXPIRED;
+import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.NEVER;
+import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.NOT_WHITELISTED;
+
 public class TimeLeftExpansion extends PlaceholderExpansion {
     @AutowiredLocale private static LocaleLog locale;
     @Autowired(mapId="plugin")
@@ -49,15 +53,15 @@ public class TimeLeftExpansion extends PlaceholderExpansion {
         Optional<Whitelistable> optionalWhitelistable = whitelistService.find(player.getUniqueId()).join();
         if (optionalWhitelistable.isPresent())
             return getTimeLeftFor(optionalWhitelistable.get());
-        return locale.localize("papi-not-whitelisted", "not whitelisted").getRawMessage();
+        return locale.localize(NOT_WHITELISTED).getRawMessage();
     }
 
     private String getTimeLeftFor(final Whitelistable whitelistable) {
         if (!whitelistable.isExpirable())
-            return locale.localize("papi-never", "never").getRawMessage();
+            return locale.localize(NEVER).getRawMessage();
         final long millisBeforeExpires = whitelistable.getExpiresAt().getTime() - System.currentTimeMillis();
         if (millisBeforeExpires <= 0)
-            return locale.localize("papi-expired", "expired").getRawMessage();
+            return locale.localize(EXPIRED).getRawMessage();
         return Duration.ofMillis(millisBeforeExpires).toString().substring(2).replaceAll("(\\d[HMS])(?!$)", "$1 ")
                 .toLowerCase();
     }
