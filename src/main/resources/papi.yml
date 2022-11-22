@@ -1,0 +1,4 @@
+messages:
+  papi-expired: 'expired'
+  papi-never: 'never'
+  papi-not-whitelisted: 'not whitelisted'

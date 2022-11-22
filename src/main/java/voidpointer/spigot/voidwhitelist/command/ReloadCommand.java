@@ -12,6 +12,7 @@ import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistReloadEvent;
 import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
+import voidpointer.spigot.voidwhitelist.papi.PapiLocale;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
@@ -24,6 +25,7 @@ public final class ReloadCommand extends Command {
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static LocaleLog guiLocale;
+    @Autowired private static PapiLocale papiLocale;
     @Autowired(mapId="plugin")
     private static VoidWhitelistPlugin plugin;
     @Autowired private static StorageFactory storageFactory;
@@ -43,6 +45,7 @@ public final class ReloadCommand extends Command {
                 reloadConfig(args);
                 reloadGeneralLocale(args);
                 reloadGuiLocale(args);
+                papiLocale.reload(); // TODO notify about reload? meh
                 reloadStorage(args);
             }
         });
