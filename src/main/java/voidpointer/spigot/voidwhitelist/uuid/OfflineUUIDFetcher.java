@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public final class OfflineUUIDFetcher {
+final class OfflineUUIDFetcher {
     private static final Cache<String, UUID> offlineUuidCache = CacheBuilder.newBuilder()
             .expireAfterAccess(6, TimeUnit.HOURS)
             .build();

@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public final class OnlineUUIDFetcher {
+final class OnlineUUIDFetcher {
     private static final String UUID_API_URL = "https://api.mojang.com/users/profiles/minecraft/";
     private static final Gson gson = new GsonBuilder().create();
     @AutowiredLocale private static LocaleLog log;
