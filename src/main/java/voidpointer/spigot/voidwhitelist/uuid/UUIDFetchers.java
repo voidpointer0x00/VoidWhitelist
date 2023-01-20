@@ -12,7 +12,7 @@
  *  
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.net;
+package voidpointer.spigot.voidwhitelist.uuid;
 
 import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public final class DefaultUUIDFetcher {
+public final class UUIDFetchers {
     private static Function<String, CompletableFuture<Optional<UUID>>> defaultMethod;
 
     public static void updateMode(final boolean isOnlineMode) {
@@ -32,15 +32,11 @@ public final class DefaultUUIDFetcher {
                 : OfflineUUIDFetcher::getUUID;
     }
 
-    public static CompletableFuture<Optional<UUID>> getUUID(final String name) {
-        return defaultMethod.apply(name);
-    }
-
     public static UUIDFetcher of(final Collection<DefinedOption> options) {
         if (options.contains(UuidOptions.ONLINE))
             return OnlineUUIDFetcher::getUUID;
         else if (options.contains(UuidOptions.OFFLINE))
             return OfflineUUIDFetcher::getUUID;
-        return DefaultUUIDFetcher::getUUID;
+        return defaultMethod::apply;
     }
 }

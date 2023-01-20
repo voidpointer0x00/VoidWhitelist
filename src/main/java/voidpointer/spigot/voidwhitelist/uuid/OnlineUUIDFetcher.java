@@ -12,7 +12,7 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.net;
+package voidpointer.spigot.voidwhitelist.uuid;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -70,7 +70,7 @@ public final class OnlineUUIDFetcher {
         }
     }
 
-    protected static String idToUuid(final String id) {
+    static String idToUuid(final String id) {
         StringBuilder uuidBuilder = new StringBuilder(id.length() + 4);
         for (int index = 0; index < id.length(); index++) {
             uuidBuilder.append(id.charAt(index));

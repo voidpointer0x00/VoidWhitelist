@@ -12,12 +12,14 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.net;
+package voidpointer.spigot.voidwhitelist.uuid;
 
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-public interface UUIDFetcher {
-    CompletableFuture<Optional<UUID>> getUUID(final String name);
+@NoArgsConstructor
+@AllArgsConstructor
+final class MojangUUIDResponse {
+    String name;
+    String id;
 }

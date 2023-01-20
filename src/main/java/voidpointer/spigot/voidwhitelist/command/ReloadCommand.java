@@ -11,10 +11,10 @@ import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistReloadEvent;
-import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
 
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
@@ -50,7 +50,7 @@ public final class ReloadCommand extends Command {
 
     private void reloadConfig(final Args args) {
         config.reload();
-        DefaultUUIDFetcher.updateMode(config.isUUIDModeOnline());
+        UUIDFetchers.updateMode(config.isUUIDModeOnline());
         locale.localize(CONFIG_RELOADED).send(args.getSender());
     }
 

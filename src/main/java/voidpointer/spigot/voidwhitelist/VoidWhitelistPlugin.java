@@ -39,10 +39,10 @@ import voidpointer.spigot.voidwhitelist.listener.WhitelistReconnectListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistReloadListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistRemovedListener;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
-import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
 
 import java.io.File;
 
@@ -69,7 +69,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         whitelistConfig = new WhitelistConfig(this);
         guiLocale = new GuiConfig(this, whitelistConfig).getLocaleLog();
         eventManager = new EventManager(this);
-        DefaultUUIDFetcher.updateMode(whitelistConfig.isUUIDModeOnline());
+        UUIDFetchers.updateMode(whitelistConfig.isUUIDModeOnline());
 
         getLogger().info("Resolving locale dependencies...");
         LocaleAnnotationResolver.resolve(this);
