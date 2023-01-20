@@ -37,6 +37,12 @@ public final class UUIDFetchers {
             return OnlineUUIDFetcher::getUUID;
         else if (options.contains(UuidOptions.OFFLINE))
             return OfflineUUIDFetcher::getUUID;
+        else if (options.contains(UuidOptions.XUID))
+            return XuidFetcher.isFloodgateSupported() ? XuidFetcher::fetch : UUIDFetchers::fetchEmptyUuid;
         return defaultMethod::apply;
+    }
+
+    private static CompletableFuture<Optional<UUID>> fetchEmptyUuid(final String name) {
+        return CompletableFuture.completedFuture(Optional.empty());
     }
 }
