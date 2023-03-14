@@ -21,7 +21,7 @@ import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 
 public enum UuidOptions implements DefinedOption {
-    ONLINE, OFFLINE;
+    ONLINE, OFFLINE, XUID;
     private static final String patternFormat = "^--?%s$";
 
     private final Pattern pattern;

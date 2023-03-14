@@ -24,8 +24,8 @@ import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
-import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,7 +61,7 @@ public final class InfoCommand extends Command {
             if (uuidOptional.isEmpty()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
-                        .set("player", args.get(0))
+                        .set("player", args.isEmpty() ? args.getPlayer().getDisplayName() : args.get(0))
                         .set("date", null)
                         .send(args.getSender());
                 return;
@@ -77,7 +77,7 @@ public final class InfoCommand extends Command {
         if (args.isEmpty())
             return CompletableFuture.completedFuture(Optional.of(args.getPlayer().getUniqueId()));
         else
-            return DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(args.get(0));
+            return UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0));
     }
 
     private boolean isSelfConsole(final Args args) {
@@ -93,7 +93,7 @@ public final class InfoCommand extends Command {
         else
             message = locale.localize(INFO_WHITELISTED);
         message.set("player-details", locale.localize(PLAYER_DETAILS))
-                .set("player", args.get(0))
+                .set("player", args.isEmpty() ? args.getPlayer().getDisplayName() : args.get(0))
                 .set("uuid", uuid.toString())
                 .send(args.getSender());
     }

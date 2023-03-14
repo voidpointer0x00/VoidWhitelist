@@ -139,7 +139,9 @@ public abstract class Command implements CommandExecutor, TabCompleter {
         return completeOption0(optionStart);
     }
 
-    protected final List<String> completeOption(final String optionStart) {
+    /** @throws IllegalArgumentException if the given optionStart argument is not an option
+     * (does not have a dash prefix) */
+    protected final List<String> completeOption(final String optionStart) throws IllegalArgumentException {
         if (!optionStart.startsWith("-"))
             throw new IllegalArgumentException("Option must start with \"-\" prefix");
         return completeOption0(optionStart);

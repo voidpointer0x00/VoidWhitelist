@@ -26,8 +26,8 @@ import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
-import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +59,7 @@ public class RemoveCommand extends Command {
 
     @Override public void execute(final Args args) {
         final String name = args.get(0);
-        DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
+        UUIDFetchers.of(args.getDefinedOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
             if (uuidOptional.isEmpty()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
