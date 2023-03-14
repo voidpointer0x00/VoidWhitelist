@@ -61,7 +61,7 @@ public final class InfoCommand extends Command {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
-                        .set("player", args.get(0))
+                        .set("player", args.isEmpty() ? args.getPlayer().getDisplayName() : args.get(0))
                         .set("date", null)
                         .send(args.getSender());
                 return;
