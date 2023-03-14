@@ -39,6 +39,8 @@ import voidpointer.spigot.voidwhitelist.listener.WhitelistReconnectListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistReloadListener;
 import voidpointer.spigot.voidwhitelist.listener.WhitelistRemovedListener;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
+import voidpointer.spigot.voidwhitelist.papi.PapiLocale;
+import voidpointer.spigot.voidwhitelist.papi.TimeLeftExpansion;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
@@ -56,6 +58,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Dependency private static EventManager eventManager;
     @Dependency private static StorageFactory storageFactory;
     @Dependency private static KickTaskScheduler kickTaskScheduler;
+    @Dependency private static PapiLocale papiLocale;
     @Dependency(id="plugin")
     private static VoidWhitelistPlugin instance;
 
@@ -68,6 +71,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         instance = this;
         whitelistConfig = new WhitelistConfig(this);
         guiLocale = new GuiConfig(this, whitelistConfig).getLocaleLog();
+        papiLocale = new PapiLocale(this);
         eventManager = new EventManager(this);
         UUIDFetchers.updateMode(whitelistConfig.isUUIDModeOnline());
 
@@ -83,6 +87,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         Injector.inject(this);
         new WhitelistCommand().register(this);
         registerListeners();
+        hookPapi();
 
         if (whitelistConfig.isWhitelistEnabled())
             eventManager.callAsyncEvent(new WhitelistEnabledEvent());
@@ -107,6 +112,11 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         new WhitelistAddedListener().register();
         new WhitelistRemovedListener().register(this);
         new QuitListener().register(this);
+    }
+
+    private void hookPapi() {
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null)
+            new TimeLeftExpansion().register();
     }
 
     private String getLanguage() {
