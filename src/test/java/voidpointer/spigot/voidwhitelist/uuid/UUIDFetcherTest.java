@@ -12,10 +12,9 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.net;
+package voidpointer.spigot.voidwhitelist.uuid;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import manifold.ext.rt.api.Jailbreak;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,7 +46,7 @@ class UUIDFetcherTest {
 
     static Stream<Arguments> getOnlineFetcher() {
         return Stream.of(
-                arguments((UUIDFetcher)OnlineUUIDFetcher::getUUID, "_voidpointer", "c55a15b5-896f-4c09-9c07-75ad36572aad"),
+                arguments((UUIDFetcher) OnlineUUIDFetcher::getUUID, "_voidpointer", "c55a15b5-896f-4c09-9c07-75ad36572aad"),
                 arguments((UUIDFetcher)OnlineUUIDFetcher::getUUID, "Notch", "069a79f4-44e9-4726-a5be-fca90e38aaf5"),
                 arguments((UUIDFetcher)OnlineUUIDFetcher::getUUID, "Dinnerbone", "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"),
                 arguments((UUIDFetcher)OnlineUUIDFetcher::getUUID, "slicedlime", "9c2ac958-5de9-45a8-8ca1-4122eb4c0b9e"),
@@ -57,7 +56,7 @@ class UUIDFetcherTest {
 
     static Stream<Arguments> getOfflineFetcher() {
         return Stream.of(
-                arguments((UUIDFetcher)OfflineUUIDFetcher::getUUID, "_voidpointer", "3d6e6616-8029-3e86-8d40-8b5bbbd0cc2a"),
+                arguments((UUIDFetcher) OfflineUUIDFetcher::getUUID, "_voidpointer", "3d6e6616-8029-3e86-8d40-8b5bbbd0cc2a"),
                 arguments((UUIDFetcher)OfflineUUIDFetcher::getUUID, "Notch", "b50ad385-829d-3141-a216-7e7d7539ba7f"),
                 arguments((UUIDFetcher)OfflineUUIDFetcher::getUUID, "Dinnerbone", "4d258a81-2358-3084-8166-05b9faccad80"),
                 arguments((UUIDFetcher)OfflineUUIDFetcher::getUUID, "slicedlime", "0310df31-0906-37c1-b92c-231dd867f622"),
@@ -81,8 +80,7 @@ class UUIDFetcherTest {
     @ParameterizedTest
     @MethodSource("getIdUuid")
     void testIdToUuid(String id, String expect) {
-        @Jailbreak OnlineUUIDFetcher uuidFetcher = new OnlineUUIDFetcher();
-        assertEquals(expect, uuidFetcher.idToUuid(id));
+        assertEquals(expect, OnlineUUIDFetcher.idToUuid(id));
     }
 
     static Stream<Arguments> getIdUuid() {

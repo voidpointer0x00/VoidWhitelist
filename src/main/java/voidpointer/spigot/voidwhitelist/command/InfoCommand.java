@@ -24,8 +24,8 @@ import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
-import voidpointer.spigot.voidwhitelist.net.DefaultUUIDFetcher;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +77,7 @@ public final class InfoCommand extends Command {
         if (args.isEmpty())
             return CompletableFuture.completedFuture(Optional.of(args.getPlayer().getUniqueId()));
         else
-            return DefaultUUIDFetcher.of(args.getDefinedOptions()).getUUID(args.get(0));
+            return UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0));
     }
 
     private boolean isSelfConsole(final Args args) {

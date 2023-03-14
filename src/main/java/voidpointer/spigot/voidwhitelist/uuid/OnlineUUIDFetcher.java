@@ -12,7 +12,7 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.net;
+package voidpointer.spigot.voidwhitelist.uuid;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public final class OnlineUUIDFetcher {
+final class OnlineUUIDFetcher {
     private static final String UUID_API_URL = "https://api.mojang.com/users/profiles/minecraft/";
     private static final Gson gson = new GsonBuilder().create();
     @AutowiredLocale private static LocaleLog log;
@@ -70,7 +70,7 @@ public final class OnlineUUIDFetcher {
         }
     }
 
-    protected static String idToUuid(final String id) {
+    static String idToUuid(final String id) {
         StringBuilder uuidBuilder = new StringBuilder(id.length() + 4);
         for (int index = 0; index < id.length(); index++) {
             uuidBuilder.append(id.charAt(index));
