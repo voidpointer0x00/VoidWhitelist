@@ -93,7 +93,7 @@ public final class InfoCommand extends Command {
         else
             message = locale.localize(INFO_WHITELISTED);
         message.set("player-details", locale.localize(PLAYER_DETAILS))
-                .set("player", args.get(0))
+                .set("player", args.isEmpty() ? args.getPlayer().getDisplayName() : args.get(0))
                 .set("uuid", uuid.toString())
                 .send(args.getSender());
     }
