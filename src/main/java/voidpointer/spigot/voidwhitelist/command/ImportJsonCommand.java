@@ -88,6 +88,8 @@ public class ImportJsonCommand extends Command {
     @Override public List<String> tabComplete(final Args args) {
         if (args.isEmpty())
             return emptyList();
-        return completeOption(args.getLast());
+        if (args.getLastArg().isPresent() && args.getLastArg().get().isOption())
+            return completeOption(args.getLast());
+        return emptyList();
     }
 }
