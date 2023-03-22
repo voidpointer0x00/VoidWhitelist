@@ -74,7 +74,7 @@ final class DbmsFactory {
     }
 
     private String mysqlConnectionUrl(final String host, final int port, final String database) {
-        return format("jdbc:mysql://%s:%d/%s", host, port != -1 ? port : MYSQL_PORT, database);
+        return format("jdbc:mysql://%s:%d/%s?autoReconnect=true", host, port != -1 ? port : MYSQL_PORT, database);
     }
 
     private ConnectionSource psql(final OrmliteConfig ormliteConfig) {
@@ -92,6 +92,6 @@ final class DbmsFactory {
     }
 
     private String psqlConnectionUrl(final String host, final int port, final String database) {
-        return format("jdbc:postgresql://%s:%d/%s", host, port != -1 ? port : PSQL_PORT, database);
+        return format("jdbc:postgresql://%s:%d/%s?autoReconnect=true", host, port != -1 ? port : PSQL_PORT, database);
     }
 }
