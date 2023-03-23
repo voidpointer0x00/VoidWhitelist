@@ -33,7 +33,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -113,16 +112,23 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int limit) {
-        return supplyAsync(() -> query(this::findAll0, null, (long) limit))
-                .exceptionally(this::onFindAllException);
+        return supplyAsync(() -> findAll(null, (long) limit)); // rewrite using null
     }
 
     @Override public CompletableFuture<Set<Whitelistable>> findAll(final int offset, final int limit) {
-        return supplyAsync(() -> query(this::findAll0, offset + 1L, (long) limit))
-                .exceptionally(this::onFindAllException);
+        return supplyAsync(() -> findAll(offset + 1L, (long) limit));
     }
 
-    private Set<Whitelistable> findAll0(final Long offset, final Long limit) throws Exception {
+    private Set<Whitelistable> findAll(final Long offset, final Long limit) {
+        try {
+            return findAll0(offset, limit);
+        } catch (final SQLException sqlException) {
+            return tryToReconnectIfDisconnected(sqlException, () -> findAllQuietly(offset, limit),
+                    () -> onFindAllException(sqlException));
+        }
+    }
+
+    private Set<Whitelistable> findAll0(final Long offset, final Long limit) throws SQLException {
         requireConnection();
         List<WhitelistableModel> result = dao.queryBuilder()
                 .offset(offset)
@@ -131,8 +137,16 @@ public final class OrmliteWhitelistService implements WhitelistService {
         return unmodifiableSet(new HashSet<>(result));
     }
 
+    private Set<Whitelistable> findAllQuietly(final Long offset, final Long limit) {
+        try {
+            return findAll0(offset, limit);
+        } catch (SQLException sqlException) {
+            return onFindAllException(sqlException);
+        }
+    }
+
     private Set<Whitelistable> onFindAllException(final Throwable thrown) {
-        log.warn("Couldn't execute find all query: {0}", thrown.getMessage());
+        log.warn("Could not execute find all query: {0}", thrown.getMessage());
         return emptySet();
     }
 
@@ -150,9 +164,14 @@ public final class OrmliteWhitelistService implements WhitelistService {
     private <T> T tryToReconnectIfDisconnected(final SQLException sqlException, final Supplier<T> ifReconnected,
                                                final Supplier<T> ifFailed) {
         if (isDisconnectedAndCanReconnect(sqlException.getMessage())) {
+            log.warn("Lost database connection! Trying to reconnect...");
             failedToReconnect = !reconnect().isSuccess();
-            if (!failedToReconnect)
+            if (!failedToReconnect) {
+                log.info("Reconnected successfully!");
                 return ifReconnected.get();
+            } else {
+                log.severe("Failed to reconnect!");
+            }
         }
         return ifFailed.get();
     }
@@ -176,7 +195,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     private Optional<Whitelistable> onFindException(final Throwable thrown) {
-        log.warn("Couldn't find whitelistable: {0}", thrown.getMessage());
+        log.warn("Could not find whitelistable: {0}", thrown.getMessage());
         return Optional.empty();
     }
 
@@ -221,45 +240,89 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
-        return supplyAsync(() -> ofNullable(query(this::add0, new WhitelistableModel(uuid, name, expiresAt))))
-                .exceptionally(this::onAddException);
+        return supplyAsync(() -> {
+            try {
+                return add0(uuid, name, expiresAt);
+            } catch (final SQLException sqlException) {
+                return tryToReconnectIfDisconnected(sqlException, () -> addQuietly(uuid, name, expiresAt),
+                        () -> onAddException(sqlException));
+            }
+        });
     }
 
-    private Whitelistable add0(final WhitelistableModel whitelistable) throws SQLException {
+    private Optional<Whitelistable> addQuietly(final UUID uuid, final String name, final Date expiresAt) {
+        try {
+            return add0(uuid, name, expiresAt);
+        } catch (SQLException sqlException) {
+            return onAddException(sqlException);
+        }
+    }
+
+    private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt) throws SQLException {
+        final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
         requireConnection();
         dao.createOrUpdate(whitelistable);
-        return whitelistable;
+        return Optional.of(whitelistable);
     }
 
     private Optional<Whitelistable> onAddException(final Throwable thrown) {
-        log.warn("Couldn't add whitelistable: {0}", thrown.getMessage());
+        log.warn("Could not add whitelistable: {0}", thrown.getMessage());
         return Optional.empty();
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable) {
-        return supplyAsync(() -> ofNullable(query(this::update0, whitelistable)))
-                .exceptionally(this::onUpdateException);
+        return supplyAsync(() -> {
+            try {
+                return update0(whitelistable);
+            } catch (final SQLException sqlException) {
+                return tryToReconnectIfDisconnected(sqlException, () -> updateQuietly(whitelistable),
+                        () -> onUpdateException(sqlException));
+            }
+        });
     }
 
-    private Whitelistable update0(final Whitelistable whitelistable) throws SQLException {
+    private Optional<Whitelistable> updateQuietly(final Whitelistable whitelistable) {
+        try {
+            return update0(whitelistable);
+        } catch (final SQLException sqlException) {
+            return onUpdateException(sqlException);
+        }
+    }
+
+    private Optional<Whitelistable> update0(final Whitelistable whitelistable) throws SQLException {
         requireConnection();
         if (whitelistable instanceof WhitelistableModel)
             dao.update((WhitelistableModel) whitelistable);
         else
             dao.update(WhitelistableModel.copyOf(whitelistable));
-        return whitelistable;
+        return Optional.of(whitelistable);
     }
 
     private Optional<Whitelistable> onUpdateException(final Throwable thrown) {
-        log.warn("Couldn't update whitelistable: {0}", thrown.getMessage());
+        log.warn("Could not update whitelistable: {0}", thrown.getMessage());
         return Optional.empty();
     }
 
     @Override public CompletableFuture<Boolean> remove(final Whitelistable whitelistable) {
-        return supplyAsync(() -> queryBool(this::remove0, whitelistable)).exceptionally(this::onRemoveException);
+        return supplyAsync(() -> {
+            try {
+                return remove0(whitelistable);
+            } catch (final SQLException sqlException) {
+                return tryToReconnectIfDisconnected(sqlException, () -> removeQuietly(whitelistable),
+                        () -> onRemoveException(sqlException));
+            }
+        });
     }
 
-    private Boolean remove0(final Whitelistable whitelistable) throws Exception {
+    private <T> Boolean removeQuietly(final Whitelistable whitelistable) {
+        try {
+            return remove0(whitelistable);
+        } catch (final SQLException sqlException) {
+            return onRemoveException(sqlException);
+        }
+    }
+
+    private Boolean remove0(final Whitelistable whitelistable) throws SQLException {
         requireConnection();
         if (whitelistable instanceof WhitelistableModel)
             dao.delete((WhitelistableModel) whitelistable);
@@ -269,7 +332,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     private Boolean onRemoveException(final Throwable thrown) {
-        log.warn("Couldn't remove whitelistable: {0}", thrown.getMessage());
+        log.warn("Could not remove whitelistable: {0}", thrown.getMessage());
         return false;
     }
 
