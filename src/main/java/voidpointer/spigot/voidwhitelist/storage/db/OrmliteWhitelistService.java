@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
@@ -54,6 +55,11 @@ public final class OrmliteWhitelistService implements WhitelistService {
     private Dao<WhitelistableModel, UUID> dao;
     private final OrmliteConfig ormliteConfig;
     private DatabaseSyncTask syncTask;
+    /* !ONLY! for internal use in case the plugin got disconnected from dbms
+     *  indicates whether it is needed to try reconnecting after failing a query
+     *  or if we already tried that (in which case trying to reconnect once again will
+     *  only lead to an infinite recursion: try query->fail->reconnect->repeat) */
+    private boolean failedToReconnect = false;
 
     public OrmliteWhitelistService(final Plugin plugin) {
         this.plugin = plugin;
@@ -88,6 +94,7 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public void shutdown() {
+        failedToReconnect = false;
         if (syncTask != null)
             syncTask.cancel();
         if (ormliteConfig.getConnectionSource() != null)
@@ -126,13 +133,42 @@ public final class OrmliteWhitelistService implements WhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> find(final UUID uuid) {
-        return supplyAsync(() -> ofNullable(query(this::find0, uuid)))
-                .exceptionally(this::onFindException);
+        return supplyAsync(() -> {
+            try {
+                return find0(uuid);
+            } catch (final SQLException sqlException) {
+                return tryToReconnectIfDisconnected(sqlException, () -> findQuietly(uuid),
+                        () -> onFindException(sqlException));
+            }
+        });
     }
 
-    private Whitelistable find0(final UUID uuid) throws SQLException {
+    private <T> T tryToReconnectIfDisconnected(final SQLException sqlException, final Supplier<T> ifReconnected,
+                                               final Supplier<T> ifFailed) {
+        if (isDisconnectedAndCanReconnect(sqlException.getMessage())) {
+            failedToReconnect = !reconnect().isSuccess();
+            if (!failedToReconnect)
+                return ifReconnected.get();
+        }
+        return ifFailed.get();
+    }
+
+    private boolean isDisconnectedAndCanReconnect(final String exceptionMessage) {
+        return !failedToReconnect && (exceptionMessage.contains("wait_timeout")
+                || exceptionMessage.contains("Communications link failure"));
+    }
+
+    private Optional<Whitelistable> find0(final UUID uuid) throws SQLException {
         requireConnection();
-        return dao.queryForId(uuid);
+        return ofNullable(dao.queryForId(uuid));
+    }
+
+    private Optional<Whitelistable> findQuietly(final UUID uuid) {
+        try {
+            return find0(uuid);
+        } catch (final SQLException sqlException) {
+            return onFindException(sqlException);
+        }
     }
 
     private Optional<Whitelistable> onFindException(final Throwable thrown) {
