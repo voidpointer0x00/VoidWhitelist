@@ -28,7 +28,7 @@
 
     <description>UUID based temporal whitelist. Supports JSON, H2, MySQL and PostrgreSQL storage.</description>
     <properties>
-        <version.stability>unstable</version.stability>
+        <version.stability>stable</version.stability>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
