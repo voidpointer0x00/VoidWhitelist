@@ -103,7 +103,11 @@ public final class OrmliteWhitelistService implements WhitelistService {
 
     public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {
         return supplyAsync(() -> {
-            requireConnection();
+            try {
+                requireConnection();
+            } catch (final SQLException sqlException) {
+                return null;
+            }
             return dao.getWrappedIterable();
         });
     }
@@ -199,9 +203,9 @@ public final class OrmliteWhitelistService implements WhitelistService {
     private Set<Whitelistable> addAll(
             final CheckedBiConsumer<WhitelistableModel, Set<WhitelistableModel>> addFunction,
             final Collection<Whitelistable> all) {
-        requireConnection();
         Set<WhitelistableModel> added = new HashSet<>();
         try {
+            requireConnection();
             return dao.callBatchTasks(() -> {
                 for (final Whitelistable whitelistable : all) {
                     if (whitelistable instanceof WhitelistableModel)
@@ -269,39 +273,9 @@ public final class OrmliteWhitelistService implements WhitelistService {
         return false;
     }
 
-    private <T, U, R> R query(final CheckedBiFunction<T, U, R> function, T first, U second) {
-        try {
-            return function.apply(first, second);
-        } catch (final Exception exception) {
-            reportQueryException(exception);
-            return null;
-        }
-    }
-
-    private <T> Boolean queryBool(final CheckedFunction<T, Boolean> function, T argument) {
-        try {
-            return function.apply(argument);
-        } catch (final Exception exception) {
-            reportQueryException(exception);
-            return Boolean.FALSE;
-        }
-    }
-
-    private <T, R> R query(final CheckedFunction<T, R> function, T argument) {
-        try {
-            return function.apply(argument);
-        } catch (final Exception exception) {
-            reportQueryException(exception);
-            return null;
-        }
-    }
-
-    private void reportQueryException(final Throwable thrown) {
-        log.warn("Unable to perform a database query: {0}", thrown.getMessage());
-    }
-
-    private void requireConnection() {
-        Objects.requireNonNull(dao, "Database connection is not established");
+    private void requireConnection() throws SQLException {
+        if (dao == null)
+            throw new SQLException("Database connection is not established: dao == null");
     }
 
     private void disableOrmliteLogging() {
