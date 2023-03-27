@@ -176,7 +176,7 @@ public final class WhitelistGui extends AbstractGui {
     }
 
     private boolean isLoading() {
-        return !loadingTaskRef.refersTo(null) && requireNonNull(loadingTaskRef.get()).isLoading();
+        return (loadingTaskRef != null) && !loadingTaskRef.refersTo(null) && requireNonNull(loadingTaskRef.get()).isLoading();
     }
 
     private boolean isAtLastPage() {

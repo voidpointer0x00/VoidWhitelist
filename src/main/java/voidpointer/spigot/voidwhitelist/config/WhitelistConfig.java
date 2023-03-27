@@ -94,11 +94,14 @@ public final class WhitelistConfig {
 
     public StorageMethod getStorageMethod() {
         if (plugin.getConfig().isSet(STORAGE_METHOD_PATH)) {
-            String storageMethodName = plugin.getConfig().getString(STORAGE_METHOD_PATH);
-            for (StorageMethod storageMethod : StorageMethod.values()) {
+            final String storageMethodName = plugin.getConfig().getString(STORAGE_METHOD_PATH);
+            if ("serial".equalsIgnoreCase(storageMethodName))
+                /* backwards compatibility (though I can hardly imagine someone actually used serial) */ {
+                return StorageMethod.JSON;
+            }
+            for (StorageMethod storageMethod : StorageMethod.values())
                 if (storageMethod.toString().equalsIgnoreCase(storageMethodName))
                     return storageMethod;
-            }
             reportUnknown(STORAGE_METHOD_PATH, DEFAULT_STORAGE_METHOD.toString().toLowerCase());
         } else {
             plugin.getConfig().set(STORAGE_METHOD_PATH, DEFAULT_STORAGE_METHOD.toString().toLowerCase());

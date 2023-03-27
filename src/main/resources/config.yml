@@ -13,9 +13,6 @@ language: en
 #   Possible values:
 #   json — Simple JSON-based whitelist file. All whitelistable players are
 #       once loaded and then cached. Saves on each update.
-#   serial — NOT RECOMMENDED serialization-based storage. All whitelistable
-#         players are once loaded and then cached. Saves on each update.
-#         Does NOT support cross-version automatic upgrades.
 #   database — connects to database with database.yml configuration.
 storage-method: json
 

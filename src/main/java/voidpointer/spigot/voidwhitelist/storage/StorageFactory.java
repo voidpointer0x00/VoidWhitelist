@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
-import voidpointer.spigot.voidwhitelist.storage.serial.SerialWhitelistService;
 
 @RequiredArgsConstructor
 public final class StorageFactory {
@@ -29,8 +28,6 @@ public final class StorageFactory {
         switch (storageMethod) {
             case JSON:
                 return new JsonWhitelistService(plugin.getDataFolder());
-            case SERIAL:
-                return new SerialWhitelistService(plugin.getDataFolder());
             case DATABASE:
                 return new OrmliteWhitelistService(plugin);
             default:
