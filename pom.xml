@@ -21,7 +21,7 @@
 
     <groupId>voidpointer.spigot</groupId>
     <artifactId>voidwhitelist</artifactId>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
     <packaging>jar</packaging>
 
     <name>VoidWhitelist</name>
@@ -302,7 +302,7 @@
         <dependency>
             <groupId>com.github.stefvanschie.inventoryframework</groupId>
             <artifactId>IF</artifactId>
-            <version>0.10.5</version>
+            <version>0.10.9</version>
         </dependency>
         <dependency>
             <groupId>com.j256.ormlite</groupId>
