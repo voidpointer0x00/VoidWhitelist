@@ -67,6 +67,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Override public void onLoad() {
         instance = this;
         whitelistConfig = new WhitelistConfig(this);
+        whitelistConfig.runMigrations();
         guiLocale = new GuiConfig(this, whitelistConfig).getLocaleLog();
         eventManager = new EventManager(this);
         UUIDFetchers.updateMode(whitelistConfig.isUUIDModeOnline());
