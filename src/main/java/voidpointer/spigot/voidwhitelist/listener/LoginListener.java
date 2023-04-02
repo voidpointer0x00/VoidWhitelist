@@ -46,7 +46,7 @@ public final class LoginListener implements Listener {
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
 
-    @EventHandler public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
+    @EventHandler public void disallowIfNotWhitelisted(final AsyncPlayerPreLoginEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
@@ -59,7 +59,7 @@ public final class LoginListener implements Listener {
     }
 
     @EventHandler(priority=EventPriority.MONITOR)
-    public void onJoin(final PlayerJoinEvent event) {
+    public void scheduleKickOnJoin(final PlayerJoinEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
