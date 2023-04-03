@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
 
@@ -36,19 +37,32 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public final class WhitelistableModel extends AbstractWhitelistable {
-    @DatabaseField(id=true, dataType=DataType.UUID)
+    @DatabaseField(columnName="unique_id", id=true, dataType=DataType.UUID)
     @EqualsAndHashCode.Include
     private UUID uniqueId;
-    @DatabaseField
+    @DatabaseField(columnName="name")
     private String name;
-    @DatabaseField(dataType=DataType.DATE)
+    @DatabaseField(columnName="expires_at", dataType=DataType.DATE)
     private Date expiresAt;
+    // TODO rework OrmliteWhitelistableService and OrmliteConfig, so that
+    //  it will run migrations to add this particular field and allow more
+    //  flexibility later
+    // At this stage database storage won't work
+    @DatabaseField(columnName="times_auto_whitelisted")
+    private int timesAutoWhitelisted = 0;
+
+    public WhitelistableModel(final @NotNull UUID uniqueId, final String name, final Date expiresAt) {
+        this.uniqueId = uniqueId;
+        this.name = name;
+        this.expiresAt = expiresAt;
+    }
 
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);
     }
 
     public static WhitelistableModel copyOf(final Whitelistable whitelistable) {
-        return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(), whitelistable.getExpiresAt());
+        return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(),
+                whitelistable.getExpiresAt(), whitelistable.getTimesAutoWhitelisted());
     }
 }
