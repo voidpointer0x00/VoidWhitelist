@@ -21,7 +21,7 @@
 
     <groupId>voidpointer.spigot</groupId>
     <artifactId>voidwhitelist</artifactId>
-    <version>0.9.6</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>VoidWhitelist</name>
