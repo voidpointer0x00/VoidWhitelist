@@ -177,6 +177,8 @@ public final class WhitelistGui extends AbstractGui {
     private boolean isLoading() {
         // TODO: drop Java 8 support and use Java 16 API after release
         //  loadingTaskRef.refersTo(null) instead of (null != loadingTask)
+        if (loadingTaskRef == null)
+            return false;
         AddProfileSkullTask loadingTask = loadingTaskRef.get();
         return (null != loadingTask) && loadingTask.isLoading();
     }
