@@ -23,15 +23,18 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
+import voidpointer.spigot.voidwhitelist.message.KickReason;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST;
@@ -46,25 +49,51 @@ public final class LoginListener implements Listener {
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
 
-    @EventHandler(priority=EventPriority.LOW)
-    public void automaticallyAddToWhitelist(final AsyncPlayerPreLoginEvent event) {
-        if (!(whitelistConfig.isWhitelistEnabled() && whitelistConfig.isAutoWhitelistEnabled()))
-            return;
-        if (whitelistConfig.getStrategyPredicate().negate().test(event.getUniqueId()))
-            return; /* the logging player does not meet selected strategy */
-    }
-
-    @EventHandler(priority=EventPriority.HIGH)
-    public void disallowIfNotWhitelisted(final AsyncPlayerPreLoginEvent event) {
+    @EventHandler(priority=EventPriority.NORMAL)
+    public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
+        /*  This listener disallows login if the connecting user is not on the whitelist,
+         * and due to either configuration or exceeding auto-whitelist.max-repeats limit
+         * we cannot automatically add the user to the whitelist. */
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        Optional<Whitelistable> whitelistable = whitelistService.find(event.getUniqueId()).join();
+        Optional<Whitelistable> user = whitelistService.find(event.getUniqueId()).join();
+        Optional<KickReason> optionalKickReason = getKickReasonFor(user.orElse(null));
+        if (!optionalKickReason.isPresent())
+            return;
 
-        if (!whitelistable.isPresent())
-            event.disallow(KICK_WHITELIST, locale.localize(WhitelistMessage.of(NOT_ALLOWED)).getRawMessage());
-        else if (!whitelistable.get().isAllowedToJoin())
-            event.disallow(KICK_WHITELIST, locale.localize(WhitelistMessage.of(EXPIRED)).getRawMessage());
+        if (!whitelistConfig.isAutoWhitelistEnabled()
+                || whitelistConfig.getStrategyPredicate().negate().test(event.getUniqueId())
+                || (whitelistConfig.getAutoMaxRepeats() <= 0)) {
+            disallow(event, optionalKickReason.get());
+            return;
+        }
+        if (user.isPresent() && (user.get().getTimesAutoWhitelisted() >= whitelistConfig.getAutoMaxRepeats())) {
+            disallow(event, optionalKickReason.get());
+            return;
+        }
+        final Optional<Date> autoDuration = whitelistConfig.getAutoDuration();
+        if (!autoDuration.isPresent()) {
+            locale.warn("Could not apply auto-whitelist to user {0} because of invalid duration {1}",
+                    event.getUniqueId(), whitelistConfig.getRawAutoDuration());
+            disallow(event, optionalKickReason.get());
+            return;
+        }
+        whitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get());
+        locale.info("Automatically whitelisted {0} ({1}) for {2}", event.getUniqueId(), event.getName(), autoDuration.get());
+    }
+
+    private Optional<KickReason> getKickReasonFor(final @Nullable Whitelistable whitelistable) {
+        if (whitelistable == null)
+            return Optional.of(NOT_ALLOWED);
+        else if (!whitelistable.isAllowedToJoin())
+            return Optional.of(EXPIRED);
+        else
+            return Optional.empty();
+    }
+
+    private void disallow(final AsyncPlayerPreLoginEvent event, final KickReason reason) {
+        event.disallow(KICK_WHITELIST, locale.localize(WhitelistMessage.of(reason)).getRawMessage());
     }
 
     @EventHandler(priority=EventPriority.MONITOR)

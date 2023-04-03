@@ -20,9 +20,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.migration.WhitelistConfigMigrationFactory;
+import voidpointer.spigot.voidwhitelist.date.Duration;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
 import java.io.File;
+import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -111,6 +114,18 @@ public final class WhitelistConfig {
 
     public Predicate<UUID> getStrategyPredicate() {
         return StrategyPredicateFactory.getPredicate(plugin.getConfig().getString(AUTO_WL_STRATEGY_PATH, "newcomers"));
+    }
+
+    public int getAutoMaxRepeats() {
+        return plugin.getConfig().getInt(AUTO_WL_MAX_REPEATS_PATH, 0);
+    }
+
+    public Optional<Date> getAutoDuration() {
+        return Duration.ofEssentialsDate(getRawAutoDuration());
+    }
+
+    public String getRawAutoDuration() {
+        return plugin.getConfig().getString(AUTO_WL_DURATION_PATH, "7d");
     }
 
     public void enableWhitelist() {

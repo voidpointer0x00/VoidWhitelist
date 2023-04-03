@@ -36,6 +36,10 @@ public interface Whitelistable {
 
     UUID getUniqueId();
 
+    int getTimesAutoWhitelisted();
+
+    void setTimesAutoWhitelisted(final int timesAutoWhitelisted);
+
     String getName();
 
     void setName(final String name);

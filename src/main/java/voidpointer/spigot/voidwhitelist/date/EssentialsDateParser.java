@@ -33,6 +33,8 @@ public final class EssentialsDateParser {
             Pattern.CASE_INSENSITIVE
     );
 
+    /** @deprecated consider using {@link Duration#ofEssentialsDate(String)} instead */
+    @Deprecated
     public static long parseDate(final String date) {
         /*
          * Just formatted copy-paste from Essentials DateUtil class
