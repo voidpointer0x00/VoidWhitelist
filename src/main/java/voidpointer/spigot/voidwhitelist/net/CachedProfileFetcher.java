@@ -39,6 +39,7 @@ public final class CachedProfileFetcher {
             .expireAfterAccess(30, TimeUnit.MINUTES)
             .build();
     @AutowiredLocale private static LocaleLog log;
+    private static JsonParser jsonParser;
 
     public static ConcurrentLinkedQueue<Profile> fetchProfiles(final Iterable<Whitelistable> whitelistables) {
         ConcurrentLinkedQueue<Profile> profiles = new ConcurrentLinkedQueue<>();
@@ -60,7 +61,8 @@ public final class CachedProfileFetcher {
             return completedFuture(profilesCache.asMap().get(uniqueId).getName());
         return supplyAsync(() -> {
             try {
-                JsonElement jsonElement = JsonParser.parseReader(newConnectionReader(uniqueId));
+                //noinspection deprecation
+                JsonElement jsonElement = getJsonParser().parse(newConnectionReader(uniqueId));
                 if (!jsonElement.isJsonObject()) {
                     log.warn("Profile with name for UUID {0} not found.", uniqueId);
                     return null;
@@ -104,11 +106,19 @@ public final class CachedProfileFetcher {
 
     private static Profile requestApi0(final Whitelistable whitelistable) throws IOException {
         Profile profile = new Profile(whitelistable);
-        profile.fromJson(JsonParser.parseReader(newConnectionReader(whitelistable.getUniqueId())));
+        //noinspection deprecation
+        profile.fromJson(getJsonParser().parse(newConnectionReader(whitelistable.getUniqueId())));
         return profile;
     }
 
     private static InputStreamReader newConnectionReader(final UUID uuid) throws IOException {
         return new InputStreamReader(new URL(API_URL + uuid.toString()).openStream());
+    }
+
+    private static JsonParser getJsonParser() {
+        if (jsonParser == null)
+            //noinspection deprecation
+            jsonParser = new JsonParser();
+        return jsonParser;
     }
 }
