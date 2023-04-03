@@ -62,7 +62,7 @@ final class AutoWhitelistMigration implements ConfigMigration {
         config.set("auto-whitelist-new-players", null);
         config.set("auto-whitelist-time", null);
 
-        if (supportsComments(config)) { // TODO test on 1.18.1, 1.18, 1.17
+        if (supportsComments(config)) {
             config.setComments(WhitelistConfig.AUTO_WL_PATH, AUTO_WL_COMMENTS);
             config.setComments(WhitelistConfig.AUTO_WL_DURATION_PATH, AUTO_WL_DURATION_COMMENTS);
             config.setComments(WhitelistConfig.AUTO_WL_MAX_REPEATS_PATH, AUTO_WL_MAX_REPEATS_COMMENTS);
