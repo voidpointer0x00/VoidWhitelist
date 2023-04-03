@@ -32,10 +32,10 @@ public abstract class AbstractJsonUpdate implements JsonUpdate {
     @Getter(AccessLevel.PROTECTED)
     private static LocaleLog log;
 
-    @Override public Collection<Whitelistable> performUpdate(final JsonElement root) {
+    @Override public Collection<Whitelistable> performUpdate(final JsonElement whitelistFileRoot) {
         try {
-            Collection<Whitelistable> updated = updateJson(root);
-            root.getAsJsonObject().addProperty("version", StorageVersion.CURRENT.toString());
+            Collection<Whitelistable> updated = updateJson(whitelistFileRoot);
+            whitelistFileRoot.getAsJsonObject().addProperty("version", StorageVersion.CURRENT.toString());
             return updated;
         } catch (final NullPointerException nullPointerException) {
             log.warn("Invalid JSON data for the specified version", nullPointerException);
@@ -43,11 +43,11 @@ public abstract class AbstractJsonUpdate implements JsonUpdate {
         }
     }
 
-    private Collection<Whitelistable> updateJson(final JsonElement root) throws NullPointerException {
-        return stream(root.getAsJsonObject().getAsJsonArray("whitelist").spliterator(), true)
+    private Collection<Whitelistable> updateJson(final JsonElement whitelistableRoot) throws NullPointerException {
+        return stream(whitelistableRoot.getAsJsonObject().getAsJsonArray("whitelist").spliterator(), true)
                 .map(this::update)
                 .collect(Collectors.toList());
     }
 
-    protected abstract Whitelistable update(final JsonElement jsonElement);
+    protected abstract Whitelistable update(final JsonElement whitelistableRoot);
 }
