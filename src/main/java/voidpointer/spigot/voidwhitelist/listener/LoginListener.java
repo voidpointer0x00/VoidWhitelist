@@ -50,6 +50,8 @@ public final class LoginListener implements Listener {
     public void automaticallyAddToWhitelist(final AsyncPlayerPreLoginEvent event) {
         if (!(whitelistConfig.isWhitelistEnabled() && whitelistConfig.isAutoWhitelistEnabled()))
             return;
+        if (whitelistConfig.getStrategyPredicate().negate().test(event.getUniqueId()))
+            return; /* the logging player does not meet selected strategy */
     }
 
     @EventHandler(priority=EventPriority.HIGH)
