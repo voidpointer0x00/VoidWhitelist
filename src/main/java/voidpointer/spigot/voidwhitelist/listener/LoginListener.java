@@ -46,13 +46,13 @@ public final class LoginListener implements Listener {
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
 
-    @EventHandler(priority=EventPriority.HIGH)
+    @EventHandler(priority=EventPriority.LOW)
     public void automaticallyAddToWhitelist(final AsyncPlayerPreLoginEvent event) {
         if (!(whitelistConfig.isWhitelistEnabled() && whitelistConfig.isAutoWhitelistEnabled()))
             return;
     }
 
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority=EventPriority.HIGH)
     public void disallowIfNotWhitelisted(final AsyncPlayerPreLoginEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
