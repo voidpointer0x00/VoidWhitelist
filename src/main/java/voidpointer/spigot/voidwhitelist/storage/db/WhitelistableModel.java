@@ -23,7 +23,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
 
@@ -50,12 +49,6 @@ public final class WhitelistableModel extends AbstractWhitelistable {
     // At this stage database storage won't work
     @DatabaseField(columnName="times_auto_whitelisted")
     private int timesAutoWhitelisted = 0;
-
-    public WhitelistableModel(final @NotNull UUID uniqueId, final String name, final Date expiresAt) {
-        this.uniqueId = uniqueId;
-        this.name = name;
-        this.expiresAt = expiresAt;
-    }
 
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);

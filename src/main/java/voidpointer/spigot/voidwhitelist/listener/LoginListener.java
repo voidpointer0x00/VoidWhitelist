@@ -79,8 +79,16 @@ public final class LoginListener implements Listener {
             disallow(event, optionalKickReason.get());
             return;
         }
-        whitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get());
-        locale.info("Automatically whitelisted {0} ({1}) for {2}", event.getUniqueId(), event.getName(), autoDuration.get());
+        whitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get(),
+                user.map(usr -> usr.getTimesAutoWhitelisted() + 1).orElse(1)).thenApplyAsync(whitelistable -> {
+            if (!whitelistable.isPresent()) {
+                locale.warn("Automatic whitelisting of {0} failed, even though they were allowed to join",
+                        event.getUniqueId());
+                return whitelistable;
+            }
+            locale.info("Automatically whitelisted {0} ({1}) for {2}", event.getUniqueId(), event.getName(), autoDuration.get());
+            return whitelistable;
+        });
     }
 
     private Optional<KickReason> getKickReasonFor(final @Nullable Whitelistable whitelistable) {
