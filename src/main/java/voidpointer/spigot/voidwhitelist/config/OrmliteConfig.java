@@ -84,7 +84,6 @@ public final class OrmliteConfig {
         try {
             Dao<WhitelistableModel, UUID> dao = DaoManager.createDao(connectionSource, WhitelistableModel.class);
             TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
-            // TODO alter table if has no timesAutoWhitelisted column
             return dao;
         } catch (final SQLException sqlException) {
             Throwable rootCause = sqlException;
