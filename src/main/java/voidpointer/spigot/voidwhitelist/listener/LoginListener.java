@@ -68,7 +68,7 @@ public final class LoginListener implements Listener {
             disallow(event, optionalKickReason.get());
             return;
         }
-        if (user.isPresent() && (user.get().getTimesAutoWhitelisted() >= whitelistConfig.getAutoMaxRepeats())) {
+        if (user.isPresent()/* && (user.get().getTimesAutoWhitelisted() >= whitelistConfig.getAutoMaxRepeats())*/) {
             disallow(event, optionalKickReason.get());
             return;
         }
@@ -79,8 +79,8 @@ public final class LoginListener implements Listener {
             disallow(event, optionalKickReason.get());
             return;
         }
-        whitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get(),
-                user.map(usr -> usr.getTimesAutoWhitelisted() + 1).orElse(1)).thenApplyAsync(whitelistable -> {
+        whitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get()/*,
+                user.map(usr -> usr.getTimesAutoWhitelisted() + 1).orElse(1)*/).thenApplyAsync(whitelistable -> {
             if (!whitelistable.isPresent()) {
                 locale.warn("Automatic whitelisting of {0} failed, even though they were allowed to join",
                         event.getUniqueId());

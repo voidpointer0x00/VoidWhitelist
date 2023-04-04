@@ -35,7 +35,6 @@ public final class SimpleWhitelistable extends AbstractWhitelistable {
     private String name;
     @NonNull
     private Date expiresAt;
-    private int timesAutoWhitelisted;
 
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);

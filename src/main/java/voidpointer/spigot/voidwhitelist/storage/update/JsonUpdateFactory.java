@@ -27,8 +27,7 @@ public final class JsonUpdateFactory {
         switch (oldStorageVersion) {
             case V1_BETA: /* this version will never be seen again (early GitHub releases only) */
                 return Optional.of(new JsonV1BetaUpdate());
-            case V2_BETA:
-                return Optional.of(new JsonV2BetaUpdate());
+            case V2_BETA: /* current version */
             case UNDEFINED: /* cannot update from unknown version */
         }
         log.warn("Cannot update JSON from {0} version", oldStorageVersion);

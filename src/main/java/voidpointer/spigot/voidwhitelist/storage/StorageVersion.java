@@ -18,8 +18,7 @@ public enum StorageVersion {
     UNDEFINED,
     V1_BETA,
     V2_BETA,
-    V3
     ;
 
-    public static final StorageVersion CURRENT = V3;
+    public static final StorageVersion CURRENT = V2_BETA;
 }

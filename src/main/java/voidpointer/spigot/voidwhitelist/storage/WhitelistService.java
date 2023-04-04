@@ -63,9 +63,6 @@ public interface WhitelistService {
 
     CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt);
 
-    CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt,
-                                                   final int timesAutoWhitelisted);
-
     CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable);
 
     CompletableFuture<Boolean> remove(final Whitelistable whitelistable);

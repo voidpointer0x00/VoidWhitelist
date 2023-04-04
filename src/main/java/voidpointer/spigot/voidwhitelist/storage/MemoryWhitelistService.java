@@ -92,13 +92,8 @@ public abstract class MemoryWhitelistService implements WhitelistService {
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
             final UUID uuid, final String name, final Date expiresAt) {
-        return add(uuid, name, expiresAt, 0);
-    }
-
-    @Override public CompletableFuture<Optional<Whitelistable>> add(
-            final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted) {
         return supplyAsync(() -> {
-            final Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt, timesAutoWhitelisted);
+            final Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt);
             if (!whitelist.add(whitelistable)) {
                 whitelist.remove(whitelistable);
                 whitelist.add(whitelistable);

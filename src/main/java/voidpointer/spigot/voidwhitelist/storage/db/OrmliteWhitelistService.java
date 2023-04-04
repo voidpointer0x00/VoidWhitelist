@@ -241,35 +241,27 @@ public final class OrmliteWhitelistService implements WhitelistService {
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
             final UUID uuid, final String name, final Date expiresAt) {
-        return add(uuid, name, expiresAt, 0);
-    }
-
-    @Override public CompletableFuture<Optional<Whitelistable>> add(
-            final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted) {
         return supplyAsync(() -> {
             try {
-                return add0(uuid, name, expiresAt, timesAutoWhitelisted);
+                return add0(uuid, name, expiresAt);
             } catch (final SQLException sqlException) {
                 return tryToReconnectIfDisconnected(sqlException,
-                        () -> addQuietly(uuid, name, expiresAt, timesAutoWhitelisted),
+                        () -> addQuietly(uuid, name, expiresAt),
                         () -> onAddException(sqlException));
             }
         });
     }
 
-    private Optional<Whitelistable> addQuietly(
-            final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted) {
+    private Optional<Whitelistable> addQuietly(final UUID uuid, final String name, final Date expiresAt) {
         try {
-            return add0(uuid, name, expiresAt, timesAutoWhitelisted);
+            return add0(uuid, name, expiresAt);
         } catch (SQLException sqlException) {
             return onAddException(sqlException);
         }
     }
 
-    private Optional<Whitelistable> add0(
-            final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted)
-            throws SQLException {
-        final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt, timesAutoWhitelisted);
+    private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt) throws SQLException {
+        final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
         requireConnection();
         dao.createOrUpdate(whitelistable);
         return Optional.of(whitelistable);

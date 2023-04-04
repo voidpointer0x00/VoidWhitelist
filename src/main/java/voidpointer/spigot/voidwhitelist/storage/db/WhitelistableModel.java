@@ -43,12 +43,6 @@ public final class WhitelistableModel extends AbstractWhitelistable {
     private String name;
     @DatabaseField(columnName="expires_at", dataType=DataType.DATE)
     private Date expiresAt;
-    // TODO rework OrmliteWhitelistableService and OrmliteConfig, so that
-    //  it will run migrations to add this particular field and allow more
-    //  flexibility later
-    // At this stage database storage won't work
-    @DatabaseField(columnName="times_auto_whitelisted")
-    private int timesAutoWhitelisted = 0;
 
     @Override public boolean isAssociatedWith(final Player player) {
         return player.getUniqueId().equals(uniqueId);
@@ -56,6 +50,6 @@ public final class WhitelistableModel extends AbstractWhitelistable {
 
     public static WhitelistableModel copyOf(final Whitelistable whitelistable) {
         return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(),
-                whitelistable.getExpiresAt(), whitelistable.getTimesAutoWhitelisted());
+                whitelistable.getExpiresAt());
     }
 }
