@@ -10,6 +10,7 @@ import static java.util.Arrays.asList;
 
 final class AutoWhitelistMigration implements ConfigMigration {
     private static final List<String> AUTO_WL_COMMENTS = asList(
+            "",
             " When both whitelist and auto-whitelist are enabled, the plugin will automatically",
             "add a joining player of selected group to the whitelist for the specified duration.",
             "",
@@ -27,11 +28,9 @@ final class AutoWhitelistMigration implements ConfigMigration {
             "whitelisting feature until the configuration is fixed and reloaded."
     );
     private static final List<String> AUTO_WL_MAX_REPEATS_COMMENTS = asList(
-            " Any value in range (-∞;0] will disable the auto whitelisting.",
-            "Although, it should not be used that way, because if you want to disable this feature",
-            "then simply disable it, using < 1 \"max-repeats\" will still make the plugin run multiple",
-            "checks when a player logins, wastefully spending your important clock-cycles and their",
-            "login time."
+            " A value of zero will disable the auto whitelisting.",
+            " Any negative number will disable this property and players will be able to",
+            "infinitely join the server and get whitelisted every time."
     );
     private static final List<String> AUTO_WL_STRATEGY_COMMENTS = asList(
             "all — simply every joining player if the number that they've been \"freely\" whitelisted",

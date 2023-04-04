@@ -51,11 +51,9 @@ auto-whitelist:
   #   Any value that can not be parsed will result in disabling the automatic
   # whitelisting feature until the configuration is fixed and reloaded.
   duration: 7d
-  #  Any value in range (-∞;0] will disable the auto whitelisting.
-  # Although, it should not be used that way, because if you want to disable this feature
-  # then simply disable it, using < 1 "max-repeats" will still make the plugin run multiple
-  # checks when a player logins, wastefully spending your important clock-cycles and their
-  # login time.
+  #   A value of zero will disable the auto whitelisting.
+  #   Any negative number will disable this property and players will be able to
+  # infinitely join the server and get whitelisted every time.
   max-repeats: 1
   # all — simply every joining player if the number that they've been "freely" whitelisted
   #       have yet to exceed the limiting "max-repeats" property.
