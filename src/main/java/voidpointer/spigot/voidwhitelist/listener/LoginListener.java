@@ -86,7 +86,8 @@ public final class LoginListener implements Listener {
                         event.getUniqueId());
                 return whitelistable;
             }
-            locale.info("Automatically whitelisted {0} ({1}) for {2}", event.getUniqueId(), event.getName(), autoDuration.get());
+            locale.info("Automatically whitelisted {0} ({1}) until {2}", event.getUniqueId(), event.getName(),
+                    autoDuration.get());
             return whitelistable;
         });
     }
