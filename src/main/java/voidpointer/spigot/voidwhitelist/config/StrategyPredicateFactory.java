@@ -15,7 +15,7 @@ final class StrategyPredicateFactory {
                 return uuid -> true;
             case NEWCOMERS:
             default:
-                return uuid -> Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
+                return uuid -> !Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
         }
     }
 
