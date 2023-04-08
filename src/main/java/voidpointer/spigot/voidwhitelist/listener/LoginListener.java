@@ -65,7 +65,7 @@ public final class LoginListener implements Listener {
 
         if (!whitelistConfig.isAutoWhitelistEnabled()
                 || whitelistConfig.getStrategyPredicate().negate().test(event.getUniqueId())
-                || (whitelistConfig.getAutoMaxRepeats() <= 0)) {
+                || (whitelistConfig.getAutoMaxRepeats() == 0)) {
             disallow(event, optionalKickReason.get());
             return;
         }
