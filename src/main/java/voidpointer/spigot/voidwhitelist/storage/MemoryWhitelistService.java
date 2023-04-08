@@ -53,7 +53,7 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
     private Map<UUID, AutoWhitelistNumber> autoWhitelist = new ConcurrentHashMap<>();
 
     @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId) {
-        return supplyAsync(() -> Optional.of(autoWhitelist.get(uniqueId)));
+        return supplyAsync(() -> Optional.ofNullable(autoWhitelist.get(uniqueId)));
     }
 
     @Override public void shutdown() {
