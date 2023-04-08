@@ -43,7 +43,8 @@ public final class InfoCommand extends Command {
     public static final String PERMISSION = "whitelist.info";
 
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
 
     public InfoCommand() {
         super(NAME);

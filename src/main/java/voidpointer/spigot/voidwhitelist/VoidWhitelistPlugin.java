@@ -55,7 +55,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     private static TranslatedLocaleFile locale;
     @Dependency private static WhitelistConfig whitelistConfig;
     @Dependency private static LocaleLog guiLocale;
-    @Dependency private static AutoWhitelistService whitelistService;
+    @Dependency(id="whitelistService")
+    private static AutoWhitelistService whitelistService;
     @Dependency private static EventManager eventManager;
     @Dependency private static StorageFactory storageFactory;
     @Dependency private static KickTaskScheduler kickTaskScheduler;

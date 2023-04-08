@@ -21,7 +21,8 @@ public class ExportCommand extends Command {
 
     @AutowiredLocale private static LocaleLog localeLog;
     @Autowired(mapId="plugin") private static Plugin plugin;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
 
     public ExportCommand() {
         super(NAME);

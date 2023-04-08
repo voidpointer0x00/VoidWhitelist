@@ -49,7 +49,8 @@ public final class AddCommand extends Command {
     public static final int MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
 
     public AddCommand() {

@@ -19,7 +19,8 @@ import static org.bukkit.Bukkit.getOnlinePlayers;
 public final class DatabaseSyncTask extends BukkitRunnable {
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
 
     @Override public void run() {
         if (!whitelistConfig.isWhitelistEnabled())

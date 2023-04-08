@@ -32,7 +32,8 @@ public final class ReloadCommand extends Command {
     @Autowired private static StorageFactory storageFactory;
     @Autowired private static WhitelistConfig config;
     @Autowired private static EventManager eventManager;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
 
     public ReloadCommand() {
         super(NAME);

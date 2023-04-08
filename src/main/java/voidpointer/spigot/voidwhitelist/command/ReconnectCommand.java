@@ -16,7 +16,8 @@ public final class ReconnectCommand extends Command {
     public static final String PERMISSION = "whitelist.reconnect";
 
     @AutowiredLocale private static Locale locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
 
     public ReconnectCommand() {

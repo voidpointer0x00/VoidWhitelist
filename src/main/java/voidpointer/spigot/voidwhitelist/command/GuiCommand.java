@@ -28,7 +28,8 @@ public final class GuiCommand extends Command {
     private static final String PERMISSION = "whitelist.gui";
 
     @AutowiredLocale private static Locale locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
 
     public GuiCommand() {
         super(NAME);

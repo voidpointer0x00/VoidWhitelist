@@ -40,7 +40,7 @@ public abstract class AbstractGui {
     @AutowiredLocale
     private static LocaleLog localeLog;
     @Getter
-    @Autowired
+    @Autowired(mapId="whitelistService")
     private static WhitelistService whitelistService;
     @Getter
     @Autowired

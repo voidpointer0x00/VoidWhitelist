@@ -44,7 +44,8 @@ public class ImportJsonCommand extends Command {
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static EventManager eventManager;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static StorageFactory storageFactory;
     @Autowired(mapId="plugin")
     private static Plugin plugin;

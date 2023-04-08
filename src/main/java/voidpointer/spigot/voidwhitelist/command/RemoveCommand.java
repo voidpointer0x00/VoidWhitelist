@@ -47,7 +47,8 @@ public class RemoveCommand extends Command {
     public static final Integer MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
 
     public RemoveCommand() {
@@ -78,7 +79,7 @@ public class RemoveCommand extends Command {
                         .send(args.getSender());
                 return;
             }
-            boolean isRemoved = whitelistService.remove(whitelistable.get()).join().booleanValue();
+            boolean isRemoved = whitelistService.remove(whitelistable.get()).join();
             if (isRemoved) {
                 notifyRemoved(args.getSender(), uuidOptional.get(), name);
                 eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));

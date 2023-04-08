@@ -31,7 +31,7 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.message.KickReason;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
-import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
 
 import java.util.Date;
@@ -45,7 +45,8 @@ import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.removeCa
 @RequiredArgsConstructor
 public final class LoginListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static AutoWhitelistService whitelistService;
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
 
