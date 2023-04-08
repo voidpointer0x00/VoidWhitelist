@@ -22,10 +22,11 @@ import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
+import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
-import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.DatabaseSyncTask;
 
 import java.sql.SQLException;
@@ -48,7 +49,7 @@ import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.DATABASE;
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.FAIL;
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.SUCCESS;
 
-public final class OrmliteWhitelistService implements WhitelistService {
+public final class OrmliteWhitelistService implements AutoWhitelistService {
     private final Plugin plugin;
     @AutowiredLocale private static LocaleLog log;
     private Dao<WhitelistableModel, UUID> dao;
@@ -98,6 +99,11 @@ public final class OrmliteWhitelistService implements WhitelistService {
             syncTask.cancel();
         if (ormliteConfig.getConnectionSource() != null)
             ormliteConfig.getConnectionSource().closeQuietly();
+    }
+
+    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final Whitelistable whitelistable) {
+        // FIXME implement the thing
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {

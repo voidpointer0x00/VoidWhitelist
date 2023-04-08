@@ -18,12 +18,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -43,10 +45,17 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  *  {@link #saveWhitelist()} methods. It will be invoked upon any modification
  *  ({@link #add(UUID, String, Date)}, {@link #remove(Whitelistable)} to the cached whitelist.
  */
-public abstract class MemoryWhitelistService implements WhitelistService {
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.PROTECTED)
+public abstract class MemoryWhitelistService implements AutoWhitelistService {
     private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
+    /* possibly we could join the two structures, but I prefer keeping things simple KISS */
+    private Map<UUID, AutoWhitelistNumber> autoWhitelist = new ConcurrentHashMap<>();
+
+    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(
+            final Whitelistable whitelistable) {
+        return supplyAsync(() -> Optional.of(autoWhitelist.get(whitelistable.getUniqueId())));
+    }
 
     @Override public void shutdown() {
         saveWhitelist();
