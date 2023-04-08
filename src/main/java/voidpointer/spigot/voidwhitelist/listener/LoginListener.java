@@ -71,9 +71,9 @@ public final class LoginListener implements Listener {
             disallow(event, optionalKickReason.get());
             return;
         }
-        val optionalAutoWhitelistNumber = autoWhitelistService.getAutoWhitelistNumberOf(event.getUniqueId()).join();
-        if (user.isPresent() && optionalAutoWhitelistNumber.isPresent()
-                && optionalAutoWhitelistNumber.get().isExceeded(whitelistConfig.getAutoMaxRepeats())) {
+        val timesAutoWhitelisted = autoWhitelistService.getAutoWhitelistNumberOf(event.getUniqueId()).join();
+        if (user.isPresent() && timesAutoWhitelisted.isPresent()
+                && timesAutoWhitelisted.get().isExceeded(whitelistConfig.getAutoMaxRepeats())) {
                 disallow(event, optionalKickReason.get());
                 return;
         }
@@ -85,7 +85,7 @@ public final class LoginListener implements Listener {
             return;
         }
         autoWhitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get(),
-                optionalAutoWhitelistNumber.orElse(AutoWhitelistNumber.ZERO)).thenApplyAsync(whitelistable -> {
+                timesAutoWhitelisted.orElse(AutoWhitelistNumber.ZERO).get() + 1).thenApplyAsync(whitelistable -> {
             if (!whitelistable.isPresent()) {
                 locale.warn("Automatic whitelisting of {0} failed, even though they were allowed to join",
                         event.getUniqueId());

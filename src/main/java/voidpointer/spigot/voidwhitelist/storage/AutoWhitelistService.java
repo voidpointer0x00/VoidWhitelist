@@ -12,5 +12,5 @@ public interface AutoWhitelistService extends WhitelistService {
     CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId);
 
     CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt,
-                                                   final AutoWhitelistNumber autoWhitelistNumber);
+                                                   final int timesAutoWhitelisted);
 }

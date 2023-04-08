@@ -246,7 +246,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
-            final UUID uuid, final String name, final Date expiresAt, final AutoWhitelistNumber autoWhitelistNumber) {
+            final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted) {
         // FIXME implement the thing
         throw new UnsupportedOperationException();
     }
