@@ -100,8 +100,8 @@ public final class JsonWhitelist extends JsonStorage {
      * @return {@code true} if saved successfully, {@code false} if any
      *      exception occurred in the process.
      */
-    public boolean save(final @NonNull File to) {
-        return save(to, whitelistAndMeta);
+    public boolean save(final @NonNull File destination) {
+        return save(whitelistAndMeta, destination);
     }
 
     private static StorageVersion parseVersion(final JsonElement root) {
@@ -136,7 +136,7 @@ public final class JsonWhitelist extends JsonStorage {
     }
 
     private static void backupUpdateFailure(final File jsonFile, final JsonElement root) {
-        if (save(new File(jsonFile.getParentFile(), jsonFile.getName() + ".bak"), root)) {
+        if (save(root, new File(jsonFile.getParentFile(), jsonFile.getName() + ".bak"))) {
             log.info("Created backup .bak file for {0} due to update failure", jsonFile.getName());
         } else {
             log.severe("Unable to create backup file for {0}, data loss to be expected", jsonFile.getName());

@@ -28,9 +28,9 @@ abstract class JsonStorage {
 
     @AutowiredLocale protected static LocaleLog log;
 
-    protected static boolean save(final @NonNull File to, final JsonElement whitelistAndMeta) {
+    protected static boolean save(final JsonElement whitelistAndMeta, final @NonNull File destination) {
         try {
-            Files.asCharSink(to, UTF_8).write(gson.toJson(whitelistAndMeta));
+            Files.asCharSink(destination, UTF_8).write(gson.toJson(whitelistAndMeta));
             return true;
         } catch (final IOException ioException) {
             log.warn("Couldn't save whitelist due to I/O error: {0}", ioException.getMessage());
