@@ -53,6 +53,8 @@ final class JsonAutoWhitelist extends JsonStorage {
             jsonAutoWhitelistEntry.addProperty("timesAutoWhitelisted", timesAutoWhitelisted.get());
             jsonAutoWhitelist.add(jsonAutoWhitelistEntry);
         });
-        save(jsonAutoWhitelist, destination);
+        final JsonObject dataAndMeta = new JsonObject();
+        dataAndMeta.add("autoWhitelist", jsonAutoWhitelist);
+        save(dataAndMeta, destination);
     }
 }
