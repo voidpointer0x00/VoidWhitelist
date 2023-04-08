@@ -15,6 +15,7 @@
 package voidpointer.spigot.voidwhitelist.listener;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,6 +28,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.message.KickReason;
@@ -46,7 +48,7 @@ import static voidpointer.spigot.voidwhitelist.net.CachedProfileFetcher.removeCa
 public final class LoginListener implements Listener {
     @AutowiredLocale private static LocaleLog locale;
     @Autowired(mapId="whitelistService")
-    private static AutoWhitelistService whitelistService;
+    private static AutoWhitelistService autoWhitelistService;
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
 
@@ -58,7 +60,7 @@ public final class LoginListener implements Listener {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        Optional<Whitelistable> user = whitelistService.find(event.getUniqueId()).join();
+        Optional<Whitelistable> user = autoWhitelistService.find(event.getUniqueId()).join();
         Optional<KickReason> optionalKickReason = getKickReasonFor(user.orElse(null));
         if (!optionalKickReason.isPresent())
             return;
@@ -69,9 +71,11 @@ public final class LoginListener implements Listener {
             disallow(event, optionalKickReason.get());
             return;
         }
-        if (user.isPresent()/* && (user.get().getTimesAutoWhitelisted() >= whitelistConfig.getAutoMaxRepeats())*/) {
-            disallow(event, optionalKickReason.get());
-            return;
+        val optionalAutoWhitelistNumber = autoWhitelistService.getAutoWhitelistNumberOf(event.getUniqueId()).join();
+        if (user.isPresent() && optionalAutoWhitelistNumber.isPresent()
+                && optionalAutoWhitelistNumber.get().isExceeded(whitelistConfig.getAutoMaxRepeats())) {
+                disallow(event, optionalKickReason.get());
+                return;
         }
         final Optional<Date> autoDuration = whitelistConfig.getAutoDuration();
         if (!autoDuration.isPresent()) {
@@ -80,8 +84,8 @@ public final class LoginListener implements Listener {
             disallow(event, optionalKickReason.get());
             return;
         }
-        whitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get()/*,
-                user.map(usr -> usr.getTimesAutoWhitelisted() + 1).orElse(1)*/).thenApplyAsync(whitelistable -> {
+        autoWhitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get(),
+                optionalAutoWhitelistNumber.orElse(AutoWhitelistNumber.ZERO)).thenApplyAsync(whitelistable -> {
             if (!whitelistable.isPresent()) {
                 locale.warn("Automatic whitelisting of {0} failed, even though they were allowed to join",
                         event.getUniqueId());
@@ -111,7 +115,7 @@ public final class LoginListener implements Listener {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
 
-        whitelistService.find(event.getPlayer().getUniqueId()).thenAcceptAsync(whitelistable -> {
+        autoWhitelistService.find(event.getPlayer().getUniqueId()).thenAcceptAsync(whitelistable -> {
             if (!whitelistable.isPresent()) {
                 locale.severe("No Whitelistable entity found for a player that passed PreLogin check {0}",
                         event.getPlayer().getUniqueId());
@@ -133,7 +137,7 @@ public final class LoginListener implements Listener {
         assert player.getUniqueId().equals(whitelistable.getUniqueId())
                 : "UUID of the updating player must match Whitelistable";
         whitelistable.setName(player.getName());
-        whitelistService.update(whitelistable).thenAcceptAsync(updatedOptional ->
+        autoWhitelistService.update(whitelistable).thenAcceptAsync(updatedOptional ->
                 updatedOptional.ifPresent(updated -> removeCachedProfile(updated.getUniqueId())));
     }
 }
