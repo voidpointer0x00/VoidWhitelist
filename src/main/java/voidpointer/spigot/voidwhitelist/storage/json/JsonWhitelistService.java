@@ -84,6 +84,6 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
     }
 
     @Override protected void saveAutoWhitelist() {
-
+        JsonAutoWhitelist.save(getAutoWhitelist(), autoWhitelistFile);
     }
 }

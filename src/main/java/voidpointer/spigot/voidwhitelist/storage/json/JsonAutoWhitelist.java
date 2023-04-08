@@ -44,4 +44,15 @@ final class JsonAutoWhitelist extends JsonStorage {
             return Optional.empty();
         }
     }
+
+    public static void save(final Map<UUID, AutoWhitelistNumber> autoWhitelist, final File destination) {
+        final JsonArray jsonAutoWhitelist = new JsonArray();
+        autoWhitelist.forEach((uniqueId, timesAutoWhitelisted) -> {
+            JsonObject jsonAutoWhitelistEntry = new JsonObject();
+            jsonAutoWhitelistEntry.addProperty("uniqueId", uniqueId.toString());
+            jsonAutoWhitelistEntry.addProperty("timesAutoWhitelisted", timesAutoWhitelisted.get());
+            jsonAutoWhitelist.add(jsonAutoWhitelistEntry);
+        });
+        save(jsonAutoWhitelist, destination);
+    }
 }
