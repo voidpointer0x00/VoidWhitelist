@@ -7,9 +7,9 @@ public interface AutoWhitelistNumber {
         return () -> timesAutoWhitelisted;
     }
 
-    int getTimesAutoWhitelisted();
+    int get();
 
     default boolean isExceeded(final int limit) {
-        return (limit >= 0) && (getTimesAutoWhitelisted() >= limit);
+        return (limit >= 0) && (get() >= limit);
     }
 }
