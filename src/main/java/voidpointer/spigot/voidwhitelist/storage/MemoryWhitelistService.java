@@ -52,9 +52,8 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
     /* possibly we could join the two structures, but I prefer keeping things simple KISS */
     private Map<UUID, AutoWhitelistNumber> autoWhitelist = new ConcurrentHashMap<>();
 
-    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(
-            final Whitelistable whitelistable) {
-        return supplyAsync(() -> Optional.of(autoWhitelist.get(whitelistable.getUniqueId())));
+    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId) {
+        return supplyAsync(() -> Optional.of(autoWhitelist.get(uniqueId)));
     }
 
     @Override public void shutdown() {

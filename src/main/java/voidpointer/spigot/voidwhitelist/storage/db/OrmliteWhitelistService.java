@@ -101,7 +101,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
             ormliteConfig.getConnectionSource().closeQuietly();
     }
 
-    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final Whitelistable whitelistable) {
+    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId) {
         // FIXME implement the thing
         throw new UnsupportedOperationException("Not yet implemented");
     }
