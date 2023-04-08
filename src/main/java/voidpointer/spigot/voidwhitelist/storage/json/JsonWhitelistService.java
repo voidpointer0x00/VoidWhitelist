@@ -14,6 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.storage.json;
 
+import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.MemoryWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
@@ -21,7 +22,9 @@ import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.FAIL;
@@ -29,11 +32,14 @@ import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.Reconnec
 
 public final class JsonWhitelistService extends MemoryWhitelistService {
     public static final String WHITELIST_FILE_NAME = "whitelist.json";
+    public static final String AUTO_WHITELIST_FILE_NAME = "auto-whitelist.json";
 
     private final File whitelistFile;
+    private final File autoWhitelistFile;
 
     public JsonWhitelistService(final File dataFolder) {
         whitelistFile = new File(dataFolder, WHITELIST_FILE_NAME);
+        autoWhitelistFile = new File(dataFolder, AUTO_WHITELIST_FILE_NAME);
         load();
     }
 
@@ -46,6 +52,22 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
     }
 
     private boolean load() {
+        return loadWhitelist() && loadAutoWhitelist();
+    }
+
+    private boolean loadAutoWhitelist() {
+        if (!autoWhitelistFile.exists()) {
+            saveAutoWhitelist();
+            return true;
+        }
+        Optional<Map<UUID, AutoWhitelistNumber>> autoWhitelist = JsonAutoWhitelist.parseJsonFile(autoWhitelistFile);
+        if (!autoWhitelist.isPresent())
+            return false;
+        getAutoWhitelist().putAll(autoWhitelist.get());
+        return true;
+    }
+
+    private boolean loadWhitelist() {
         if (!whitelistFile.exists()) {
             saveWhitelist();
             return true;
@@ -59,5 +81,9 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
 
     @Override protected void saveWhitelist() {
         JsonWhitelist.of(getWhitelist()).save(whitelistFile);
+    }
+
+    @Override protected void saveAutoWhitelist() {
+
     }
 }

@@ -100,6 +100,11 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
             final UUID uuid, final String name, final Date expiresAt) {
+        return add(uuid, name, expiresAt, AutoWhitelistNumber.ZERO);
+    }
+
+    @Override public CompletableFuture<Optional<Whitelistable>> add(
+            final UUID uuid, final String name, final Date expiresAt, final AutoWhitelistNumber autoWhitelistNumber) {
         return supplyAsync(() -> {
             final Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt);
             if (!whitelist.add(whitelistable)) {
@@ -107,6 +112,8 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
                 whitelist.add(whitelistable);
             }
             saveWhitelist();
+            autoWhitelist.put(uuid, autoWhitelistNumber);
+            saveAutoWhitelist();
             return Optional.of(whitelistable);
         });
     }
@@ -128,4 +135,6 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
     }
 
     protected abstract void saveWhitelist();
+
+    protected abstract void saveAutoWhitelist();
 }
