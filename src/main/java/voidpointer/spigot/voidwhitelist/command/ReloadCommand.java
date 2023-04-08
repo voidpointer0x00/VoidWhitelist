@@ -12,6 +12,7 @@ import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistReloadEvent;
 import voidpointer.spigot.voidwhitelist.papi.PapiLocale;
+import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
@@ -88,7 +89,7 @@ public final class ReloadCommand extends Command {
         if (oldMethod.equals(config.getStorageMethod()))
             return;
 
-        WhitelistService reloadedStorage = storageFactory.loadStorage(config.getStorageMethod());
+        AutoWhitelistService reloadedStorage = storageFactory.loadStorage(config.getStorageMethod());
         whitelistService.shutdown();
         plugin.changeWhitelistService(reloadedStorage);
         Injector.inject(plugin);

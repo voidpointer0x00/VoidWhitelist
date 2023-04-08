@@ -41,6 +41,7 @@ import voidpointer.spigot.voidwhitelist.listener.WhitelistRemovedListener;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.papi.PapiLocale;
 import voidpointer.spigot.voidwhitelist.papi.TimeLeftExpansion;
+import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
@@ -54,7 +55,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     private static TranslatedLocaleFile locale;
     @Dependency private static WhitelistConfig whitelistConfig;
     @Dependency private static LocaleLog guiLocale;
-    @Dependency private static WhitelistService whitelistService;
+    @Dependency private static AutoWhitelistService whitelistService;
     @Dependency private static EventManager eventManager;
     @Dependency private static StorageFactory storageFactory;
     @Dependency private static KickTaskScheduler kickTaskScheduler;
@@ -100,7 +101,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     /** Changes the {@link WhitelistService}, but doesn't inject it. */
-    public void changeWhitelistService(final @NonNull WhitelistService whitelistService) {
+    public void changeWhitelistService(final @NonNull AutoWhitelistService whitelistService) {
         VoidWhitelistPlugin.whitelistService = whitelistService;
     }
 
