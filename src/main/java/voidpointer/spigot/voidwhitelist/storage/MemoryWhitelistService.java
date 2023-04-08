@@ -48,7 +48,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
 public abstract class MemoryWhitelistService implements AutoWhitelistService {
-    private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
+    @Getter private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
     /* possibly we could join the two structures, but I prefer keeping things simple KISS */
     private Map<UUID, AutoWhitelistNumber> autoWhitelist = new ConcurrentHashMap<>();
 
