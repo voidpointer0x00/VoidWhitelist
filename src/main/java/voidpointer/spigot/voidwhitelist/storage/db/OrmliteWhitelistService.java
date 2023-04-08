@@ -246,6 +246,12 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
+            final UUID uuid, final String name, final Date expiresAt, final AutoWhitelistNumber autoWhitelistNumber) {
+        // FIXME implement the thing
+        throw new UnsupportedOperationException();
+    }
+
+    @Override public CompletableFuture<Optional<Whitelistable>> add(
             final UUID uuid, final String name, final Date expiresAt) {
         return supplyAsync(() -> {
             try {
