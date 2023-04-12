@@ -62,4 +62,4 @@ auto-whitelist:
   #       This strategy makes use of Bukkit's #hasPlayerBefore() method that checks
   #       whether the server has any data on the given player. This will always
   #       be true if you disable the property «players.disable-saving» in spigot.yml
-  strategy: newcomers
+  strategy: all
