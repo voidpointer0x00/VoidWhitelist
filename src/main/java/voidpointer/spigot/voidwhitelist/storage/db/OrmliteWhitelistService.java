@@ -15,9 +15,6 @@
 package voidpointer.spigot.voidwhitelist.storage.db;
 
 import com.j256.ormlite.dao.CloseableWrappedIterable;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.logger.Level;
-import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.misc.TransactionManager;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -25,10 +22,8 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
 import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
-import voidpointer.spigot.voidwhitelist.task.DatabaseSyncTask;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -47,16 +42,11 @@ import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.DATABASE;
-import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.FAIL;
-import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult.SUCCESS;
 
 public final class OrmliteWhitelistService implements AutoWhitelistService {
-    private final Plugin plugin;
     @AutowiredLocale private static LocaleLog log;
-    private Dao<WhitelistableModel, UUID> whitelistDao;
-    private Dao<AutoWhitelistNumberModel, UUID> autoWhitelistDao;
-    private final OrmliteConfig ormliteConfig;
-    private DatabaseSyncTask syncTask;
+    private final OrmliteDatabase ormliteDatabase;
+
     /* !ONLY! for internal use in case the plugin got disconnected from dbms
      *  indicates whether it is needed to try reconnecting after failing a query
      *  or if we already tried that (in which case trying to reconnect once again will
@@ -64,32 +54,12 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private boolean failedToReconnect = false;
 
     public OrmliteWhitelistService(final Plugin plugin) {
-        this.plugin = plugin;
-        log.info("Establishing database connection...");
-        ormliteConfig = new OrmliteConfig(plugin);
-        disableOrmliteLogging();
-        whitelistDao = ormliteConfig.getWhitelistableDao();
-        autoWhitelistDao = ormliteConfig.getAutoWhitelistDao();
-        if (whitelistDao != null) {
-            log.info("Connection established.");
-            scheduleSync();
-        }
+        ormliteDatabase = new OrmliteDatabase(plugin);
+        ormliteDatabase.connect();
     }
 
     public ConnectionResult reconnect() {
-        shutdown();
-        if (ormliteConfig.reload() && ((whitelistDao = ormliteConfig.getWhitelistableDao()) != null)) {
-            scheduleSync();
-            return SUCCESS;
-        }
-        return FAIL;
-    }
-
-    private void scheduleSync() {
-        if (ormliteConfig.isSyncEnabled()) {
-            syncTask = new DatabaseSyncTask();
-            syncTask.runTaskTimerAsynchronously(plugin, 0, ormliteConfig.getSyncTimerInTicks());
-        }
+        return ormliteDatabase.reconnect();
     }
 
     @Override public StorageMethod getStorageMethod() {
@@ -98,16 +68,14 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
 
     @Override public void shutdown() {
         failedToReconnect = false;
-        if (syncTask != null)
-            syncTask.cancel();
-        if (ormliteConfig.getConnectionSource() != null)
-            ormliteConfig.getConnectionSource().closeQuietly();
+        ormliteDatabase.shutdown();
     }
 
     @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId) {
         return supplyAsync(() -> {
             try {
-                return Optional.ofNullable(autoWhitelistDao.queryForId(uniqueId));
+                requireConnection();
+                return Optional.ofNullable(ormliteDatabase.getAutoWhitelistDao().queryForId(uniqueId));
             } catch (final SQLException sqlException) {
                 log.warn("Unable to get timesAutoWhitelisted for {0}: {1}", uniqueId, sqlException.getMessage());
                 return Optional.empty();
@@ -122,7 +90,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
             } catch (final SQLException sqlException) {
                 return null;
             }
-            return whitelistDao.getWrappedIterable();
+            return ormliteDatabase.getWhitelistDao().getWrappedIterable();
         });
     }
 
@@ -145,7 +113,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
 
     private Set<Whitelistable> findAll0(final Long offset, final Long limit) throws SQLException {
         requireConnection();
-        List<WhitelistableModel> result = whitelistDao.queryBuilder()
+        List<WhitelistableModel> result = ormliteDatabase.getWhitelistDao().queryBuilder()
                 .offset(offset)
                 .limit(limit)
                 .query();
@@ -198,7 +166,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
 
     private Optional<Whitelistable> find0(final UUID uuid) throws SQLException {
         requireConnection();
-        return ofNullable(whitelistDao.queryForId(uuid));
+        return ofNullable(ormliteDatabase.getWhitelistDao().queryForId(uuid));
     }
 
     private Optional<Whitelistable> findQuietly(final UUID uuid) {
@@ -218,8 +186,8 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         if (all.isEmpty())
             return completedFuture(emptySet());
         return supplyAsync(() -> addAll((model, addedSet) -> {
-            if (!whitelistDao.idExists(model.getUniqueId())) {
-                whitelistDao.create(model);
+            if (!ormliteDatabase.getWhitelistDao().idExists(model.getUniqueId())) {
+                ormliteDatabase.getWhitelistDao().create(model);
                 addedSet.add(model);
             }
         }, all));
@@ -229,7 +197,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         if (all.isEmpty())
             return completedFuture(emptySet());
         return supplyAsync(() -> addAll((model, addedSet) -> {
-            whitelistDao.createOrUpdate(model);
+            ormliteDatabase.getWhitelistDao().createOrUpdate(model);
             addedSet.add(model);
         }, all));
     }
@@ -240,7 +208,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         Set<WhitelistableModel> added = new HashSet<>();
         try {
             requireConnection();
-            return whitelistDao.callBatchTasks(() -> {
+            return ormliteDatabase.getWhitelistDao().callBatchTasks(() -> {
                 for (final Whitelistable whitelistable : all) {
                     if (whitelistable instanceof WhitelistableModel)
                         addFunction.consume((WhitelistableModel) whitelistable, added);
@@ -258,8 +226,10 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
             final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted) {
         return supplyAsync(() -> {
             try {
+                requireConnection();
                 return add0(uuid, name, expiresAt, timesAutoWhitelisted);
             } catch (final SQLException sqlException) {
+                log.warn("Unable to add {0} to whitelist: {1}", uuid, sqlException.getMessage());
                 return Optional.empty();
             }
         });
@@ -267,10 +237,10 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
 
     private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt,
                                          final int timesAutoWhitelisted) throws SQLException {
-        return TransactionManager.callInTransaction(ormliteConfig.getConnectionSource(), () -> {
-            autoWhitelistDao.create(new AutoWhitelistNumberModel(uuid, timesAutoWhitelisted));
+        return TransactionManager.callInTransaction(ormliteDatabase.getConnectionSource(), () -> {
+            ormliteDatabase.getAutoWhitelistDao().create(new AutoWhitelistNumberModel(uuid, timesAutoWhitelisted));
             final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
-            whitelistDao.create(whitelistable);
+            ormliteDatabase.getWhitelistDao().create(whitelistable);
             return Optional.of(whitelistable);
         });
     }
@@ -299,7 +269,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt) throws SQLException {
         final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
         requireConnection();
-        whitelistDao.createOrUpdate(whitelistable);
+        ormliteDatabase.getWhitelistDao().createOrUpdate(whitelistable);
         return Optional.of(whitelistable);
     }
 
@@ -330,9 +300,9 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private Optional<Whitelistable> update0(final Whitelistable whitelistable) throws SQLException {
         requireConnection();
         if (whitelistable instanceof WhitelistableModel)
-            whitelistDao.update((WhitelistableModel) whitelistable);
+            ormliteDatabase.getWhitelistDao().update((WhitelistableModel) whitelistable);
         else
-            whitelistDao.update(WhitelistableModel.copyOf(whitelistable));
+            ormliteDatabase.getWhitelistDao().update(WhitelistableModel.copyOf(whitelistable));
         return Optional.of(whitelistable);
     }
 
@@ -363,9 +333,9 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private Boolean remove0(final Whitelistable whitelistable) throws SQLException {
         requireConnection();
         if (whitelistable instanceof WhitelistableModel)
-            whitelistDao.delete((WhitelistableModel) whitelistable);
+            ormliteDatabase.getWhitelistDao().delete((WhitelistableModel) whitelistable);
         else
-            whitelistDao.delete(WhitelistableModel.copyOf(whitelistable));
+            ormliteDatabase.getWhitelistDao().delete(WhitelistableModel.copyOf(whitelistable));
         return true;
     }
 
@@ -375,11 +345,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     }
 
     private void requireConnection() throws SQLException {
-        if (whitelistDao == null)
-            throw new SQLException("Database connection is not established: dao == null");
-    }
-
-    private void disableOrmliteLogging() {
-        Logger.setGlobalLogLevel(Level.OFF);
+        if (ormliteDatabase.isNotConnected())
+            throw new SQLException("Database connection is not established");
     }
 }
