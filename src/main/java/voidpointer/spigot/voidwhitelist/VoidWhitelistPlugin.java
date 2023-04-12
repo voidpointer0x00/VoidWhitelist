@@ -98,7 +98,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     @Override public void onDisable() {
-        whitelistService.shutdown();
+        if (whitelistService != null)
+            whitelistService.shutdown();
     }
 
     /** Changes the {@link WhitelistService}, but doesn't inject it. */
