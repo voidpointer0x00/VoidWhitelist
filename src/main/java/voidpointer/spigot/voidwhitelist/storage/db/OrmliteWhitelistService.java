@@ -238,9 +238,9 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt,
                                          final int timesAutoWhitelisted) throws SQLException {
         return TransactionManager.callInTransaction(ormliteDatabase.getConnectionSource(), () -> {
-            ormliteDatabase.getAutoWhitelistDao().create(new AutoWhitelistNumberModel(uuid, timesAutoWhitelisted));
+            ormliteDatabase.getAutoWhitelistDao().createOrUpdate(new AutoWhitelistNumberModel(uuid, timesAutoWhitelisted));
             final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
-            ormliteDatabase.getWhitelistDao().create(whitelistable);
+            ormliteDatabase.getWhitelistDao().createOrUpdate(whitelistable);
             return Optional.of(whitelistable);
         });
     }
