@@ -6,11 +6,13 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
 
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @DatabaseTable(tableName="auto_whitelist")
