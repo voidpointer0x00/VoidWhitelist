@@ -328,7 +328,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         });
     }
 
-    private <T> Boolean removeQuietly(final Whitelistable whitelistable) {
+    private Boolean removeQuietly(final Whitelistable whitelistable) {
         try {
             return remove0(whitelistable);
         } catch (final SQLException sqlException) {
