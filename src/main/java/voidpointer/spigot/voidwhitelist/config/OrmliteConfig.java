@@ -23,6 +23,8 @@ import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.storage.db.AutoWhitelistNumberModel;
+import voidpointer.spigot.voidwhitelist.storage.db.Dbms;
+import voidpointer.spigot.voidwhitelist.storage.db.DbmsFactory;
 import voidpointer.spigot.voidwhitelist.storage.db.WhitelistableModel;
 
 import java.io.File;
@@ -111,11 +113,11 @@ public final class OrmliteConfig {
         }
     }
 
-    String getHost() {
+    public String getHost() {
         return config.getString(HOST_PATH, DEFAULT_HOST);
     }
 
-    int getPort() {
+    public int getPort() {
         try {
             return parseInt(config.getString(PORT_PATH, "-1"));
         } catch (final NumberFormatException numberFormatException) {
@@ -124,15 +126,15 @@ public final class OrmliteConfig {
         }
     }
 
-    String getDatabase() {
+    public String getDatabase() {
         return config.getString(DATABASE_PATH, DEFAULT_DATABASE);
     }
 
-    String getUser() {
+    public String getUser() {
         return config.getString(USER_PATH, DEFAULT_USER);
     }
 
-    String getPassword() {
+    public String getPassword() {
         return config.getString(PASSWORD_PATH, DEFAULT_PASSWORD);
     }
 

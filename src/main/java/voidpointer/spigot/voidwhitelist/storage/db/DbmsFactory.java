@@ -12,13 +12,14 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.config;
+package voidpointer.spigot.voidwhitelist.storage.db;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import lombok.RequiredArgsConstructor;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ import java.sql.SQLException;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
-final class DbmsFactory {
+public final class DbmsFactory {
     private static final int MYSQL_PORT = 3306;
     private static final int PSQL_PORT = 5432;
 
