@@ -11,6 +11,8 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.db.migration.MigrationModel;
+import voidpointer.spigot.voidwhitelist.storage.db.migration.SchemaMigrator;
 import voidpointer.spigot.voidwhitelist.task.DatabaseSyncTask;
 
 import java.net.ConnectException;
@@ -21,20 +23,23 @@ import static com.j256.ormlite.dao.DaoManager.createDao;
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ConnectionResult.FAIL;
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ConnectionResult.SUCCESS;
 
-final class OrmliteDatabase {
+public final class OrmliteDatabase {
     @AutowiredLocale private static LocaleLog log;
 
     private final Plugin plugin;
     private final OrmliteConfig ormliteConfig;
+    private final SchemaMigrator schemaMigrator;
     private DatabaseSyncTask syncTask;
 
     @Getter private ConnectionSource connectionSource;
     @Getter private Dao<WhitelistableModel, UUID> whitelistDao;
     @Getter private Dao<AutoWhitelistNumberModel, UUID> autoWhitelistDao;
+    @Getter private Dao<MigrationModel, String> migrationDao;
 
     public OrmliteDatabase(final Plugin plugin) {
         this.plugin = plugin;
         ormliteConfig = new OrmliteConfig(plugin);
+        schemaMigrator = new SchemaMigrator(this);
         Logger.setGlobalLogLevel(Level.OFF); // disable ORMLite logging
     }
 
@@ -45,6 +50,7 @@ final class OrmliteDatabase {
             log.warn("Connection failed.");
             return FAIL;
         }
+        schemaMigrator.runUnfinishedMigrations();
         scheduleSync();
         log.info("Connection established.");
         return SUCCESS;
@@ -85,6 +91,7 @@ final class OrmliteDatabase {
                     getRootConnectionExceptionOrElse(sqlException, sqlException).getMessage());
             whitelistDao = null;
             autoWhitelistDao = null;
+            migrationDao = null;
             return false;
         }
     }
@@ -92,9 +99,11 @@ final class OrmliteDatabase {
     private void createDataAccessObjects0() throws SQLException {
         TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
         TableUtils.createTableIfNotExists(connectionSource, AutoWhitelistNumberModel.class);
+        TableUtils.createTableIfNotExists(connectionSource, MigrationModel.class);
 
         whitelistDao = createDao(connectionSource, WhitelistableModel.class);
         autoWhitelistDao = createDao(connectionSource, AutoWhitelistNumberModel.class);
+        migrationDao = createDao(connectionSource, MigrationModel.class);
     }
 
     private void scheduleSync() {
