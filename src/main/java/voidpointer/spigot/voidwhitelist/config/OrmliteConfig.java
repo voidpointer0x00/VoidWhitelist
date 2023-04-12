@@ -144,7 +144,7 @@ public final class OrmliteConfig {
     }
 
     private void createConnectionSource() {
-        DbmsFactory dbmsFactory = new DbmsFactory(plugin);
+        DbmsFactory dbmsFactory = new DbmsFactory(plugin.getDataFolder());
         Dbms dbms = dbmsFactory.matchingOrDefault(getDbms());
         connectionSource = dbms.newConnectionSource(this);
     }

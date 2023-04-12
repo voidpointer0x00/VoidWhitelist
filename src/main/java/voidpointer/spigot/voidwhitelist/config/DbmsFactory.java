@@ -17,7 +17,6 @@ package voidpointer.spigot.voidwhitelist.config;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
@@ -33,7 +32,7 @@ final class DbmsFactory {
 
     @AutowiredLocale private static LocaleLog log;
 
-    private final Plugin plugin;
+    private final File dataFolder;
 
     public Dbms matchingOrDefault(final String dbmsName) {
         switch (dbmsName.toLowerCase()) {
@@ -50,7 +49,7 @@ final class DbmsFactory {
     }
 
     private ConnectionSource h2(final OrmliteConfig ormliteConfig) {
-        File h2File = new File(plugin.getDataFolder(), "h2");
+        File h2File = new File(dataFolder, "h2");
         try {
             return new JdbcConnectionSource("jdbc:h2:" + h2File.getAbsolutePath());
         } catch (SQLException sqlException) {
