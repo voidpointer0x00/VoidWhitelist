@@ -9,7 +9,7 @@ import voidpointer.spigot.voidwhitelist.event.WhitelistReconnectEvent;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
-import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult;
+import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ConnectionResult;
 
 public final class ReconnectCommand extends Command {
     public static final String NAME = "reconnect";
@@ -26,11 +26,11 @@ public final class ReconnectCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        ReconnectResult reconnectResult = whitelistService.reconnect();
-        if (reconnectResult.isSuccess())
+        ConnectionResult connectionResult = whitelistService.reconnect();
+        if (connectionResult.isSuccess())
             locale.localize(RECONNECT_SUCCESS).send(args.getSender());
         else
             locale.localize(RECONNECT_FAIL).send(args.getSender());
-        eventManager.callAsyncEvent(new WhitelistReconnectEvent(reconnectResult, args.getSender()));
+        eventManager.callAsyncEvent(new WhitelistReconnectEvent(connectionResult, args.getSender()));
     }
 }

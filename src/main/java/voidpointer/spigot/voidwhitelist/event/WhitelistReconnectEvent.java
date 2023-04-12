@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.command.ReconnectCommand;
-import voidpointer.spigot.voidwhitelist.storage.WhitelistService.ReconnectResult;
+import voidpointer.spigot.voidwhitelist.storage.WhitelistService.ConnectionResult;
 
 /**
  * <p>Called asynchronously after reconnecting to a database
@@ -21,12 +21,12 @@ public final class WhitelistReconnectEvent extends Event {
         return handlers;
     }
 
-    @Getter private final ReconnectResult result;
+    @Getter private final ConnectionResult result;
 
     /** The {@link CommandSender} that ran the reconnect operation. */
     @Getter private final CommandSender sender;
 
-    public WhitelistReconnectEvent(final @NonNull ReconnectResult result, final @NonNull CommandSender sender) {
+    public WhitelistReconnectEvent(final @NonNull ConnectionResult result, final @NonNull CommandSender sender) {
         super(true);
         this.result = result;
         this.sender = sender;

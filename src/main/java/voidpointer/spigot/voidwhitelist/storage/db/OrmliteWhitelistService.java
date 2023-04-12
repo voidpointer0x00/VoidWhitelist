@@ -76,7 +76,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         }
     }
 
-    public ReconnectResult reconnect() {
+    public ConnectionResult reconnect() {
         shutdown();
         if (ormliteConfig.reload() && ((whitelistDao = ormliteConfig.getWhitelistableDao()) != null)) {
             scheduleSync();

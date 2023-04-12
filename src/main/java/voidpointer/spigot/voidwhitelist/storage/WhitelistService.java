@@ -27,14 +27,14 @@ import java.util.concurrent.CompletableFuture;
 public interface WhitelistService {
     StorageMethod getStorageMethod();
 
-    enum ReconnectResult {
+    enum ConnectionResult {
         SUCCESS, FAIL;
         public boolean isSuccess() {
             return this == SUCCESS;
         }
     }
 
-    ReconnectResult reconnect();
+    ConnectionResult reconnect();
 
     void shutdown();
 
