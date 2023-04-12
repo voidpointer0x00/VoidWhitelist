@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.CloseableWrappedIterable;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.misc.TransactionManager;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -53,6 +54,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private final Plugin plugin;
     @AutowiredLocale private static LocaleLog log;
     private Dao<WhitelistableModel, UUID> whitelistDao;
+    private Dao<AutoWhitelistNumberModel, UUID> autoWhitelistDao;
     private final OrmliteConfig ormliteConfig;
     private DatabaseSyncTask syncTask;
     /* !ONLY! for internal use in case the plugin got disconnected from dbms
@@ -67,6 +69,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         ormliteConfig = new OrmliteConfig(plugin);
         disableOrmliteLogging();
         whitelistDao = ormliteConfig.getWhitelistableDao();
+        autoWhitelistDao = ormliteConfig.getAutoWhitelistDao();
         if (whitelistDao != null) {
             log.info("Connection established.");
             scheduleSync();
@@ -102,8 +105,14 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     }
 
     @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId) {
-        // FIXME implement the thing
-        throw new UnsupportedOperationException("Not yet implemented");
+        return supplyAsync(() -> {
+            try {
+                return Optional.ofNullable(autoWhitelistDao.queryForId(uniqueId));
+            } catch (final SQLException sqlException) {
+                log.warn("Unable to get timesAutoWhitelisted for {0}: {1}", uniqueId, sqlException.getMessage());
+                return Optional.empty();
+            }
+        });
     }
 
     public CompletableFuture<CloseableWrappedIterable<? extends Whitelistable>> findAll() {
@@ -247,8 +256,23 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
             final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted) {
-        // FIXME implement the thing
-        throw new UnsupportedOperationException();
+        return supplyAsync(() -> {
+            try {
+                return add0(uuid, name, expiresAt, timesAutoWhitelisted);
+            } catch (final SQLException sqlException) {
+                return Optional.empty();
+            }
+        });
+    }
+
+    private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt,
+                                         final int timesAutoWhitelisted) throws SQLException {
+        return TransactionManager.callInTransaction(ormliteConfig.getConnectionSource(), () -> {
+            autoWhitelistDao.create(new AutoWhitelistNumberModel(uuid, timesAutoWhitelisted));
+            final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
+            whitelistDao.create(whitelistable);
+            return Optional.of(whitelistable);
+        });
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(

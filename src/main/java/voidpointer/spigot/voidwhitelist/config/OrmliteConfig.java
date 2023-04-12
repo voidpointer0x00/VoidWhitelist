@@ -15,7 +15,6 @@
 package voidpointer.spigot.voidwhitelist.config;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import lombok.Getter;
@@ -23,6 +22,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.storage.db.AutoWhitelistNumberModel;
 import voidpointer.spigot.voidwhitelist.storage.db.WhitelistableModel;
 
 import java.io.File;
@@ -30,6 +30,7 @@ import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static com.j256.ormlite.dao.DaoManager.createDao;
 import static java.lang.Integer.parseInt;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
@@ -82,8 +83,23 @@ public final class OrmliteConfig {
 
     public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
         try {
-            Dao<WhitelistableModel, UUID> dao = DaoManager.createDao(connectionSource, WhitelistableModel.class);
+            Dao<WhitelistableModel, UUID> dao = createDao(connectionSource, WhitelistableModel.class);
             TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
+            return dao;
+        } catch (final SQLException sqlException) {
+            Throwable rootCause = sqlException;
+            while ((rootCause.getCause() != null) && (rootCause != rootCause.getCause()))
+                rootCause = rootCause.getCause();
+            Throwable reportableCause = (rootCause instanceof ConnectException) ? rootCause : sqlException;
+            log.warn("Unable to establish connection: {0}", reportableCause.getMessage());
+            return null;
+        }
+    }
+
+    public Dao<AutoWhitelistNumberModel, UUID> getAutoWhitelistDao() {
+        try {
+            Dao<AutoWhitelistNumberModel, UUID> dao = createDao(connectionSource, AutoWhitelistNumberModel.class);
+            TableUtils.createTableIfNotExists(connectionSource, AutoWhitelistNumberModel.class);
             return dao;
         } catch (final SQLException sqlException) {
             Throwable rootCause = sqlException;
