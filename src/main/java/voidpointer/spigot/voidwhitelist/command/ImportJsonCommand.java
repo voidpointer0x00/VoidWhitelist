@@ -21,15 +21,12 @@ import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.ImportOptions;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
-import voidpointer.spigot.voidwhitelist.event.WhitelistImportEvent;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyList;
@@ -72,18 +69,17 @@ public class ImportJsonCommand extends Command {
                 .set("storage", WHITELIST_FILE_NAME)
                 .send(args.getSender());
         OrmliteWhitelistService database = (OrmliteWhitelistService) whitelistService;
-        Set<UUID> imported;
+        final int importedInTotal;
         if (args.hasOption(REPLACE))
-            imported = database.addAllReplacing(json.getWhitelist()).join();
+            importedInTotal = database.addAllReplacing(json.getWhitelist()).join();
         else
-            imported = database.addAllIfNotExists(json.getWhitelist()).join();
+            importedInTotal = database.addAllIfNotExists(json.getWhitelist()).join();
         final long end = currentTimeMillis();
         locale.localize(IMPORT_RESULT)
-                .set("imported", imported.size())
+                .set("imported", importedInTotal)
                 .set("loaded", json.getWhitelist().size())
                 .set("ms-spent", end - start)
                 .send(args.getSender());
-        eventManager.callAsyncEvent(new WhitelistImportEvent(imported));
     }
 
     @Override public List<String> tabComplete(final Args args) {

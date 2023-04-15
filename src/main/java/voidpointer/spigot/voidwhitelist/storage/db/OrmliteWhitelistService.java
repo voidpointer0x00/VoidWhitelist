@@ -16,6 +16,7 @@ package voidpointer.spigot.voidwhitelist.storage.db;
 
 import com.j256.ormlite.dao.CloseableWrappedIterable;
 import com.j256.ormlite.misc.TransactionManager;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -218,44 +219,44 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         return Optional.empty();
     }
 
-    public CompletableFuture<Set<UUID>> addAllIfNotExists(final Collection<Whitelistable> all) {
+    public CompletableFuture<Integer> addAllIfNotExists(final Collection<Whitelistable> all) {
         if (all.isEmpty())
-            return completedFuture(emptySet());
-        return supplyAsync(() -> addAll((model, addedSet) -> {
+            return completedFuture(0);
+        return supplyAsync(() -> addAll((model, addedInTotal) -> {
             if (!ormliteDatabase.getWhitelistDao().idExists(model.getUniqueId())) {
                 ormliteDatabase.getWhitelistDao().create(model);
-                addedSet.add(model.getUniqueId());
+                addedInTotal.increment();
             }
         }, all));
     }
 
-    public CompletableFuture<Set<UUID>> addAllReplacing(final Collection<Whitelistable> all) {
+    public CompletableFuture<Integer> addAllReplacing(final Collection<Whitelistable> all) {
         if (all.isEmpty())
-            return completedFuture(emptySet());
-        return supplyAsync(() -> addAll((model, addedSet) -> {
+            return completedFuture(0);
+        return supplyAsync(() -> addAll((model, addedInTotal) -> {
             ormliteDatabase.getWhitelistDao().createOrUpdate(model);
-            addedSet.add(model.getUniqueId());
+            addedInTotal.increment();
         }, all));
     }
 
-    private Set<UUID> addAll(
-            final CheckedBiConsumer<WhitelistableModel, Set<UUID>> addFunction,
+    private int addAll(
+            final CheckedBiConsumer<WhitelistableModel, MutableInt> addFunction,
             final Collection<Whitelistable> all) {
-        final Set<UUID> added = new HashSet<>();
+        final MutableInt addedInTotal = new MutableInt();
         try {
             requireConnection();
             return ormliteDatabase.getWhitelistDao().callBatchTasks(() -> {
                 for (final Whitelistable whitelistable : all) {
                     if (whitelistable instanceof WhitelistableModel)
-                        addFunction.consume((WhitelistableModel) whitelistable, added);
+                        addFunction.consume((WhitelistableModel) whitelistable, addedInTotal);
                     else
-                        addFunction.consume(WhitelistableModel.copyOf(whitelistable), added);
+                        addFunction.consume(WhitelistableModel.copyOf(whitelistable), addedInTotal);
                 }
-                return unmodifiableSet(added);
+                return addedInTotal.intValue();
             });
         } catch (final Exception exception) {
             log.warn("Unable to add all whitelistable entities: {0}", exception.getMessage());
-            return unmodifiableSet(added);
+            return addedInTotal.intValue();
         }
     }
 
