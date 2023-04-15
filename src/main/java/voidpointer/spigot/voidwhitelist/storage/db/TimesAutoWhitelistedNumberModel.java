@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @DatabaseTable(tableName="auto_whitelist")
-public class TimesAutoWhitelistedNumberModel implements TimesAutoWhitelistedNumber {
+public final class TimesAutoWhitelistedNumberModel implements TimesAutoWhitelistedNumber {
     @EqualsAndHashCode.Include
     @DatabaseField(id=true, columnName="unique_id", dataType=DataType.UUID)
     private UUID uniqueId;
