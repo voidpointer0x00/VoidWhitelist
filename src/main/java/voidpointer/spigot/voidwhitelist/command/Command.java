@@ -39,6 +39,7 @@ import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
 import static lombok.AccessLevel.PROTECTED;
+import static lombok.AccessLevel.PUBLIC;
 
 @Getter
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
     private static final List<String> EMPTY_ALIASES = emptyList();
     @AutowiredLocale private static LocaleLog localeLog;
 
-    @Setter(PROTECTED)
+    @Setter(PUBLIC)
     private @NonNull String permission = EMPTY_PERMISSION;
 
     private final String name;
