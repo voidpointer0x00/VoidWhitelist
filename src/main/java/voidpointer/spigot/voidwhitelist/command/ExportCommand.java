@@ -1,5 +1,7 @@
 package voidpointer.spigot.voidwhitelist.command;
 
+import com.j256.ormlite.dao.CloseableWrappedIterable;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
@@ -8,6 +10,8 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
+import voidpointer.spigot.voidwhitelist.storage.db.TimesAutoWhitelistedNumberModel;
+import voidpointer.spigot.voidwhitelist.storage.json.JsonAutoWhitelist;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelist;
 
 import java.io.File;
@@ -36,27 +40,52 @@ public class ExportCommand extends Command {
         }
         OrmliteWhitelistService database = (OrmliteWhitelistService) whitelistService;
         localeLog.localize(EXPORT_GATHERING).send(args.getSender());
-        database.findAll().thenAcceptAsync(allWhitelistable -> {
-            final long start = currentTimeMillis();
-            JsonWhitelist jsonWhitelist = new JsonWhitelist();
-            long nGathered = 0;
-            for (final Whitelistable whitelistable : allWhitelistable) {
-                jsonWhitelist.add(whitelistable);
-                nGathered++;
-            }
-            localeLog.localize(EXPORT_PROCESSING).set("gathered", nGathered).send(args.getSender());
-
-            if (jsonWhitelist.save(newExportFile())) {
-                localeLog.localize(EXPORT_FINISHED)
-                        .set("ms-spent", currentTimeMillis() - start)
-                        .send(args.getSender());
-            } else {
-                localeLog.localize(EXPORT_FAILURE).send(args.getSender());
-            }
+        /* whitelist export */
+        database.getTotalCountOfWhitelist().thenAcceptAsync(optionalTotalWhitelist -> {
+            optionalTotalWhitelist.ifPresent(total -> /* TODO Java update ifPresentOrElse */
+                    localeLog.localize(WHITELIST_EXPORT_PROCESSING).set("total", total).send(args.getSender()));
+            database.findAll().thenAccept(allWhitelistable -> exportWhitelist(allWhitelistable, args.getSender()));
+        });
+        /* auto-whitelist export */
+        database.getTotalCountOfAutoWhitelist().thenAcceptAsync(optionalTotalAutoWhitelist -> {
+            optionalTotalAutoWhitelist.ifPresent(total ->
+                    localeLog.localize(AUTO_WHITELIST_EXPORT_PROCESSING).set("total", total).send(args.getSender()));
+            database.findAllAuto().thenAccept(allAuto -> exportAuto(allAuto, args.getSender()));
         });
     }
 
-    private File newExportFile() {
-        return new File(plugin.getDataFolder(), "export-" + currentTimeMillis() + ".json");
+    private void exportWhitelist(final CloseableWrappedIterable<? extends Whitelistable> allWhitelistable,
+                                 final CommandSender sender) {
+        final long start = currentTimeMillis();
+        final JsonWhitelist jsonWhitelist = new JsonWhitelist();
+        /* TODO try-with-resource reference Java 9 */
+        for (final Whitelistable whitelistable : allWhitelistable)
+            jsonWhitelist.add(whitelistable);
+
+        if (jsonWhitelist.save(new File(plugin.getDataFolder(), "whitelist-export-" + currentTimeMillis() + ".json"))) {
+            localeLog.localize(WHITELIST_EXPORT_FINISHED)
+                    .set("ms-spent", currentTimeMillis() - start)
+                    .send(sender);
+        } else {
+            localeLog.localize(WHITELIST_EXPORT_FAILURE).send(sender);
+        }
+    }
+
+    private void exportAuto(final CloseableWrappedIterable<TimesAutoWhitelistedNumberModel> allAuto,
+                            final CommandSender sender) {
+        final long start = currentTimeMillis();
+        final JsonAutoWhitelist jsonAutoWhitelist = new JsonAutoWhitelist();
+        /* TODO try-with-resource reference Java 9 */
+        for (final TimesAutoWhitelistedNumberModel timesAutoWhitelisted : allAuto)
+            jsonAutoWhitelist.add(timesAutoWhitelisted);
+
+        if (jsonAutoWhitelist.save(new File(plugin.getDataFolder(),
+                "auto-whitelist-export-" + currentTimeMillis() + ".json"))) {
+            localeLog.localize(AUTO_WHITELIST_EXPORT_FINISHED)
+                    .set("ms-spent", currentTimeMillis() - start)
+                    .send(sender);
+        } else {
+            localeLog.localize(AUTO_WHITELIST_EXPORT_FAILURE).send(sender);
+        }
     }
 }
