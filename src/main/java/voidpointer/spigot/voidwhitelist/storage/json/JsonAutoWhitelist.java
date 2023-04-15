@@ -7,9 +7,10 @@ import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
 import voidpointer.spigot.voidwhitelist.storage.db.TimesAutoWhitelistedNumberModel;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public final class JsonAutoWhitelist extends JsonStorage {
@@ -25,7 +26,7 @@ public final class JsonAutoWhitelist extends JsonStorage {
      *     }
      * </code>
      */
-    static Optional<Map<UUID, TimesAutoWhitelistedNumber>> parseJsonFile(final File jsonFile) {
+    static Optional<Set<TimesAutoWhitelistedNumber>> parseJsonFile(final File jsonFile) {
         final String jsonContents = fileToString(jsonFile);
         if (jsonContents == null)
             return Optional.empty();
@@ -34,10 +35,10 @@ public final class JsonAutoWhitelist extends JsonStorage {
             JsonArray autoWhitelist = dataAndMeta.getAsJsonArray("autoWhitelist");
             if (autoWhitelist == null)
                 return Optional.empty();
-            Map<UUID, TimesAutoWhitelistedNumber> parsed = new HashMap<>();
-            autoWhitelist.forEach(jsonElement -> parsed.put(
-                    UUID.fromString(jsonElement.getAsJsonObject().get("uniqueId").getAsString()),
-                    TimesAutoWhitelistedNumber.of(jsonElement.getAsJsonObject().get("timesAutoWhitelisted").getAsInt())
+            final Set<TimesAutoWhitelistedNumber> parsed = new HashSet<>();
+            autoWhitelist.forEach(jsonElement -> parsed.add(
+                    TimesAutoWhitelistedNumber.of(UUID.fromString(jsonElement.getAsJsonObject().get("uniqueId").getAsString()),
+                            jsonElement.getAsJsonObject().get("timesAutoWhitelisted").getAsInt())
             ));
             return Optional.of(parsed);
         } catch (final JsonSyntaxException | NullPointerException | IllegalArgumentException exception) {

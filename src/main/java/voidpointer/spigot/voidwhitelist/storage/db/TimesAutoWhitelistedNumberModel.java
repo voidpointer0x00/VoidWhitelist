@@ -23,6 +23,10 @@ public final class TimesAutoWhitelistedNumberModel implements TimesAutoWhitelist
     @DatabaseField(columnName="times_auto_whitelisted")
     private int timesAutoWhitelisted;
 
+    public static TimesAutoWhitelistedNumberModel copyOf(final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
+        return new TimesAutoWhitelistedNumberModel(timesAutoWhitelisted.getUniqueId(), timesAutoWhitelisted.get());
+    }
+
     @Override public int get() {
         return timesAutoWhitelisted;
     }

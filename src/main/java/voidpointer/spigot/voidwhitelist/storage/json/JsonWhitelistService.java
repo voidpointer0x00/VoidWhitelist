@@ -22,9 +22,9 @@ import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static voidpointer.spigot.voidwhitelist.storage.StorageMethod.JSON;
 import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.ConnectionResult.FAIL;
@@ -60,10 +60,11 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
             saveAutoWhitelist();
             return true;
         }
-        Optional<Map<UUID, TimesAutoWhitelistedNumber>> autoWhitelist = JsonAutoWhitelist.parseJsonFile(autoWhitelistFile);
+        Optional<Set<TimesAutoWhitelistedNumber>> autoWhitelist = JsonAutoWhitelist.parseJsonFile(autoWhitelistFile);
         if (!autoWhitelist.isPresent())
             return false;
-        getAutoWhitelist().putAll(autoWhitelist.get());
+        getAutoWhitelist().putAll(autoWhitelist.get().stream()
+                .collect(Collectors.toMap(TimesAutoWhitelistedNumber::getUniqueId, times -> times)));
         return true;
     }
 

@@ -1,11 +1,20 @@
 package voidpointer.spigot.voidwhitelist;
 
-public interface TimesAutoWhitelistedNumber {
-    TimesAutoWhitelistedNumber ZERO = () -> 0;
+import java.util.UUID;
 
-    static TimesAutoWhitelistedNumber of(final int timesAutoWhitelisted) {
-        return () -> timesAutoWhitelisted;
+public interface TimesAutoWhitelistedNumber {
+    static TimesAutoWhitelistedNumber of(final UUID uniqueId, final int timesAutoWhitelisted) {
+        return new TimesAutoWhitelistedNumber() {
+            @Override public UUID getUniqueId() {
+                return uniqueId;
+            }
+            @Override public int get() {
+                return timesAutoWhitelisted;
+            }
+        };
     }
+
+    UUID getUniqueId();
 
     int get();
 

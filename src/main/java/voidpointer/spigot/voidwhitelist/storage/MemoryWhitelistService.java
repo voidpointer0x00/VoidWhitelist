@@ -100,7 +100,7 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
             final UUID uuid, final String name, final Date expiresAt) {
-        return add(uuid, name, expiresAt, TimesAutoWhitelistedNumber.ZERO.get());
+        return add(uuid, name, expiresAt, 0);
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
@@ -112,7 +112,7 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
                 whitelist.add(whitelistable);
             }
             saveWhitelist();
-            autoWhitelist.put(uuid, TimesAutoWhitelistedNumber.of(timesAutoWhitelisted));
+            autoWhitelist.put(uuid, TimesAutoWhitelistedNumber.of(uuid, timesAutoWhitelisted));
             saveAutoWhitelist();
             return Optional.of(whitelistable);
         });

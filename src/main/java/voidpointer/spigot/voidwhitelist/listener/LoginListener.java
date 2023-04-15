@@ -85,7 +85,7 @@ public final class LoginListener implements Listener {
             return;
         }
         autoWhitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get(),
-                timesAutoWhitelisted.orElse(TimesAutoWhitelistedNumber.ZERO).get() + 1).thenApplyAsync(whitelistable -> {
+                timesAutoWhitelisted.map(TimesAutoWhitelistedNumber::get).orElse(0) + 1).thenApplyAsync(whitelistable -> {
             if (!whitelistable.isPresent()) {
                 locale.warn("Automatic whitelisting of {0} failed", event.getUniqueId());
                 return whitelistable;
