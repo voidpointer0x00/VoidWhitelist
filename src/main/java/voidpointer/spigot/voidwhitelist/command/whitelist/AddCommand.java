@@ -46,7 +46,6 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class AddCommand extends Command {
     public static final String NAME = "add";
-    public static final String PERMISSION = "whitelist.add";
     public static final int MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
@@ -57,7 +56,6 @@ public final class AddCommand extends Command {
     public AddCommand() {
         super(NAME);
         super.setRequiredArgsNumber(MIN_ARGS);
-        super.setPermission(PERMISSION);
         super.addOptions(UuidOptions.values());
     }
 

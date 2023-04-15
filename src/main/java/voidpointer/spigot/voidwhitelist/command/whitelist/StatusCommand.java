@@ -25,14 +25,12 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class StatusCommand extends Command {
     public static final String NAME = "status";
-    public static final String PERMISSION = "whitelist.status";
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static WhitelistConfig config;
 
     public StatusCommand() {
         super(NAME);
-        setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {

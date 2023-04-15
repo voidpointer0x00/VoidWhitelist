@@ -26,7 +26,6 @@ import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 public final class EnableCommand extends Command {
     public static final String NAME = "on";
-    public static final String PERMISSION = "whitelist.enable";
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static WhitelistConfig whitelistConfig;
@@ -34,7 +33,6 @@ public final class EnableCommand extends Command {
 
     public EnableCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {

@@ -44,7 +44,6 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 public class RemoveCommand extends Command {
     public static final String NAME = "remove";
     public static final List<String> ALIASES = singletonList("rem");
-    public static final String PERMISSION = "whitelist.remove";
     public static final Integer MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
@@ -54,7 +53,6 @@ public class RemoveCommand extends Command {
 
     public RemoveCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
         super.setRequiredArgsNumber(MIN_ARGS);
         super.addOptions(UuidOptions.values());
     }

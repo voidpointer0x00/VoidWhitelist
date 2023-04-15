@@ -41,7 +41,6 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class InfoCommand extends Command {
     public static final String NAME = "info";
-    public static final String PERMISSION = "whitelist.info";
 
     @AutowiredLocale private static LocaleLog locale;
     @Autowired(mapId="whitelistService")
@@ -49,7 +48,6 @@ public final class InfoCommand extends Command {
 
     public InfoCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
         super.addOptions(UuidOptions.values());
     }
 

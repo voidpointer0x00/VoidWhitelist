@@ -26,7 +26,6 @@ import voidpointer.spigot.voidwhitelist.version.Version;
 
 public final class GuiCommand extends Command {
     private static final String NAME = "gui";
-    private static final String PERMISSION = "whitelist.gui";
 
     @AutowiredLocale private static Locale locale;
     @Autowired(mapId="whitelistService")
@@ -34,7 +33,6 @@ public final class GuiCommand extends Command {
 
     public GuiCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {

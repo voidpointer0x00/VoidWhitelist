@@ -22,7 +22,6 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public class ExportCommand extends Command {
     public static final String NAME = "export-db";
-    public static final String PERMISSION = "whitelist.export";
 
     @AutowiredLocale private static LocaleLog localeLog;
     @Autowired(mapId="plugin") private static Plugin plugin;
@@ -31,7 +30,6 @@ public class ExportCommand extends Command {
 
     public ExportCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {

@@ -9,13 +9,11 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 final class HelpCommand extends Command {
     public static final String NAME = "help";
-    public static final String PERMISSION = "whitelist.help";
 
     @AutowiredLocale private static Locale locale;
 
     public HelpCommand() {
         super(NAME);
-        setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {

@@ -42,7 +42,6 @@ import static voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService
 
 public class ImportJsonCommand extends Command {
     public static final String NAME = "import-json";
-    public static final String PERMISSION = "whitelist.import";
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static EventManager eventManager;
@@ -54,7 +53,6 @@ public class ImportJsonCommand extends Command {
 
     public ImportJsonCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
         super.addOptions(ImportOptions.values());
     }
 

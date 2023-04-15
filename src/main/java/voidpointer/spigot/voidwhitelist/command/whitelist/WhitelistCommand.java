@@ -35,6 +35,9 @@ public final class WhitelistCommand extends Command {
     public WhitelistCommand() {
         super(NAME);
 
+        super.setPermission("voidwhitelist." + NAME);
+        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
+
         whitelistCommands.addCommand(new AddCommand());
         whitelistCommands.addCommand(new RemoveCommand());
         whitelistCommands.addCommand(new EnableCommand());
@@ -47,7 +50,9 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new HelpCommand());
         whitelistCommands.addCommand(new ReloadCommand());
         whitelistCommands.addCommand(new ReconnectCommand());
-        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
+
+        whitelistCommands.getCommands().values()
+                .forEach(cmd -> cmd.setPermission(getPermission() + "." + cmd.getName()));
     }
 
     @Override public void execute(final Args args) {

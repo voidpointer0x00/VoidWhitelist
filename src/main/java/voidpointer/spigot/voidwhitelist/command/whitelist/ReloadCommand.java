@@ -23,7 +23,6 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class ReloadCommand extends Command {
     public static final String NAME = "reload";
-    public static final String PERMISSION = "whitelist.reload";
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static LocaleLog guiLocale;
@@ -38,7 +37,6 @@ public final class ReloadCommand extends Command {
 
     public ReloadCommand() {
         super(NAME);
-        setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {

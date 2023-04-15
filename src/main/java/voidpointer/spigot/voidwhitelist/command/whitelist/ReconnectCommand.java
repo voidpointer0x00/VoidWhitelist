@@ -14,7 +14,6 @@ import static voidpointer.spigot.voidwhitelist.storage.WhitelistService.Connecti
 
 public final class ReconnectCommand extends Command {
     public static final String NAME = "reconnect";
-    public static final String PERMISSION = "whitelist.reconnect";
 
     @AutowiredLocale private static Locale locale;
     @Autowired(mapId="whitelistService")
@@ -23,7 +22,6 @@ public final class ReconnectCommand extends Command {
 
     public ReconnectCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {
