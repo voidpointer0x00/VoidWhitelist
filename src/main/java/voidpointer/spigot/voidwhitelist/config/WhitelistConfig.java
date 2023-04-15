@@ -35,7 +35,7 @@ public final class WhitelistConfig {
     public static final String AUTO_WL_PATH = "auto-whitelist";
     public static final String AUTO_WL_ENABLED_PATH = "auto-whitelist.enabled";
     public static final String AUTO_WL_DURATION_PATH = "auto-whitelist.duration";
-    public static final String AUTO_WL_MAX_REPEATS_PATH = "auto-whitelist.max-repeats";
+    public static final String AUTO_WL_LIMIT_PATH = "auto-whitelist.limit";
     public static final String AUTO_WL_STRATEGY_PATH = "auto-whitelist.strategy";
     private static final String WHITELIST_ENABLED_PATH = "whitelist.enabled";
     private static final String UUID_MODE_PATH = "whitelist.uuid-mode";
@@ -116,8 +116,8 @@ public final class WhitelistConfig {
         return StrategyPredicateFactory.getPredicate(plugin.getConfig().getString(AUTO_WL_STRATEGY_PATH, "newcomers"));
     }
 
-    public int getAutoMaxRepeats() {
-        return plugin.getConfig().getInt(AUTO_WL_MAX_REPEATS_PATH, 0);
+    public int getAutoLimit() {
+        return plugin.getConfig().getInt(AUTO_WL_LIMIT_PATH, 0);
     }
 
     public Optional<Date> getAutoDuration() {

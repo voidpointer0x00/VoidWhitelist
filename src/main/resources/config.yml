@@ -51,10 +51,12 @@ auto-whitelist:
   #   Any value that can not be parsed will result in disabling the automatic
   # whitelisting feature until the configuration is fixed and reloaded.
   duration: 7d
-  #   A value of zero will disable the auto whitelisting.
-  #   Any negative number will disable this property and players will be able to
-  # infinitely join the server and get whitelisted every time.
-  max-repeats: 1
+  #   This property controls the limit for the number of automatic whitelisting.
+  #
+  #   A value of zero will disable the auto whitelisting. Any negative number will
+  # disable this property and players will be able to infinitely join the server
+  # and get whitelisted every time.
+  limit: 1
   # all — simply every joining player if the number that they've been "freely" whitelisted
   #       have yet to exceed the limiting "max-repeats" property.
   #

@@ -3,12 +3,11 @@ package voidpointer.spigot.voidwhitelist.config.migration;
 import org.bukkit.configuration.ConfigurationSection;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 
-final class AutoWhitelistMigration implements ConfigMigration {
+final class AutoWhitelistMigration extends AbstractMigration {
     private static final List<String> AUTO_WL_COMMENTS = asList(
             "",
             " When both whitelist and auto-whitelist are enabled, the plugin will automatically",
@@ -26,11 +25,6 @@ final class AutoWhitelistMigration implements ConfigMigration {
             "",
             " Any value that can not be parsed will result in disabling the automatic",
             "whitelisting feature until the configuration is fixed and reloaded."
-    );
-    private static final List<String> AUTO_WL_MAX_REPEATS_COMMENTS = asList(
-            " A value of zero will disable the auto whitelisting.",
-            " Any negative number will disable this property and players will be able to",
-            "infinitely join the server and get whitelisted every time."
     );
     private static final List<String> AUTO_WL_STRATEGY_COMMENTS = asList(
             "all — simply every joining player if the number that they've been \"freely\" whitelisted",
@@ -54,7 +48,6 @@ final class AutoWhitelistMigration implements ConfigMigration {
     @Override public void run(final ConfigurationSection config) {
         config.set(WhitelistConfig.AUTO_WL_ENABLED_PATH, false);
         config.set(WhitelistConfig.AUTO_WL_DURATION_PATH, "7d");
-        config.set(WhitelistConfig.AUTO_WL_MAX_REPEATS_PATH, 1);
         config.set(WhitelistConfig.AUTO_WL_STRATEGY_PATH, "all");
 
         /* unset previous shitty unimplemented configuration */
@@ -64,22 +57,7 @@ final class AutoWhitelistMigration implements ConfigMigration {
         if (supportsComments(config)) {
             config.setComments(WhitelistConfig.AUTO_WL_PATH, AUTO_WL_COMMENTS);
             config.setComments(WhitelistConfig.AUTO_WL_DURATION_PATH, AUTO_WL_DURATION_COMMENTS);
-            config.setComments(WhitelistConfig.AUTO_WL_MAX_REPEATS_PATH, AUTO_WL_MAX_REPEATS_COMMENTS);
             config.setComments(WhitelistConfig.AUTO_WL_STRATEGY_PATH, AUTO_WL_STRATEGY_COMMENTS);
         }
-    }
-
-    private boolean supportsComments(final ConfigurationSection config) {
-        /* SpigotMC only introduced comment manipulation methods in 1.18.2
-         *  if we can trust the release & commit dates commit 3e2dd2bc120 on 20 dec 2021,
-         *  Spigot version 1.18.1 released on 10 dec 2021, 1.18.2 on 6 mar 2022
-         * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/3e2dd2bc120754ea4db193e878050d0eb31a6894
-         */
-        List<String> commentMethods = asList("getComments", "getInlineComments", "setComments", "setInlineComments");
-        for (final Method method : config.getClass().getMethods()) {
-            if (commentMethods.contains(method.getName()))
-                return true;
-        }
-        return false;
     }
 }
