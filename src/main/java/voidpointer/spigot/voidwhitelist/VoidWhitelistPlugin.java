@@ -25,6 +25,7 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationResolver;
 import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
+import voidpointer.spigot.voidwhitelist.command.autowhitelist.AutoWhitelistCommand;
 import voidpointer.spigot.voidwhitelist.command.whitelist.WhitelistCommand;
 import voidpointer.spigot.voidwhitelist.config.GuiConfig;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
@@ -89,6 +90,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         kickTaskScheduler = new KickTaskScheduler();
         Injector.inject(this);
         new WhitelistCommand().register(this);
+        new AutoWhitelistCommand().register(this);
         registerListeners();
         hookPapi();
 
