@@ -71,6 +71,18 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         ormliteDatabase.shutdown();
     }
 
+    public CompletableFuture<CloseableWrappedIterable<TimesAutoWhitelistedNumberModel>> findAllAuto() {
+        return supplyAsync(() -> {
+           try {
+               requireConnection();
+               return ormliteDatabase.getAutoWhitelistDao().getWrappedIterable();
+           } catch (final SQLException sqlException) {
+               log.warn("Unable to get all entities from auto whitelist: {0}", sqlException.getMessage());
+               return null;
+           }
+        });
+    }
+
     @Override public CompletableFuture<Optional<TimesAutoWhitelistedNumber>> getTimesAutoWhitelisted(final UUID uniqueId) {
         return supplyAsync(() -> {
             try {
@@ -78,6 +90,30 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
                 return Optional.ofNullable(ormliteDatabase.getAutoWhitelistDao().queryForId(uniqueId));
             } catch (final SQLException sqlException) {
                 log.warn("Unable to get timesAutoWhitelisted for {0}: {1}", uniqueId, sqlException.getMessage());
+                return Optional.empty();
+            }
+        });
+    }
+
+    public CompletableFuture<Optional<Long>> getTotalCountOfWhitelist() {
+        return supplyAsync(() -> {
+            try {
+                requireConnection();
+                return Optional.of(ormliteDatabase.getWhitelistDao().countOf());
+            } catch (final SQLException sqlException) {
+                log.warn("Unable to get the total number of whitelist entities: {}", sqlException.getMessage());
+                return Optional.empty();
+            }
+        });
+    }
+
+    public CompletableFuture<Optional<Long>> getTotalCountOfAutoWhitelist() {
+        return supplyAsync(() -> {
+            try {
+                requireConnection();
+                return Optional.of(ormliteDatabase.getAutoWhitelistDao().countOf());
+            } catch (final SQLException sqlException) {
+                log.warn("Unable to get the total number of whitelist entities: {}", sqlException.getMessage());
                 return Optional.empty();
             }
         });
