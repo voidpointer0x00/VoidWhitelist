@@ -130,6 +130,7 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
         return supplyAsync(() -> {
             whitelist.remove(whitelistable);
             whitelist.add(whitelistable);
+            saveWhitelist();
             return Optional.of(whitelistable);
         });
     }
