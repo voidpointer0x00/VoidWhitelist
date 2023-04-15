@@ -55,7 +55,7 @@ final class AutoWhitelistMigration implements ConfigMigration {
         config.set(WhitelistConfig.AUTO_WL_ENABLED_PATH, false);
         config.set(WhitelistConfig.AUTO_WL_DURATION_PATH, "7d");
         config.set(WhitelistConfig.AUTO_WL_MAX_REPEATS_PATH, 1);
-        config.set(WhitelistConfig.AUTO_WL_STRATEGY_PATH, "newcomers");
+        config.set(WhitelistConfig.AUTO_WL_STRATEGY_PATH, "all");
 
         /* unset previous shitty unimplemented configuration */
         config.set("auto-whitelist-new-players", null);
