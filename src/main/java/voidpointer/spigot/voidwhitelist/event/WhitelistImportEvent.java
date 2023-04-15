@@ -22,6 +22,7 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.command.ImportJsonCommand;
 
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * <p>Called asynchronously when someone imported a whitelist storage.</p>
@@ -41,9 +42,9 @@ public final class WhitelistImportEvent extends Event {
     /**
      * An unmodifiable {@link Set} of imported {@link Whitelistable} entities.
      */
-    private @NonNull @Getter final Set<Whitelistable> imported;
+    private @NonNull @Getter final Set<UUID> imported;
 
-    public WhitelistImportEvent(final @NonNull Set<Whitelistable> imported) {
+    public WhitelistImportEvent(final @NonNull Set<UUID> imported) {
         super(true);
         this.imported = imported;
     }

@@ -218,30 +218,30 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         return Optional.empty();
     }
 
-    public CompletableFuture<Set<Whitelistable>> addAllIfNotExists(final Collection<Whitelistable> all) {
+    public CompletableFuture<Set<UUID>> addAllIfNotExists(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(emptySet());
         return supplyAsync(() -> addAll((model, addedSet) -> {
             if (!ormliteDatabase.getWhitelistDao().idExists(model.getUniqueId())) {
                 ormliteDatabase.getWhitelistDao().create(model);
-                addedSet.add(model);
+                addedSet.add(model.getUniqueId());
             }
         }, all));
     }
 
-    public CompletableFuture<Set<Whitelistable>> addAllReplacing(final Collection<Whitelistable> all) {
+    public CompletableFuture<Set<UUID>> addAllReplacing(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(emptySet());
         return supplyAsync(() -> addAll((model, addedSet) -> {
             ormliteDatabase.getWhitelistDao().createOrUpdate(model);
-            addedSet.add(model);
+            addedSet.add(model.getUniqueId());
         }, all));
     }
 
-    private Set<Whitelistable> addAll(
-            final CheckedBiConsumer<WhitelistableModel, Set<WhitelistableModel>> addFunction,
+    private Set<UUID> addAll(
+            final CheckedBiConsumer<WhitelistableModel, Set<UUID>> addFunction,
             final Collection<Whitelistable> all) {
-        Set<WhitelistableModel> added = new HashSet<>();
+        Set<UUID> added = new HashSet<>();
         try {
             requireConnection();
             return ormliteDatabase.getWhitelistDao().callBatchTasks(() -> {

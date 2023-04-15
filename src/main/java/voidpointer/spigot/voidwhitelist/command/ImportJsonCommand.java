@@ -18,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.ImportOptions;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
@@ -30,6 +29,7 @@ import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyList;
@@ -61,18 +61,18 @@ public class ImportJsonCommand extends Command {
             locale.localize(IMPORT_ONLY_TO_DATABASE).send(args.getSender());
             return;
         }
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> execute0(args));
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> importJson(args));
     }
 
-    private void execute0(final Args args) {
+    private void importJson(final Args args) {
         final long start = currentTimeMillis();
         JsonWhitelistService json = (JsonWhitelistService) storageFactory.loadStorage(JSON);
         locale.localize(IMPORT_LOADED)
                 .set("loaded", json.getWhitelist().size())
                 .set("storage", WHITELIST_FILE_NAME)
                 .send(args.getSender());
-        OrmliteWhitelistService database = (OrmliteWhitelistService) ImportJsonCommand.whitelistService;
-        Set<Whitelistable> imported;
+        OrmliteWhitelistService database = (OrmliteWhitelistService) whitelistService;
+        Set<UUID> imported;
         if (args.hasOption(REPLACE))
             imported = database.addAllReplacing(json.getWhitelist()).join();
         else
