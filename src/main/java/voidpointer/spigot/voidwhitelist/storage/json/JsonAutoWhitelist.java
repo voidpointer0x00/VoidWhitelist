@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
+import voidpointer.spigot.voidwhitelist.storage.db.TimesAutoWhitelistedNumberModel;
 
 import java.io.File;
 import java.util.HashMap;
@@ -46,15 +47,27 @@ public final class JsonAutoWhitelist extends JsonStorage {
     }
 
     static void save(final Map<UUID, TimesAutoWhitelistedNumber> autoWhitelist, final File destination) {
-        final JsonArray jsonAutoWhitelist = new JsonArray();
-        autoWhitelist.forEach((uniqueId, timesAutoWhitelisted) -> {
-            JsonObject jsonAutoWhitelistEntry = new JsonObject();
-            jsonAutoWhitelistEntry.addProperty("uniqueId", uniqueId.toString());
-            jsonAutoWhitelistEntry.addProperty("timesAutoWhitelisted", timesAutoWhitelisted.get());
-            jsonAutoWhitelist.add(jsonAutoWhitelistEntry);
-        });
-        final JsonObject dataAndMeta = new JsonObject();
-        dataAndMeta.add("autoWhitelist", jsonAutoWhitelist);
-        save(dataAndMeta, destination);
+        final JsonAutoWhitelist jsonAutoWhitelist = new JsonAutoWhitelist();
+        autoWhitelist.forEach(jsonAutoWhitelist::add);
+        jsonAutoWhitelist.save(destination);
+    }
+
+    private final JsonArray jsonAutoWhitelist = new JsonArray();
+
+    public void add(final TimesAutoWhitelistedNumberModel timesAutoWhitelistedNumber) {
+        add(timesAutoWhitelistedNumber.getUniqueId(), timesAutoWhitelistedNumber);
+    }
+
+    private void add(final UUID uniqueId, final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
+        JsonObject jsonAutoWhitelistEntry = new JsonObject();
+        jsonAutoWhitelistEntry.addProperty("uniqueId", uniqueId.toString());
+        jsonAutoWhitelistEntry.addProperty("timesAutoWhitelisted", timesAutoWhitelisted.get());
+        jsonAutoWhitelist.add(jsonAutoWhitelistEntry);
+    }
+
+    public boolean save(final File destination) {
+        final JsonObject wrapper = new JsonObject();
+        wrapper.add("autoWhitelist", jsonAutoWhitelist);
+        return save(wrapper, destination);
     }
 }
