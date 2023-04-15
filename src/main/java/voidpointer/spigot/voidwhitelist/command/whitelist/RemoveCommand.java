@@ -12,17 +12,20 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
-import voidpointer.spigot.framework.localemodule.LocalizedMessage;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
+import voidpointer.spigot.voidwhitelist.event.EventManager;
+import voidpointer.spigot.voidwhitelist.event.WhitelistRemovedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
@@ -30,73 +33,80 @@ import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
-public final class InfoCommand extends Command {
-    public static final String NAME = "info";
-    public static final String PERMISSION = "whitelist.info";
+public class RemoveCommand extends Command {
+    public static final String NAME = "remove";
+    public static final List<String> ALIASES = singletonList("rem");
+    public static final String PERMISSION = "whitelist.remove";
+    public static final Integer MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
     @Autowired(mapId="whitelistService")
     private static WhitelistService whitelistService;
+    @Autowired private static EventManager eventManager;
 
-    public InfoCommand() {
+    public RemoveCommand() {
         super(NAME);
         super.setPermission(PERMISSION);
+        super.setRequiredArgsNumber(MIN_ARGS);
         super.addOptions(UuidOptions.values());
     }
 
     @Override public void execute(final Args args) {
-        if (isSelfConsole(args)) {
-            locale.localize(WhitelistMessage.CONSOLE_WHITELISTED).send(args.getSender());
-            return;
-        }
-
-        getUniqueId(args).thenAcceptAsync(uuidOptional -> {
+        final String name = args.get(0);
+        UUIDFetchers.of(args.getDefinedOptions()).getUUID(name).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
-                        .set("player", args.isEmpty() ? args.getPlayer().getDisplayName() : args.get(0))
+                        .set("player", name)
                         .set("date", null)
                         .send(args.getSender());
                 return;
             }
-            tellInfo(args, whitelistService.find(uuidOptional.get()).join(), uuidOptional.get());
+
+            final Optional<Whitelistable> whitelistable = whitelistService.find(uuidOptional.get()).join();
+            if (!whitelistable.isPresent()) {
+                locale.localize(WhitelistMessage.REMOVE_NOT_WHITELISTED)
+                        .set("player-details", locale.localize(PLAYER_DETAILS))
+                        .set("uuid", uuidOptional.get())
+                        .set("player", name)
+                        .send(args.getSender());
+                return;
+            }
+            boolean isRemoved = whitelistService.remove(whitelistable.get()).join();
+            if (isRemoved) {
+                notifyRemoved(args.getSender(), uuidOptional.get(), name);
+                eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));
+            } else {
+                notifyNotRemoved(args.getSender(), uuidOptional.get(), name);
+            }
         }).whenCompleteAsync((res, th) -> {
             if (th != null)
-                locale.warn("Couldn't get information about player", th);
+                locale.warn("Couldn't remove a player from the whitelist", th);
         });
     }
 
-    private CompletableFuture<Optional<UUID>> getUniqueId(final Args args) {
-        if (args.isEmpty())
-            return CompletableFuture.completedFuture(Optional.of(args.getPlayer().getUniqueId()));
-        else
-            return UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0));
+    private void notifyRemoved(final CommandSender sender, final UUID uuid, final String name) {
+        locale.localize(REMOVED)
+                .set("player-details", locale.localize(PLAYER_DETAILS))
+                .set("uuid", uuid)
+                .set("player", name)
+                .send(sender);
     }
 
-    private boolean isSelfConsole(final Args args) {
-        return !args.isPlayer() && args.isEmpty();
-    }
-
-    private void tellInfo(final Args args, final Optional<Whitelistable> whitelistable, final UUID uuid) {
-        LocalizedMessage message;
-        if (!whitelistable.isPresent() || !whitelistable.get().isAllowedToJoin())
-            message = locale.localize(INFO_NOT_WHITELISTED);
-        else if (whitelistable.get().isExpirable())
-            message = locale.localize(INFO_WHITELISTED_TEMP).set("date", whitelistable.get().getExpiresAt());
-        else
-            message = locale.localize(INFO_WHITELISTED);
-        message.set("player-details", locale.localize(PLAYER_DETAILS))
-                .set("player", args.isEmpty() ? args.getPlayer().getDisplayName() : args.get(0))
-                .set("uuid", uuid.toString())
-                .send(args.getSender());
+    private void notifyNotRemoved(final CommandSender sender, final UUID uuid, final String name) {
+        locale.localize(REMOVE_FAIL)
+                .set("player-details", locale.localize(PLAYER_DETAILS))
+                .set("uuid", uuid)
+                .set("player", name)
+                .send(sender);
     }
 
     @Override public List<String> tabComplete(final Args args) {
@@ -108,7 +118,7 @@ public final class InfoCommand extends Command {
                     .map(OfflinePlayer::getName)
                     .collect(Collectors.toList());
         }
-        if (args.size() == 1) {
+        if (args.size() == MIN_ARGS) {
             return stream(getOfflinePlayers())
                     .filter(offlinePlayer -> (null != offlinePlayer.getName())
                             && offlinePlayer.getName().startsWith(args.getLast()))
@@ -116,5 +126,13 @@ public final class InfoCommand extends Command {
                     .collect(Collectors.toList());
         }
         return emptyList();
+    }
+
+    @Override public List<String> getAliases() {
+        return ALIASES;
+    }
+
+    @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
+        locale.localize(WhitelistMessage.REMOVE_HELP).send(sender);
     }
 }

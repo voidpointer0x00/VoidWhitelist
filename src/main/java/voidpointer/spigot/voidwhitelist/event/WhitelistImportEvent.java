@@ -19,7 +19,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.command.ImportJsonCommand;
+import voidpointer.spigot.voidwhitelist.command.whitelist.ImportJsonCommand;
 
 import java.util.Set;
 import java.util.UUID;

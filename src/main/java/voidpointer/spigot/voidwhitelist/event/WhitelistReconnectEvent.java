@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import voidpointer.spigot.voidwhitelist.command.ReconnectCommand;
+import voidpointer.spigot.voidwhitelist.command.whitelist.ReconnectCommand;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService.ConnectionResult;
 
 /**

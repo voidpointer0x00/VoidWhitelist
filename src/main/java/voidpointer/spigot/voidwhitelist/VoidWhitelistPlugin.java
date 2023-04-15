@@ -25,7 +25,7 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationResolver;
 import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
-import voidpointer.spigot.voidwhitelist.command.WhitelistCommand;
+import voidpointer.spigot.voidwhitelist.command.whitelist.WhitelistCommand;
 import voidpointer.spigot.voidwhitelist.config.GuiConfig;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
