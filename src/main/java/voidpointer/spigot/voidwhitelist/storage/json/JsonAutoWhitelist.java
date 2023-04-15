@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-final class JsonAutoWhitelist extends JsonStorage {
+public final class JsonAutoWhitelist extends JsonStorage {
     /**
      * <code>
      *     {
@@ -24,7 +24,7 @@ final class JsonAutoWhitelist extends JsonStorage {
      *     }
      * </code>
      */
-    public static Optional<Map<UUID, TimesAutoWhitelistedNumber>> parseJsonFile(final File jsonFile) {
+    static Optional<Map<UUID, TimesAutoWhitelistedNumber>> parseJsonFile(final File jsonFile) {
         final String jsonContents = fileToString(jsonFile);
         if (jsonContents == null)
             return Optional.empty();
@@ -45,7 +45,7 @@ final class JsonAutoWhitelist extends JsonStorage {
         }
     }
 
-    public static void save(final Map<UUID, TimesAutoWhitelistedNumber> autoWhitelist, final File destination) {
+    static void save(final Map<UUID, TimesAutoWhitelistedNumber> autoWhitelist, final File destination) {
         final JsonArray jsonAutoWhitelist = new JsonArray();
         autoWhitelist.forEach((uniqueId, timesAutoWhitelisted) -> {
             JsonObject jsonAutoWhitelistEntry = new JsonObject();
