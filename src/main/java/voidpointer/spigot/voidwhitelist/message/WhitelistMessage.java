@@ -64,7 +64,7 @@ public enum WhitelistMessage implements Message {
     RECONNECT_FAIL_KICK("&cМы больше не можем проверить, есть ли Вы в Whitelist"),
     STORAGE_METHOD_CHANGED("&eМетод хранения данных был изменён &6{old}&e->&6{new}&e."),
     UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить online UUID, попробуйте " +
-            "\\(&6-offline &8&l(клик)) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +
+            "\\(&6-offline &8&o&nклик) [hover{&6/whitelist {cmd} -offline {player} {date}}]" +
             " [click.suggest{/whitelist {cmd} -offline {player} {date}}] "),
     LOCALE_DOESNT_SUPPORT_RELOAD("&cТекущая локаль не поддерживает перезагрузку."),
     LOCALE_RELOADED("&aЛокаль перезагружена."),
@@ -78,6 +78,36 @@ public enum WhitelistMessage implements Message {
             + "\\(&e/whitelist on|off) [click.suggest{/whitelist o}] &f— включить/выключить whitelist"),
     WRONG_DATE_FORMAT("&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут &a1d15h45m"),
     YOU_WERE_REMOVED("&cВас исключили из whitelist."),
+
+    // TODO add unique id display on hover effects
+
+    AUTO_UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить UUID, попробуйте " +
+            "\\(&6-offline &8&o&n(клик)) [hover{&6/auto-whitelist {cmd} -offline {player}}]" +
+            " [click.suggest{/auto-whitelist {cmd} -offline {player}}] "),
+    AUTO_WHITELIST_NOT_ENOUGH_ARGS("&cНедостаточно аргументов. \\(&6/auto-whitelist help) [click.run{/auto-whitelist help}]"),
+    AUTO_WHITELIST_UNKNOWN_COMMAND("&cНеизвестная команда. \\(&6/auto-whitelist help) [click.run{/auto-whitelist help}]"),
+    AUTO_WHITELIST_HELP("\\(&e/auto-whitelist on|off) [click.suggest{/auto-whitelist o}] &f— включить/выключить auto-whitelist\n" +
+            "\\(&e/auto-whitelist is-on) [click.run{/auto-whitelist status}] &f— узнать, включен ли auto-whitelist\n" +
+            "\\(&e/auto-whitelist info &6<player>) [click.suggest{/auto-whitelist info }] &f— узнать лимит игрока\n" +
+            "\\(&e/auto-whitelist set &6<player>) [click.suggest{/auto-whitelist set }] &f— установить лимит для игрока\n" +
+            "\\(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— сбросить лимит для игрока\n"),
+    AUTO_WHITELIST_ENABLED("&eАвтоматическое добавление в whitelist &aвключено&e."),
+    AUTO_WHITELIST_DISABLED("&eАвтоматическое добавление в whitelist &cвыключено&e."),
+    AUTO_WHITELIST_RESET("&eКол-во авто. добавлений в whitelist для игрока &6{player}&e сброшено."),
+    AUTO_WHITELIST_RESET_FAIL("&сНе удалось сбросить кол-во авто. добавлений в whitelist для игрока &6{player}."),
+    AUTO_WHITELIST_RESET_ARGS("&cВы не указали игрока &6/auto-whitelist reset &n<player>&c."),
+    AUTO_WHITELIST_SET("&eКол-во авто. добавлений для игрока &6{player}&e изменено на &c{new}&e."),
+    AUTO_WHITELIST_SET_FAIL("&eНе удалось обновить кол-во авто. добавлений для игрока &6{player}&e."),
+    AUTO_WHITELIST_SET_ARGS("&cВы не указали игрока &6/auto-whitelist set &n<player>&c."),
+    AUTO_WHITELIST_INFO("&eТекущее кол-во авто. добавлений для игрока &6{player}&e: &c{times-auto-whitelisted}&e."),
+    AUTO_WHITELIST_INFO_FAIL("&eНе удалось получить текущее кол-во авто. добавлений для игрока &6{player}&e."),
+    AUTO_WHITELIST_INFO_ARGS("&cВы не указали игрока &6/auto-whitelist info &n<player>&c."),
+    AUTO_WHITELIST_GET_LIMIT("&eТекущий лимит для auto-whitelist: &c{limit}&e."),
+    AUTO_WHITELIST_SET_LIMIT("&eЛимит для auto-whitelist изменён: &c{old}&6->&c{new}&e."),
+    AUTO_WHITELIST_SET_LIMIT_ARGS("&cВы не указали лимит &6/auto-whitelist set-limit &n<limit>&c."),
+    AUTO_WHITELIST_GET_STRATEGY("&eТекущая стратегия выбора игроков для auto-whitelist: &c{strategy}&e."),
+    AUTO_WHITELIST_SET_STRATEGY("&eСтратегия выбора игроков для auto-whitelist изменена: &c{old}&6->&c{new}&e."),
+    AUTO_WHITELIST_SET_STRATEGY_ARGS("&cВы не указали стратегию &6/auto-whitelist set-strategy &n<strategy>&c."),
     ;
 
     public static Message of(final KickReason kickReason) {
