@@ -241,7 +241,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private Set<UUID> addAll(
             final CheckedBiConsumer<WhitelistableModel, Set<UUID>> addFunction,
             final Collection<Whitelistable> all) {
-        Set<UUID> added = new HashSet<>();
+        final Set<UUID> added = new HashSet<>();
         try {
             requireConnection();
             return ormliteDatabase.getWhitelistDao().callBatchTasks(() -> {
@@ -254,6 +254,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
                 return unmodifiableSet(added);
             });
         } catch (final Exception exception) {
+            log.warn("Unable to add all whitelistable entities: {0}", exception.getMessage());
             return unmodifiableSet(added);
         }
     }
