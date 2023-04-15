@@ -1,9 +1,9 @@
 package voidpointer.spigot.voidwhitelist;
 
-public interface AutoWhitelistNumber {
-    AutoWhitelistNumber ZERO = () -> 0;
+public interface TimesAutoWhitelistedNumber {
+    TimesAutoWhitelistedNumber ZERO = () -> 0;
 
-    static AutoWhitelistNumber of(final int timesAutoWhitelisted) {
+    static TimesAutoWhitelistedNumber of(final int timesAutoWhitelisted) {
         return () -> timesAutoWhitelisted;
     }
 

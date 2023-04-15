@@ -18,7 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Collections;
@@ -50,9 +50,9 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public abstract class MemoryWhitelistService implements AutoWhitelistService {
     @Getter private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
     /* possibly we could join the two structures, but I prefer keeping things simple KISS */
-    private Map<UUID, AutoWhitelistNumber> autoWhitelist = new ConcurrentHashMap<>();
+    private Map<UUID, TimesAutoWhitelistedNumber> autoWhitelist = new ConcurrentHashMap<>();
 
-    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId) {
+    @Override public CompletableFuture<Optional<TimesAutoWhitelistedNumber>> getTimesAutoWhitelisted(final UUID uniqueId) {
         return supplyAsync(() -> Optional.ofNullable(autoWhitelist.get(uniqueId)));
     }
 
@@ -100,7 +100,7 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
             final UUID uuid, final String name, final Date expiresAt) {
-        return add(uuid, name, expiresAt, AutoWhitelistNumber.ZERO.get());
+        return add(uuid, name, expiresAt, TimesAutoWhitelistedNumber.ZERO.get());
     }
 
     @Override public CompletableFuture<Optional<Whitelistable>> add(
@@ -112,7 +112,7 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
                 whitelist.add(whitelistable);
             }
             saveWhitelist();
-            autoWhitelist.put(uuid, AutoWhitelistNumber.of(timesAutoWhitelisted));
+            autoWhitelist.put(uuid, TimesAutoWhitelistedNumber.of(timesAutoWhitelisted));
             saveAutoWhitelist();
             return Optional.of(whitelistable);
         });

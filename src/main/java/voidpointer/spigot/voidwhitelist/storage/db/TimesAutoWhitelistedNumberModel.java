@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
 
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @DatabaseTable(tableName="auto_whitelist")
-public class AutoWhitelistNumberModel implements AutoWhitelistNumber {
+public class TimesAutoWhitelistedNumberModel implements TimesAutoWhitelistedNumber {
     @EqualsAndHashCode.Include
     @DatabaseField(id=true, columnName="unique_id", dataType=DataType.UUID)
     private UUID uniqueId;

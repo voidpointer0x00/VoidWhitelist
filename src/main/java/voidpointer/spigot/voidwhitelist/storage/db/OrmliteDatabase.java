@@ -33,7 +33,7 @@ public final class OrmliteDatabase {
 
     @Getter private ConnectionSource connectionSource;
     @Getter private Dao<WhitelistableModel, UUID> whitelistDao;
-    @Getter private Dao<AutoWhitelistNumberModel, UUID> autoWhitelistDao;
+    @Getter private Dao<TimesAutoWhitelistedNumberModel, UUID> autoWhitelistDao;
     @Getter private Dao<MigrationModel, String> migrationDao;
 
     public OrmliteDatabase(final Plugin plugin) {
@@ -98,11 +98,11 @@ public final class OrmliteDatabase {
 
     private void createDataAccessObjects0() throws SQLException {
         TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
-        TableUtils.createTableIfNotExists(connectionSource, AutoWhitelistNumberModel.class);
+        TableUtils.createTableIfNotExists(connectionSource, TimesAutoWhitelistedNumberModel.class);
         TableUtils.createTableIfNotExists(connectionSource, MigrationModel.class);
 
         whitelistDao = createDao(connectionSource, WhitelistableModel.class);
-        autoWhitelistDao = createDao(connectionSource, AutoWhitelistNumberModel.class);
+        autoWhitelistDao = createDao(connectionSource, TimesAutoWhitelistedNumberModel.class);
         migrationDao = createDao(connectionSource, MigrationModel.class);
     }
 

@@ -20,7 +20,7 @@ import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
@@ -71,7 +71,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         ormliteDatabase.shutdown();
     }
 
-    @Override public CompletableFuture<Optional<AutoWhitelistNumber>> getAutoWhitelistNumberOf(final UUID uniqueId) {
+    @Override public CompletableFuture<Optional<TimesAutoWhitelistedNumber>> getTimesAutoWhitelisted(final UUID uniqueId) {
         return supplyAsync(() -> {
             try {
                 requireConnection();
@@ -238,7 +238,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt,
                                          final int timesAutoWhitelisted) throws SQLException {
         return TransactionManager.callInTransaction(ormliteDatabase.getConnectionSource(), () -> {
-            ormliteDatabase.getAutoWhitelistDao().createOrUpdate(new AutoWhitelistNumberModel(uuid, timesAutoWhitelisted));
+            ormliteDatabase.getAutoWhitelistDao().createOrUpdate(new TimesAutoWhitelistedNumberModel(uuid, timesAutoWhitelisted));
             final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
             ormliteDatabase.getWhitelistDao().createOrUpdate(whitelistable);
             return Optional.of(whitelistable);

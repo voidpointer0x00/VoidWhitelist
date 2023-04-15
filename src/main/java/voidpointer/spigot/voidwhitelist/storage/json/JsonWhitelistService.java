@@ -14,7 +14,7 @@
  */
 package voidpointer.spigot.voidwhitelist.storage.json;
 
-import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.MemoryWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
@@ -60,7 +60,7 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
             saveAutoWhitelist();
             return true;
         }
-        Optional<Map<UUID, AutoWhitelistNumber>> autoWhitelist = JsonAutoWhitelist.parseJsonFile(autoWhitelistFile);
+        Optional<Map<UUID, TimesAutoWhitelistedNumber>> autoWhitelist = JsonAutoWhitelist.parseJsonFile(autoWhitelistFile);
         if (!autoWhitelist.isPresent())
             return false;
         getAutoWhitelist().putAll(autoWhitelist.get());

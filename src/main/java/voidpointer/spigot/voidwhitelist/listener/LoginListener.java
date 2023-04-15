@@ -28,7 +28,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.AutoWhitelistNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.message.KickReason;
@@ -71,7 +71,7 @@ public final class LoginListener implements Listener {
             disallow(event, optionalKickReason.get());
             return;
         }
-        val timesAutoWhitelisted = autoWhitelistService.getAutoWhitelistNumberOf(event.getUniqueId()).join();
+        val timesAutoWhitelisted = autoWhitelistService.getTimesAutoWhitelisted(event.getUniqueId()).join();
         if (user.isPresent() && timesAutoWhitelisted.isPresent()
                 && timesAutoWhitelisted.get().isExceeded(whitelistConfig.getAutoMaxRepeats())) {
                 disallow(event, optionalKickReason.get());
@@ -85,7 +85,7 @@ public final class LoginListener implements Listener {
             return;
         }
         autoWhitelistService.add(event.getUniqueId(), event.getName(), autoDuration.get(),
-                timesAutoWhitelisted.orElse(AutoWhitelistNumber.ZERO).get() + 1).thenApplyAsync(whitelistable -> {
+                timesAutoWhitelisted.orElse(TimesAutoWhitelistedNumber.ZERO).get() + 1).thenApplyAsync(whitelistable -> {
             if (!whitelistable.isPresent()) {
                 locale.warn("Automatic whitelisting of {0} failed", event.getUniqueId());
                 return whitelistable;
