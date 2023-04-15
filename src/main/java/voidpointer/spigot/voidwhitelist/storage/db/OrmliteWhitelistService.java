@@ -222,9 +222,9 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     public CompletableFuture<Integer> addAllIfNotExists(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(0);
-        return supplyAsync(() -> addAll((model, addedInTotal) -> {
-            if (!ormliteDatabase.getWhitelistDao().idExists(model.getUniqueId())) {
-                ormliteDatabase.getWhitelistDao().create(model);
+        return supplyAsync(() -> addAll((whitelistableModel, addedInTotal) -> {
+            if (!ormliteDatabase.getWhitelistDao().idExists(whitelistableModel.getUniqueId())) {
+                ormliteDatabase.getWhitelistDao().create(whitelistableModel);
                 addedInTotal.increment();
             }
         }, all));
@@ -233,8 +233,8 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     public CompletableFuture<Integer> addAllReplacing(final Collection<Whitelistable> all) {
         if (all.isEmpty())
             return completedFuture(0);
-        return supplyAsync(() -> addAll((model, addedInTotal) -> {
-            ormliteDatabase.getWhitelistDao().createOrUpdate(model);
+        return supplyAsync(() -> addAll((whitelistableModel, addedInTotal) -> {
+            ormliteDatabase.getWhitelistDao().createOrUpdate(whitelistableModel);
             addedInTotal.increment();
         }, all));
     }
@@ -251,6 +251,47 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
                         addFunction.consume((WhitelistableModel) whitelistable, addedInTotal);
                     else
                         addFunction.consume(WhitelistableModel.copyOf(whitelistable), addedInTotal);
+                }
+                return addedInTotal.intValue();
+            });
+        } catch (final Exception exception) {
+            log.warn("Unable to add all whitelistable entities: {0}", exception.getMessage());
+            return addedInTotal.intValue();
+        }
+    }
+
+    public CompletableFuture<Integer> addAllAutoIfNotExists(final Collection<TimesAutoWhitelistedNumber> all) {
+        if (all.isEmpty())
+            return completedFuture(0);
+        return supplyAsync(() -> addAllAuto((timesAutoWhitelistedModel, addedInTotal) -> {
+            if (!ormliteDatabase.getAutoWhitelistDao().idExists(timesAutoWhitelistedModel.getUniqueId())) {
+                ormliteDatabase.getAutoWhitelistDao().create(timesAutoWhitelistedModel);
+                addedInTotal.increment();
+            }
+        }, all));
+    }
+
+    public CompletableFuture<Integer> addAllAutoReplacing(final Collection<TimesAutoWhitelistedNumber> all) {
+        if (all.isEmpty())
+            return completedFuture(0);
+        return supplyAsync(() -> addAllAuto((timesAutoWhitelistedModel, addedInTotal) -> {
+            ormliteDatabase.getAutoWhitelistDao().createOrUpdate(timesAutoWhitelistedModel);
+            addedInTotal.increment();
+        }, all));
+    }
+
+    private int addAllAuto(
+            final CheckedBiConsumer<TimesAutoWhitelistedNumberModel, MutableInt> addFunction,
+            final Collection<TimesAutoWhitelistedNumber> allAuto) {
+        final MutableInt addedInTotal = new MutableInt();
+        try {
+            requireConnection();
+            return ormliteDatabase.getAutoWhitelistDao().callBatchTasks(() -> {
+                for (final TimesAutoWhitelistedNumber timesAutoWhitelisted : allAuto) {
+                    if (timesAutoWhitelisted instanceof TimesAutoWhitelistedNumberModel)
+                        addFunction.consume((TimesAutoWhitelistedNumberModel) timesAutoWhitelisted, addedInTotal);
+                    else
+                        addFunction.consume(TimesAutoWhitelistedNumberModel.copyOf(timesAutoWhitelisted), addedInTotal);
                 }
                 return addedInTotal.intValue();
             });
