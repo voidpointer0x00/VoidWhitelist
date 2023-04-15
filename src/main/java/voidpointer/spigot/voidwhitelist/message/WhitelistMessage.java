@@ -41,9 +41,13 @@ public enum WhitelistMessage implements Message {
     GUI_LOCALE_DOESNT_SUPPORT_RELOAD("&cТекущая GUI локаль не поддерживает перезагрузку."),
     GUI_LOCALE_RELOADED("&aGUI локаль перезагружена."),
     GUI_NOT_SUPPORTED("&cGUI не поддерживается на вашей версии MC. (минимально необходимая major версия: {major})"),
+
     IMPORT_LOADED("&eЗагружено &6{loaded}&e записей из &6{storage}&e, импорт начат."),
     IMPORT_ONLY_TO_DATABASE("&eИмпорт работает только из JSON в базу данных."),
-    IMPORT_RESULT("&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e."),
+    WHITELIST_IMPORT_RESULT("&eИмпортировано игроков: &6{imported}&e из &6{loaded}&e;\n" +
+            "&eДанных об автоматическом добавлении в белый список: &6{auto-imported}&e из &6{auto-loaded}&e.\n" +
+            "&eОбщее время импорта: &d{ms-spent}ms&e."),
+
     INFO_NOT_WHITELISTED("&eИгрок &6«&c{player-details}&6» &cотсутствует &eв whitelist."),
     INFO_WHITELISTED("&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist."),
     INFO_WHITELISTED_TEMP("&eИгрок &6«{player-details}&6» &aесть &eв whitelist, истекает &d{date}&e."),

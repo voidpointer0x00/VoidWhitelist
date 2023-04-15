@@ -20,9 +20,14 @@ messages:
   gui-locale-doesnt-support-reload: '&cCurrent GUI locale does not support reload.'
   gui-locale-reloaded: '&aGUI locale reloaded.'
   gui-not-supported: '&cGUI is not supported on your MC version. (required major version: {major})'
-  import-loaded: '&eLoaded &6{loaded}&e entries from &6{storage}&gui-e, importing...'
+
+  import-loaded: '&eLoaded &6{loaded}&e entries from &6{storage}&e, importing...'
   import-only-to-database: '&eImport is only available from JSON to database.'
-  import-result: '&eImported &6{imported}&e of &6{loaded}&e entries in &d{ms-spent}ms&e.'
+  whitelist-import-result: |-
+    &eImported players: &6{imported}&e из &6{loaded}&e;
+    &eData on automatic whitelisting: &6{auto-imported}&e из &6{auto-loaded}&e.
+    &eTime spent importing &8(async)&e: &d{ms-spent}ms&e.
+
   info-not-whitelisted: '&6«{player-details}&6» &eis &cnot whitelisted&e.'
   info-whitelisted: '&6«{player-details}&6» &eis &awhitelisted&e.'
   info-whitelisted-temp: '&e&6«{player-details}&6» &eis &awhitelisted&e, expires on &d{date}&e.'

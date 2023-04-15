@@ -45,10 +45,10 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  *  {@link #saveWhitelist()} methods. It will be invoked upon any modification
  *  ({@link #add(UUID, String, Date)}, {@link #remove(Whitelistable)} to the cached whitelist.
  */
-@Getter(AccessLevel.PROTECTED)
+@Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PROTECTED)
 public abstract class MemoryWhitelistService implements AutoWhitelistService {
-    @Getter private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
+    private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
     /* possibly we could join the two structures, but I prefer keeping things simple KISS */
     private Map<UUID, TimesAutoWhitelistedNumber> autoWhitelist = new ConcurrentHashMap<>();
 

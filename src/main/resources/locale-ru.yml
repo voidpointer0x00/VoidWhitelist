@@ -20,9 +20,14 @@ messages:
   gui-locale-doesnt-support-reload: '&cТекущая GUI локаль не поддерживает перезагрузку.'
   gui-locale-reloaded: '&aGUI локаль перезагружена.'
   gui-not-supported: '&cGUI не поддерживается на вашей версии MC. (минимально необходимая major версия: {major})'
+
   import-loaded: '&eЗагружено &e{loaded} записей из &6{storage}&e, импорт начат.'
   import-only-to-database: '&eИмпорт работает только из JSON в базу данных.'
-  import-result: '&eИмпортировано &6{imported}&e из &6{loaded}&e за &d{ms-spent}ms&e.'
+  whitelist-import-result: |-
+    &eИмпортировано игроков: &6{imported}&e из &6{loaded}&e;
+    &eДанных об автоматическом добавлении в белый список: &6{auto-imported}&e из &6{auto-loaded}&e.
+    &eОбщее время импорта &8(асинхронно)&e: &d{ms-spent}ms&e.
+
   info-not-whitelisted: '&eИгрок &6«&c{player-details}&6» &cотсутствует &eв whitelist.'
   info-whitelisted: '&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist.'
   info-whitelisted-temp: '&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist, истекает
