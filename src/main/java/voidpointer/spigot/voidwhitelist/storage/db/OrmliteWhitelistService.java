@@ -96,6 +96,24 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         });
     }
 
+    @Override public CompletableFuture<Boolean> update(final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
+        return supplyAsync(() -> {
+            try {
+                requireConnection();
+                // TODO Java upgrade var
+                TimesAutoWhitelistedNumberModel model = (timesAutoWhitelisted instanceof TimesAutoWhitelistedNumberModel)
+                        ? (TimesAutoWhitelistedNumberModel) timesAutoWhitelisted
+                        : TimesAutoWhitelistedNumberModel.copyOf(timesAutoWhitelisted);
+                ormliteDatabase.getAutoWhitelistDao().update(model);
+                return true;
+            } catch (final SQLException sqlException) {
+                log.warn("Unable to update times auto whitelisted for {0}: {1}", timesAutoWhitelisted.getUniqueId(),
+                        sqlException.getMessage());
+                return false;
+            }
+        });
+    }
+
     public CompletableFuture<Optional<Long>> getTotalCountOfWhitelist() {
         return supplyAsync(() -> {
             try {

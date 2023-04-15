@@ -118,6 +118,14 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
         });
     }
 
+    @Override public CompletableFuture<Boolean> update(final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
+        return CompletableFuture.supplyAsync(() -> {
+            getAutoWhitelist().put(timesAutoWhitelisted.getUniqueId(), timesAutoWhitelisted);
+            saveAutoWhitelist();
+            return true;
+        });
+    }
+
     @Override public CompletableFuture<Optional<Whitelistable>> update(final @NonNull Whitelistable whitelistable) {
         return supplyAsync(() -> {
             whitelist.remove(whitelistable);
