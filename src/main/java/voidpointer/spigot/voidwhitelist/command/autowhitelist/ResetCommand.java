@@ -37,7 +37,9 @@ final class ResetCommand extends Command {
             }
             autoWhitelistService.update(TimesAutoWhitelistedNumber.zero(optionalUuid.get())).thenAccept(isUpdated -> {
                 locale.localize(isUpdated ? AUTO_WHITELIST_RESET : AUTO_WHITELIST_RESET_FAIL)
+                        .set("player-details", locale.localize(PLAYER_DETAILS))
                         .set("player", args.get(0))
+                        .set("uuid", optionalUuid.get())
                         .send(args.getSender());
             });
         });
