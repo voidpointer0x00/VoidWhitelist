@@ -27,7 +27,6 @@ import voidpointer.spigot.voidwhitelist.command.whitelist.AddCommand;
  * <p><b>Notice:</b> this event doesn't get called if someone imported the whitelist.</p>
  *
  * @see AddCommand
- * @see WhitelistImportEvent
  */
 public final class WhitelistAddedEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
