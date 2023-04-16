@@ -89,19 +89,20 @@ public enum WhitelistMessage implements Message {
     AUTO_WHITELIST_HELP("\\(&e/auto-whitelist on|off) [click.suggest{/auto-whitelist o}] &f— включить/выключить auto-whitelist\n" +
             "\\(&e/auto-whitelist is-on) [click.run{/auto-whitelist status}] &f— узнать, включен ли auto-whitelist\n" +
             "\\(&e/auto-whitelist info &6<player>) [click.suggest{/auto-whitelist info }] &f— узнать лимит игрока\n" +
-            "\\(&e/auto-whitelist set &6<player>) [click.suggest{/auto-whitelist set }] &f— установить лимит для игрока\n" +
+            "\\(&e/auto-whitelist set &6<player> <int>) [click.suggest{/auto-whitelist set }] &f— установить лимит для игрока\n" +
             "\\(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— сбросить лимит для игрока\n"),
     AUTO_WHITELIST_ENABLED("&eАвтоматическое добавление в whitelist &aвключено&e."),
     AUTO_WHITELIST_DISABLED("&eАвтоматическое добавление в whitelist &cвыключено&e."),
-    AUTO_WHITELIST_RESET("&eКол-во авто. добавлений в whitelist для игрока &6{player}&e сброшено."),
-    AUTO_WHITELIST_RESET_FAIL("&сНе удалось сбросить кол-во авто. добавлений в whitelist для игрока &6{player}."),
+    AUTO_WHITELIST_RESET("&eКол-во авто. добавлений в whitelist для игрока &6{player-details}&e сброшено."),
+    AUTO_WHITELIST_RESET_FAIL("&сНе удалось сбросить кол-во авто. добавлений в whitelist для игрока &6{player-details}."),
     AUTO_WHITELIST_RESET_ARGS("&cВы не указали игрока &6/auto-whitelist reset &n<player>&c."),
-    AUTO_WHITELIST_SET("&eКол-во авто. добавлений для игрока &6{player}&e изменено на &c{new}&e."),
-    AUTO_WHITELIST_SET_FAIL("&eНе удалось обновить кол-во авто. добавлений для игрока &6{player}&e."),
-    AUTO_WHITELIST_SET_ARGS("&cВы не указали игрока &6/auto-whitelist set &n<player>&c."),
-    AUTO_WHITELIST_INFO("&eТекущее кол-во авто. добавлений для игрока &6{player}&e: &c{times-auto-whitelisted}&e."),
-    AUTO_WHITELIST_INFO_FAIL("&eНе удалось получить текущее кол-во авто. добавлений для игрока &6{player}&e."),
+    AUTO_WHITELIST_SET("&eКол-во авто. добавлений для игрока &6{player-details}&e изменено на &c{new}&e."),
+    AUTO_WHITELIST_SET_FAIL("&eНе удалось обновить кол-во авто. добавлений для игрока &6{player-details}&e."),
+    AUTO_WHITELIST_SET_ARGS("&cВы указали недостаточно параметров &8({given}/{needed}) &6/auto-whitelist set &n<player>&r &6&n<int>&c."),
+    AUTO_WHITELIST_SET_INVALID_INT("&cНеобходимо указать целочисленное значение &8({given}) &6/auto-whitelist set <player> &6&n&l<int>&c."),
+    AUTO_WHITELIST_INFO("&eТекущее кол-во авто. добавлений для игрока &6{player-details}&e: &c{times-auto-whitelisted}&e."),
     AUTO_WHITELIST_INFO_ARGS("&cВы не указали игрока &6/auto-whitelist info &n<player>&c."),
+    AUTO_WHITELIST_INFO_NOT_FOUND("&eИнформация для игрока &6{player-details} &eотсутствует."),
     AUTO_WHITELIST_GET_LIMIT("&eТекущий лимит для auto-whitelist: &c{limit}&e."),
     AUTO_WHITELIST_SET_LIMIT("&eЛимит для auto-whitelist изменён: &c{old}&6->&c{new}&e."),
     AUTO_WHITELIST_SET_LIMIT_ARGS("&cВы не указали лимит &6/auto-whitelist set-limit &n<limit>&c."),
