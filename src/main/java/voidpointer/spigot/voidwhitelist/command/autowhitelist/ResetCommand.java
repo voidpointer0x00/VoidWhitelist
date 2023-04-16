@@ -44,6 +44,6 @@ final class ResetCommand extends Command {
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {
-        locale.localize(AUTO_WHITELIST_RESET_FAIL).send(sender);
+        locale.localize(AUTO_WHITELIST_RESET_ARGS).send(sender);
     }
 }
