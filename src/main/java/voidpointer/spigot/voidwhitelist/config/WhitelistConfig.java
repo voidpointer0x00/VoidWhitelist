@@ -138,6 +138,16 @@ public final class WhitelistConfig {
         plugin.saveConfig();
     }
 
+    public void enableAutoWhitelist() {
+        plugin.getConfig().set(AUTO_WL_ENABLED_PATH, true);
+        plugin.saveConfig();
+    }
+
+    public void disableAutoWhitelist() {
+        plugin.getConfig().set(AUTO_WL_ENABLED_PATH, false);
+        plugin.saveConfig();
+    }
+
     private void saveIfNotExists() {
         if (!new File(plugin.getDataFolder(), "config.yml").exists())
             plugin.saveResource("config.yml", true);

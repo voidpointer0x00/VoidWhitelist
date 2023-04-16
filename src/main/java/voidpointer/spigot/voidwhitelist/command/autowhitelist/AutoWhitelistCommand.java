@@ -24,6 +24,8 @@ public final class AutoWhitelistCommand extends Command {
         super.setPermission("voidwhitelist.auto-whitelist");
         super.setRequiredArgsNumber(1);
 
+        autoWhitelistCommands.addCommand(new DisableCommand());
+        autoWhitelistCommands.addCommand(new EnableCommand());
         autoWhitelistCommands.addCommand(new HelpCommand());
         autoWhitelistCommands.addCommand(new IsOnCommand());
         autoWhitelistCommands.addCommand(new ResetCommand());
