@@ -28,7 +28,6 @@ public final class AutoWhitelistCommand extends Command {
         autoWhitelistCommands.addCommand(new IsOnCommand());
         autoWhitelistCommands.addCommand(new ResetCommand());
 
-        // TODO the same for whitelist command
         autoWhitelistCommands.getCommands().values() /* set appropriate permissions for sub commands */
                 .forEach(cmd -> cmd.setPermission(getPermission() + '.' + cmd.getName()));
     }
