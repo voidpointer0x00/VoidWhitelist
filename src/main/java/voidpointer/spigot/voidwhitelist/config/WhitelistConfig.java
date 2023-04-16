@@ -26,8 +26,6 @@ import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import java.io.File;
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Predicate;
 
 public final class WhitelistConfig {
     public static final String DEFAULT_LANGUAGE = "en";
@@ -112,8 +110,8 @@ public final class WhitelistConfig {
         return plugin.getConfig().getString("language", DEFAULT_LANGUAGE);
     }
 
-    public Predicate<UUID> getStrategyPredicate() {
-        return StrategyPredicateFactory.getPredicate(plugin.getConfig().getString(AUTO_WL_STRATEGY_PATH, "newcomers"));
+    public StrategyPredicate getStrategyPredicate() {
+        return StrategyPredicate.of(plugin.getConfig().getString(AUTO_WL_STRATEGY_PATH, "all"));
     }
 
     public int getAutoLimit() {
