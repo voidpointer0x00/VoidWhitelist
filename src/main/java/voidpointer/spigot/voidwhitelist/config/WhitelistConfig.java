@@ -19,7 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.config.migration.WhitelistConfigMigrationFactory;
+import voidpointer.spigot.voidwhitelist.config.migration.WhitelistConfigMigrationRepository;
 import voidpointer.spigot.voidwhitelist.date.Duration;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
@@ -54,7 +54,7 @@ public final class WhitelistConfig {
      *  and runs an appropriate migration for them.
      */
     public void runMigrations() {
-        WhitelistConfigMigrationFactory.getAllMigrations().forEach(migration -> {
+        WhitelistConfigMigrationRepository.getAllMigrations().forEach(migration -> {
             if (!migration.isUpToDate(plugin.getConfig())) {
                 /* this method is called at plugin load stage, in which LocaleLog is not
                  *  initialized yet, so we have report any information this way. */

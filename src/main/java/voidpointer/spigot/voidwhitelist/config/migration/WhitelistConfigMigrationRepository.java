@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public final class WhitelistConfigMigrationFactory {
+public final class WhitelistConfigMigrationRepository {
     public static Collection<ConfigMigration> getAllMigrations() {
         /* migrations will only run once when the server is loading,
          *  so we don't need to save or cache migrations anywhere,
