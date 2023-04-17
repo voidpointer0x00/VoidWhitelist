@@ -46,6 +46,7 @@ final class SetCommand extends Command {
                         .set("player-details", locale.localize(PLAYER_DETAILS))
                         .set("player", args.get(0))
                         .set("uuid", optionalUuid.get())
+                        .set("new", newTimesAutoWhitelisted)
                         .send(args.getSender());
             });
         });
