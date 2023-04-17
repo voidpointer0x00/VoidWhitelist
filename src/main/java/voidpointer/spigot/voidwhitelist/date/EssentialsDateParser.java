@@ -96,10 +96,6 @@ public final class EssentialsDateParser {
             c.add(Calendar.MINUTE, minutes);
         if (seconds > 0)
             c.add(Calendar.SECOND, seconds);
-        Calendar max = new GregorianCalendar();
-        max.add(Calendar.YEAR, 10);
-        if (c.after(max))
-            return max.getTimeInMillis();
         return c.getTimeInMillis();
     }
 }
