@@ -11,7 +11,7 @@ import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
-import voidpointer.spigot.voidwhitelist.storage.db.TimesAutoWhitelistedNumberModel;
+import voidpointer.spigot.voidwhitelist.storage.db.TimesAutoWhitelistedModel;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonAutoWhitelist;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelist;
 
@@ -70,12 +70,12 @@ public class ExportCommand extends Command {
         }
     }
 
-    private void exportAuto(final CloseableWrappedIterable<TimesAutoWhitelistedNumberModel> allAuto,
+    private void exportAuto(final CloseableWrappedIterable<TimesAutoWhitelistedModel> allAuto,
                             final CommandSender sender) {
         final long start = currentTimeMillis();
         final JsonAutoWhitelist jsonAutoWhitelist = new JsonAutoWhitelist();
         /* TODO try-with-resource reference Java 9 */
-        for (final TimesAutoWhitelistedNumberModel timesAutoWhitelisted : allAuto)
+        for (final TimesAutoWhitelistedModel timesAutoWhitelisted : allAuto)
             jsonAutoWhitelist.add(timesAutoWhitelisted);
 
         if (jsonAutoWhitelist.save(new File(plugin.getDataFolder(),

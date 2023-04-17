@@ -18,7 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Collections;
@@ -50,9 +50,9 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public abstract class MemoryWhitelistService implements AutoWhitelistService {
     private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
     /* possibly we could join the two structures, but I prefer keeping things simple KISS */
-    private Map<UUID, TimesAutoWhitelistedNumber> autoWhitelist = new ConcurrentHashMap<>();
+    private Map<UUID, TimesAutoWhitelisted> autoWhitelist = new ConcurrentHashMap<>();
 
-    @Override public CompletableFuture<Optional<TimesAutoWhitelistedNumber>> getTimesAutoWhitelisted(final UUID uniqueId) {
+    @Override public CompletableFuture<Optional<TimesAutoWhitelisted>> getTimesAutoWhitelisted(final UUID uniqueId) {
         return supplyAsync(() -> Optional.ofNullable(autoWhitelist.get(uniqueId)));
     }
 
@@ -112,13 +112,13 @@ public abstract class MemoryWhitelistService implements AutoWhitelistService {
                 whitelist.add(whitelistable);
             }
             saveWhitelist();
-            autoWhitelist.put(uuid, TimesAutoWhitelistedNumber.of(uuid, timesAutoWhitelisted));
+            autoWhitelist.put(uuid, TimesAutoWhitelisted.of(uuid, timesAutoWhitelisted));
             saveAutoWhitelist();
             return Optional.of(whitelistable);
         });
     }
 
-    @Override public CompletableFuture<Boolean> update(final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
+    @Override public CompletableFuture<Boolean> update(final TimesAutoWhitelisted timesAutoWhitelisted) {
         return CompletableFuture.supplyAsync(() -> {
             getAutoWhitelist().put(timesAutoWhitelisted.getUniqueId(), timesAutoWhitelisted);
             saveAutoWhitelist();

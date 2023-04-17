@@ -18,7 +18,7 @@ import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
@@ -73,7 +73,7 @@ public class ImportJsonCommand extends Command {
                 .send(args.getSender());
         final OrmliteWhitelistService database = (OrmliteWhitelistService) whitelistService;
         final Set<Whitelistable> whitelist = json.getWhitelist();
-        final Collection<TimesAutoWhitelistedNumber> autoWhitelist = json.getAutoWhitelist().values();
+        final Collection<TimesAutoWhitelisted> autoWhitelist = json.getAutoWhitelist().values();
         final int whitelistImportedInTotal, autoWhitelistImportedInTotal;
         if (args.hasOption(REPLACE)) {
             whitelistImportedInTotal = database.addAllReplacing(whitelist).join();

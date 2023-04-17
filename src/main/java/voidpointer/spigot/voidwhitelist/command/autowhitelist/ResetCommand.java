@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
 import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
@@ -35,7 +35,7 @@ final class ResetCommand extends Command {
                         .send(args.getSender());
                 return;
             }
-            autoWhitelistService.update(TimesAutoWhitelistedNumber.zero(optionalUuid.get())).thenAccept(isUpdated -> {
+            autoWhitelistService.update(TimesAutoWhitelisted.zero(optionalUuid.get())).thenAccept(isUpdated -> {
                 locale.localize(isUpdated ? AUTO_WHITELIST_RESET : AUTO_WHITELIST_RESET_FAIL)
                         .set("player-details", locale.localize(PLAYER_DETAILS))
                         .set("player", args.get(0))

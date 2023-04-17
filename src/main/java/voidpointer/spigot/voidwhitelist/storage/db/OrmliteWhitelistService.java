@@ -21,7 +21,7 @@ import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
@@ -72,7 +72,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         ormliteDatabase.shutdown();
     }
 
-    public CompletableFuture<CloseableWrappedIterable<TimesAutoWhitelistedNumberModel>> findAllAuto() {
+    public CompletableFuture<CloseableWrappedIterable<TimesAutoWhitelistedModel>> findAllAuto() {
         return supplyAsync(() -> {
            try {
                requireConnection();
@@ -84,7 +84,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         });
     }
 
-    @Override public CompletableFuture<Optional<TimesAutoWhitelistedNumber>> getTimesAutoWhitelisted(final UUID uniqueId) {
+    @Override public CompletableFuture<Optional<TimesAutoWhitelisted>> getTimesAutoWhitelisted(final UUID uniqueId) {
         return supplyAsync(() -> {
             try {
                 requireConnection();
@@ -96,14 +96,14 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         });
     }
 
-    @Override public CompletableFuture<Boolean> update(final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
+    @Override public CompletableFuture<Boolean> update(final TimesAutoWhitelisted timesAutoWhitelisted) {
         return supplyAsync(() -> {
             try {
                 requireConnection();
                 // TODO Java upgrade var
-                TimesAutoWhitelistedNumberModel model = (timesAutoWhitelisted instanceof TimesAutoWhitelistedNumberModel)
-                        ? (TimesAutoWhitelistedNumberModel) timesAutoWhitelisted
-                        : TimesAutoWhitelistedNumberModel.copyOf(timesAutoWhitelisted);
+                TimesAutoWhitelistedModel model = (timesAutoWhitelisted instanceof TimesAutoWhitelistedModel)
+                        ? (TimesAutoWhitelistedModel) timesAutoWhitelisted
+                        : TimesAutoWhitelistedModel.copyOf(timesAutoWhitelisted);
                 ormliteDatabase.getAutoWhitelistDao().createOrUpdate(model);
                 return true;
             } catch (final SQLException sqlException) {
@@ -278,7 +278,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         }
     }
 
-    public CompletableFuture<Integer> addAllAutoIfNotExists(final Collection<TimesAutoWhitelistedNumber> all) {
+    public CompletableFuture<Integer> addAllAutoIfNotExists(final Collection<TimesAutoWhitelisted> all) {
         if (all.isEmpty())
             return completedFuture(0);
         return supplyAsync(() -> addAllAuto((timesAutoWhitelistedModel, addedInTotal) -> {
@@ -289,7 +289,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         }, all));
     }
 
-    public CompletableFuture<Integer> addAllAutoReplacing(final Collection<TimesAutoWhitelistedNumber> all) {
+    public CompletableFuture<Integer> addAllAutoReplacing(final Collection<TimesAutoWhitelisted> all) {
         if (all.isEmpty())
             return completedFuture(0);
         return supplyAsync(() -> addAllAuto((timesAutoWhitelistedModel, addedInTotal) -> {
@@ -299,17 +299,17 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     }
 
     private int addAllAuto(
-            final CheckedBiConsumer<TimesAutoWhitelistedNumberModel, MutableInt> addFunction,
-            final Collection<TimesAutoWhitelistedNumber> allAuto) {
+            final CheckedBiConsumer<TimesAutoWhitelistedModel, MutableInt> addFunction,
+            final Collection<TimesAutoWhitelisted> allAuto) {
         final MutableInt addedInTotal = new MutableInt();
         try {
             requireConnection();
             return ormliteDatabase.getAutoWhitelistDao().callBatchTasks(() -> {
-                for (final TimesAutoWhitelistedNumber timesAutoWhitelisted : allAuto) {
-                    if (timesAutoWhitelisted instanceof TimesAutoWhitelistedNumberModel)
-                        addFunction.consume((TimesAutoWhitelistedNumberModel) timesAutoWhitelisted, addedInTotal);
+                for (final TimesAutoWhitelisted timesAutoWhitelisted : allAuto) {
+                    if (timesAutoWhitelisted instanceof TimesAutoWhitelistedModel)
+                        addFunction.consume((TimesAutoWhitelistedModel) timesAutoWhitelisted, addedInTotal);
                     else
-                        addFunction.consume(TimesAutoWhitelistedNumberModel.copyOf(timesAutoWhitelisted), addedInTotal);
+                        addFunction.consume(TimesAutoWhitelistedModel.copyOf(timesAutoWhitelisted), addedInTotal);
                 }
                 return addedInTotal.intValue();
             });
@@ -335,7 +335,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
     private Optional<Whitelistable> add0(final UUID uuid, final String name, final Date expiresAt,
                                          final int timesAutoWhitelisted) throws SQLException {
         return TransactionManager.callInTransaction(ormliteDatabase.getConnectionSource(), () -> {
-            ormliteDatabase.getAutoWhitelistDao().createOrUpdate(new TimesAutoWhitelistedNumberModel(uuid, timesAutoWhitelisted));
+            ormliteDatabase.getAutoWhitelistDao().createOrUpdate(new TimesAutoWhitelistedModel(uuid, timesAutoWhitelisted));
             final WhitelistableModel whitelistable = new WhitelistableModel(uuid, name, expiresAt);
             ormliteDatabase.getWhitelistDao().createOrUpdate(whitelistable);
             return Optional.of(whitelistable);

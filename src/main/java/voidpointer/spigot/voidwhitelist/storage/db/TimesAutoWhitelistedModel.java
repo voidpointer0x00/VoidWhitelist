@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
 
 import java.util.UUID;
 
@@ -16,15 +16,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @DatabaseTable(tableName="auto_whitelist")
-public final class TimesAutoWhitelistedNumberModel implements TimesAutoWhitelistedNumber {
+public final class TimesAutoWhitelistedModel implements TimesAutoWhitelisted {
     @EqualsAndHashCode.Include
     @DatabaseField(id=true, columnName="unique_id", dataType=DataType.UUID)
     private UUID uniqueId;
     @DatabaseField(columnName="times_auto_whitelisted")
     private int timesAutoWhitelisted;
 
-    public static TimesAutoWhitelistedNumberModel copyOf(final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
-        return new TimesAutoWhitelistedNumberModel(timesAutoWhitelisted.getUniqueId(), timesAutoWhitelisted.get());
+    public static TimesAutoWhitelistedModel copyOf(final TimesAutoWhitelisted timesAutoWhitelisted) {
+        return new TimesAutoWhitelistedModel(timesAutoWhitelisted.getUniqueId(), timesAutoWhitelisted.get());
     }
 
     @Override public int get() {

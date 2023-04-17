@@ -3,8 +3,8 @@ package voidpointer.spigot.voidwhitelist.storage.json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import voidpointer.spigot.voidwhitelist.TimesAutoWhitelistedNumber;
-import voidpointer.spigot.voidwhitelist.storage.db.TimesAutoWhitelistedNumberModel;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
+import voidpointer.spigot.voidwhitelist.storage.db.TimesAutoWhitelistedModel;
 
 import java.io.File;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ public final class JsonAutoWhitelist extends JsonStorage {
      *     }
      * </code>
      */
-    static Optional<Set<TimesAutoWhitelistedNumber>> parseJsonFile(final File jsonFile) {
+    static Optional<Set<TimesAutoWhitelisted>> parseJsonFile(final File jsonFile) {
         final String jsonContents = fileToString(jsonFile);
         if (jsonContents == null)
             return Optional.empty();
@@ -35,9 +35,9 @@ public final class JsonAutoWhitelist extends JsonStorage {
             JsonArray autoWhitelist = dataAndMeta.getAsJsonArray("autoWhitelist");
             if (autoWhitelist == null)
                 return Optional.empty();
-            final Set<TimesAutoWhitelistedNumber> parsed = new HashSet<>();
+            final Set<TimesAutoWhitelisted> parsed = new HashSet<>();
             autoWhitelist.forEach(jsonElement -> parsed.add(
-                    TimesAutoWhitelistedNumber.of(UUID.fromString(jsonElement.getAsJsonObject().get("uniqueId").getAsString()),
+                    TimesAutoWhitelisted.of(UUID.fromString(jsonElement.getAsJsonObject().get("uniqueId").getAsString()),
                             jsonElement.getAsJsonObject().get("timesAutoWhitelisted").getAsInt())
             ));
             return Optional.of(parsed);
@@ -47,7 +47,7 @@ public final class JsonAutoWhitelist extends JsonStorage {
         }
     }
 
-    static void save(final Map<UUID, TimesAutoWhitelistedNumber> autoWhitelist, final File destination) {
+    static void save(final Map<UUID, TimesAutoWhitelisted> autoWhitelist, final File destination) {
         final JsonAutoWhitelist jsonAutoWhitelist = new JsonAutoWhitelist();
         autoWhitelist.forEach(jsonAutoWhitelist::add);
         jsonAutoWhitelist.save(destination);
@@ -55,11 +55,11 @@ public final class JsonAutoWhitelist extends JsonStorage {
 
     private final JsonArray jsonAutoWhitelist = new JsonArray();
 
-    public void add(final TimesAutoWhitelistedNumberModel timesAutoWhitelistedNumber) {
+    public void add(final TimesAutoWhitelistedModel timesAutoWhitelistedNumber) {
         add(timesAutoWhitelistedNumber.getUniqueId(), timesAutoWhitelistedNumber);
     }
 
-    private void add(final UUID uniqueId, final TimesAutoWhitelistedNumber timesAutoWhitelisted) {
+    private void add(final UUID uniqueId, final TimesAutoWhitelisted timesAutoWhitelisted) {
         JsonObject jsonAutoWhitelistEntry = new JsonObject();
         jsonAutoWhitelistEntry.addProperty("uniqueId", uniqueId.toString());
         jsonAutoWhitelistEntry.addProperty("timesAutoWhitelisted", timesAutoWhitelisted.get());

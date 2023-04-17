@@ -2,13 +2,13 @@ package voidpointer.spigot.voidwhitelist;
 
 import java.util.UUID;
 
-public interface TimesAutoWhitelistedNumber {
-    static TimesAutoWhitelistedNumber zero(final UUID uniqueId) {
+public interface TimesAutoWhitelisted {
+    static TimesAutoWhitelisted zero(final UUID uniqueId) {
         return of(uniqueId, 0);
     }
 
-    static TimesAutoWhitelistedNumber of(final UUID uniqueId, final int timesAutoWhitelisted) {
-        return new TimesAutoWhitelistedNumber() {
+    static TimesAutoWhitelisted of(final UUID uniqueId, final int timesAutoWhitelisted) {
+        return new TimesAutoWhitelisted() {
             @Override public UUID getUniqueId() {
                 return uniqueId;
             }
