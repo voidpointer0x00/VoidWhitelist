@@ -60,7 +60,7 @@ final class OnlineUUIDFetcher {
             String uuid = idToUuid(id);
             return UUID.fromString(uuid);
         } catch (final FileNotFoundException userNotFound) {
-            log.warn("Requested unknown player's UUID: {0}", userNotFound.getMessage());
+            log.warn("Requested unknown players UUID: {0}", userNotFound.getMessage());
             return null;
         } catch (final IOException ioException) {
             log.warn("Unable to request Mojang API", ioException);
