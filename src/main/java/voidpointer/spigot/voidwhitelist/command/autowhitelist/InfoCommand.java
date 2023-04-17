@@ -37,14 +37,16 @@ final class InfoCommand extends Command {
                     locale.localize(AUTO_WHITELIST_INFO_NOT_FOUND)
                             .set("player-details", locale.localize(PLAYER_DETAILS))
                             .set("player", args.get(0))
-                            .set("uuid", optionalUuid.get());
+                            .set("uuid", optionalUuid.get())
+                            .send(args.getSender());
                     return;
                 }
                 locale.localize(AUTO_WHITELIST_INFO)
                         .set("player-details", locale.localize(PLAYER_DETAILS))
                         .set("player", args.get(0))
                         .set("uuid", optionalUuid.get())
-                        .set("times-auto-whitelisted", optionalTimesAutoWhitelist.get().get());
+                        .set("times-auto-whitelisted", optionalTimesAutoWhitelist.get().get())
+                        .send(args.getSender());
             });
         });
     }
