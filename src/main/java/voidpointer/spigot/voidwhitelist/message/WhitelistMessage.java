@@ -96,7 +96,7 @@ public enum WhitelistMessage implements Message {
             "\\(&e/auto-whitelist get-strategy) [click.run{/auto-whitelist get-strategy }] &f— узнать текущую стратегию фильтра игроков\n"+
             "\\(&e/auto-whitelist set-strategy &6<strategy>) [click.suggest{/auto-whitelist set-strategy }] &f— установить стратегию фильтра игроков\n" +
             "\\(&e/auto-whitelist get-duration) [click.run{/auto-whitelist get-duration}] &f— узнать текущую длительность добавления в whitelist\n" +
-            "\\(&e/auto-whitelist set-duration &6<time>) [click.suggest{/auto-whitelist set-duration }] &f— установить длительность  добавления в whitelist\n"),
+            "\\(&e/auto-whitelist set-duration &6<time>) [click.suggest{/auto-whitelist set-duration }] &f— установить длительность добавления в whitelist\n"),
     AUTO_WHITELIST_ENABLED("&eАвтоматическое добавление в whitelist &aвключено&e."),
     AUTO_WHITELIST_DISABLED("&eАвтоматическое добавление в whitelist &cвыключено&e."),
 
