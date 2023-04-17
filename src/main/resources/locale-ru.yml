@@ -1,4 +1,65 @@
 messages:
+  auto-uuid-fail-try-offline: '&cНе удалось запросить UUID, попробуйте \(&6-offline
+    &8&o&n(клик)) [hover{&6/auto-whitelist {cmd} -offline {player}}] [click.suggest{/auto-whitelist
+    {cmd} -offline {player}}] '
+  auto-whitelist-not-enough-args: '&cНедостаточно аргументов. \(&6/auto-whitelist
+    help) [click.run{/auto-whitelist help}]'
+  auto-whitelist-unknown-command: '&cНеизвестная команда. \(&6/auto-whitelist help)
+    [click.run{/auto-whitelist help}]'
+  auto-whitelist-help: |
+    \(&e/auto-whitelist on|off) [click.suggest{/auto-whitelist o}] &f— включить/выключить auto-whitelist
+    \(&e/auto-whitelist is-on) [click.run{/auto-whitelist status}] &f— узнать, включен ли auto-whitelist
+    \(&e/auto-whitelist info &6<player>) [click.suggest{/auto-whitelist info }] &f— узнать лимит игрока
+    \(&e/auto-whitelist set &6<player> <int>) [click.suggest{/auto-whitelist set }] &f— установить лимит для игрока
+    \(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— сбросить лимит для игрока
+    \(&e/auto-whitelist get-limit) [click.run{/auto-whitelist get-limit}] &f— узнать лимит авто. добавлений
+    \(&e/auto-whitelist set-limit &6<int>) [click.suggest{/auto-whitelist set-limit }] &f— установить лимит авто. добавлений
+    \(&e/auto-whitelist get-strategy) [click.run{/auto-whitelist get-strategy }] &f— узнать текущую стратегию фильтра игроков
+    \(&e/auto-whitelist set-strategy &6<strategy>) [click.suggest{/auto-whitelist set-strategy }] &f— установить стратегию фильтра игроков
+    \(&e/auto-whitelist get-duration) [click.run{/auto-whitelist get-duration}] &f— узнать текущую длительность добавления в whitelist
+    \(&e/auto-whitelist set-duration &6<time>) [click.suggest{/auto-whitelist set-duration }] &f— установить длительность добавления в whitelist
+  auto-whitelist-enabled: '&eАвтоматическое добавление в whitelist &aвключено&e.'
+  auto-whitelist-disabled: '&eАвтоматическое добавление в whitelist &cвыключено&e.'
+  auto-whitelist-reset: '&eКол-во авто. добавлений в whitelist для игрока &6{player-details}&e
+    сброшено.'
+  auto-whitelist-reset-fail: '&сНе удалось сбросить кол-во авто. добавлений в whitelist
+    для игрока &6{player-details}.'
+  auto-whitelist-reset-args: '&cВы не указали игрока &6/auto-whitelist reset &n<player>&c.'
+  auto-whitelist-set: '&eКол-во авто. добавлений для игрока &6{player-details}&e изменено
+    на &c{new}&e.'
+  auto-whitelist-set-fail: '&eНе удалось обновить кол-во авто. добавлений для игрока
+    &6{player-details}&e.'
+  auto-whitelist-set-args: '&cВы указали недостаточно параметров &8({given}/{needed})
+    &6/auto-whitelist set &n<player>&r &6&n<int>&c.'
+  auto-whitelist-set-invalid-int: '&cНеобходимо указать целочисленное значение &8({given})
+    &6/auto-whitelist set {player} &n<int>&c.'
+  auto-whitelist-info: '&eТекущее кол-во авто. добавлений для игрока &6{player-details}&e:
+    &c{times-auto-whitelisted}&e.'
+  auto-whitelist-info-args: '&cВы не указали игрока &6/auto-whitelist info &n<player>&c.'
+  auto-whitelist-info-not-found: '&eИнформация для игрока &6{player-details} &eотсутствует.'
+  auto-whitelist-get-limit: '&eТекущий лимит для auto-whitelist: &c{limit}&e.'
+  auto-whitelist-set-limit: '&eЛимит для auto-whitelist изменён: &c{old}&6->&c{new}&e.'
+  auto-whitelist-set-limit-args: '&cВы не указали лимит &6/auto-whitelist set-limit
+    &n<limit>&c.'
+  auto-whitelist-set-limit-int: '&cНеобходимо указать целочисленное значение &8({given})
+    &6/auto-whitelist set-limit &n<int>&c.'
+  auto-whitelist-get-strategy: '&eТекущая стратегия выбора игроков для auto-whitelist:
+    &c{strategy}&e.'
+  auto-whitelist-set-strategy: '&eСтратегия выбора игроков для auto-whitelist изменена:
+    &c{old}&6->&c{new}&e.'
+  auto-whitelist-set-strategy-args: '&cВы не указали стратегию &6/auto-whitelist set-strategy
+    &n<strategy>&c.'
+  auto-whitelist-set-invalid-strategy: '&cВы указали неизвестную стратегию &8({given})&c,
+    на выбор есть: &6{strategies}&c.'
+  auto-whitelist-get-duration: '&eТекущая длительность автоматического занесения в
+    whitelist: &6{duration} &8({exact}ms.)&e.'
+  auto-whitelist-set-duration: '&eДлительность автоматического занесения в whitelist
+    изменена: &6{old}&e->&6{new}&e.'
+  auto-whitelist-set-invalid-duration: '&cНеверный формат времени &8({given})&c, пример:
+    &61y1mo4w7d12h30m45s&c.'
+  auto-whitelist-set-duration-args: '&cВы не указали длительность: &6/auto-whitelist
+    set-duration &n<duration>&c.'
+
   added: '&eИгрок &6«&c{player-details}&6» &eдобавлен в whitelist.'
   added-temp: '&eИгрок &6«&c{player-details}&6» &eдобавлен до &d{date}&e.'
   add-help: '\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока'
