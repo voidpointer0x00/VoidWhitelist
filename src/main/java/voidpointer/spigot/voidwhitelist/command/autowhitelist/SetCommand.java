@@ -14,7 +14,8 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 final class SetCommand extends Command {
     @AutowiredLocale private static Locale locale;
-    @Autowired private static AutoWhitelistService autoWhitelistService;
+    @Autowired(mapId="whitelistService")
+    private static AutoWhitelistService autoWhitelistService;
 
     SetCommand() {
         super("set");

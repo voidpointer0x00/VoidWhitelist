@@ -12,8 +12,10 @@ import voidpointer.spigot.voidwhitelist.uuid.UUIDFetchers;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 final class InfoCommand extends Command {
-    @AutowiredLocale private static Locale locale;
-    @Autowired private static AutoWhitelistService autoWhitelistService;
+    @AutowiredLocale
+    private static Locale locale;
+    @Autowired(mapId="whitelistService")
+    private static AutoWhitelistService autoWhitelistService;
 
     InfoCommand() {
         super("info");
