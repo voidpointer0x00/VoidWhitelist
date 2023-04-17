@@ -28,7 +28,8 @@ final class SetCommand extends Command {
         try {
             newTimesAutoWhitelisted = Integer.parseInt(args.get(1));
         } catch (final NumberFormatException numberFormatException) {
-            locale.localize(AUTO_WHITELIST_SET_INVALID_INT).set("given", args.get(1)).send(args.getSender());
+            locale.localize(AUTO_WHITELIST_SET_INVALID_INT)
+                    .set("player", args.get(0)).set("given", args.get(1)).send(args.getSender());
             return;
         }
         UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(optionalUuid -> {
