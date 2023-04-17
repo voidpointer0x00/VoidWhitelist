@@ -13,4 +13,11 @@ public final class Duration {
             return Optional.empty();
         return Optional.of(new Date(millis));
     }
+
+    public static Optional<Long> exactMillis(final @NotNull String essentialsDate) {
+        final long millis = EssentialsDateParser.parseDate(essentialsDate, EssentialsDateParser.EXACT_MILLIS);
+        if (millis == EssentialsDateParser.WRONG_DATE_FORMAT)
+            return Optional.empty();
+        return Optional.of(millis);
+    }
 }

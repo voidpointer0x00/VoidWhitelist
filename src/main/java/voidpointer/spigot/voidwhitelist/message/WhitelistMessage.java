@@ -90,25 +90,43 @@ public enum WhitelistMessage implements Message {
             "\\(&e/auto-whitelist is-on) [click.run{/auto-whitelist status}] &f— узнать, включен ли auto-whitelist\n" +
             "\\(&e/auto-whitelist info &6<player>) [click.suggest{/auto-whitelist info }] &f— узнать лимит игрока\n" +
             "\\(&e/auto-whitelist set &6<player> <int>) [click.suggest{/auto-whitelist set }] &f— установить лимит для игрока\n" +
-            "\\(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— сбросить лимит для игрока\n"),
+            "\\(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— сбросить лимит для игрока\n"+
+            "\\(&e/auto-whitelist get-limit) [click.run{/auto-whitelist get-limit}] &f— узнать лимит авто. добавлений\n" +
+            "\\(&e/auto-whitelist set-limit &6<int>) [click.suggest{/auto-whitelist set-limit }] &f— установить лимит авто. добавлений\n" +
+            "\\(&e/auto-whitelist get-strategy) [click.run{/auto-whitelist get-strategy }] &f— узнать текущую стратегию фильтра игроков\n"+
+            "\\(&e/auto-whitelist set-strategy &6<strategy>) [click.suggest{/auto-whitelist set-strategy }] &f— установить стратегию фильтра игроков\n" +
+            "\\(&e/auto-whitelist get-duration) [click.run{/auto-whitelist get-duration}] &f— узнать текущую длительность добавления в whitelist\n" +
+            "\\(&e/auto-whitelist set-duration &6<time>) [click.suggest{/auto-whitelist set-duration }] &f— установить длительность  добавления в whitelist\n"),
     AUTO_WHITELIST_ENABLED("&eАвтоматическое добавление в whitelist &aвключено&e."),
     AUTO_WHITELIST_DISABLED("&eАвтоматическое добавление в whitelist &cвыключено&e."),
+
     AUTO_WHITELIST_RESET("&eКол-во авто. добавлений в whitelist для игрока &6{player-details}&e сброшено."),
     AUTO_WHITELIST_RESET_FAIL("&сНе удалось сбросить кол-во авто. добавлений в whitelist для игрока &6{player-details}."),
     AUTO_WHITELIST_RESET_ARGS("&cВы не указали игрока &6/auto-whitelist reset &n<player>&c."),
+
     AUTO_WHITELIST_SET("&eКол-во авто. добавлений для игрока &6{player-details}&e изменено на &c{new}&e."),
     AUTO_WHITELIST_SET_FAIL("&eНе удалось обновить кол-во авто. добавлений для игрока &6{player-details}&e."),
     AUTO_WHITELIST_SET_ARGS("&cВы указали недостаточно параметров &8({given}/{needed}) &6/auto-whitelist set &n<player>&r &6&n<int>&c."),
-    AUTO_WHITELIST_SET_INVALID_INT("&cНеобходимо указать целочисленное значение &8({given}) &6/auto-whitelist set <player> &6&n&l<int>&c."),
+    AUTO_WHITELIST_SET_INVALID_INT("&cНеобходимо указать целочисленное значение &8({given}) &6/auto-whitelist set {player} &n<int>&c."),
+
     AUTO_WHITELIST_INFO("&eТекущее кол-во авто. добавлений для игрока &6{player-details}&e: &c{times-auto-whitelisted}&e."),
     AUTO_WHITELIST_INFO_ARGS("&cВы не указали игрока &6/auto-whitelist info &n<player>&c."),
     AUTO_WHITELIST_INFO_NOT_FOUND("&eИнформация для игрока &6{player-details} &eотсутствует."),
+
     AUTO_WHITELIST_GET_LIMIT("&eТекущий лимит для auto-whitelist: &c{limit}&e."),
     AUTO_WHITELIST_SET_LIMIT("&eЛимит для auto-whitelist изменён: &c{old}&6->&c{new}&e."),
     AUTO_WHITELIST_SET_LIMIT_ARGS("&cВы не указали лимит &6/auto-whitelist set-limit &n<limit>&c."),
+    AUTO_WHITELIST_SET_LIMIT_INT("&cНеобходимо указать целочисленное значение &8({given}) &6/auto-whitelist set-limit &n<int>&c."),
+
     AUTO_WHITELIST_GET_STRATEGY("&eТекущая стратегия выбора игроков для auto-whitelist: &c{strategy}&e."),
     AUTO_WHITELIST_SET_STRATEGY("&eСтратегия выбора игроков для auto-whitelist изменена: &c{old}&6->&c{new}&e."),
     AUTO_WHITELIST_SET_STRATEGY_ARGS("&cВы не указали стратегию &6/auto-whitelist set-strategy &n<strategy>&c."),
+    AUTO_WHITELIST_SET_INVALID_STRATEGY("&cВы указали неизвестную стратегию &8({given})&c, на выбор есть: &6{strategies}&c."),
+
+    AUTO_WHITELIST_GET_DURATION("&eТекущая длительность автоматического занесения в whitelist: &6{duration} &8({exact}ms.)&e."),
+    AUTO_WHITELIST_SET_DURATION("&eДлительность автоматического занесения в whitelist изменена: &6{old}&e->&6{new}&e."),
+    AUTO_WHITELIST_SET_INVALID_DURATION("&cНеверный формат времени &8({given})&c, пример: &61y1mo4w7d12h30m45s&c."),
+    AUTO_WHITELIST_SET_DURATION_ARGS("&cВы не указали длительность: &6/auto-whitelist set-duration &n<duration>&c."),
     ;
 
     public static Message of(final KickReason kickReason) {

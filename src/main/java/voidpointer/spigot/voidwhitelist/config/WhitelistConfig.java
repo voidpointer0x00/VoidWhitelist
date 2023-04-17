@@ -111,15 +111,31 @@ public final class WhitelistConfig {
     }
 
     public StrategyPredicate getStrategyPredicate() {
-        return StrategyPredicate.of(plugin.getConfig().getString(AUTO_WL_STRATEGY_PATH, "all"));
+        return StrategyPredicate.getOrDefault(plugin.getConfig().getString(AUTO_WL_STRATEGY_PATH, "all"));
     }
 
     public int getAutoLimit() {
         return plugin.getConfig().getInt(AUTO_WL_LIMIT_PATH, 0);
     }
 
+    /** @return previous limit. */
+    public int setAutoLimit(final int newLimit) {
+        final int previousLimit = plugin.getConfig().getInt(AUTO_WL_LIMIT_PATH);
+        plugin.getConfig().set(AUTO_WL_LIMIT_PATH, newLimit);
+        plugin.saveConfig();
+        return previousLimit;
+    }
+
     public Optional<Date> getAutoDuration() {
         return Duration.ofEssentialsDate(getRawAutoDuration());
+    }
+
+    /** @return previous duration. */
+    public String setAutoDuration(final String newDuration) {
+        final String previousDuration = getRawAutoDuration();
+        plugin.getConfig().set(AUTO_WL_DURATION_PATH, newDuration);
+        plugin.saveConfig();
+        return previousDuration;
     }
 
     public String getRawAutoDuration() {
@@ -165,5 +181,12 @@ public final class WhitelistConfig {
 
     private void reportUnknown(final String property, final String defaultValue) {
         log.warn("Property «{0}» is not set; using default value «{1}» instead", property, defaultValue);
+    }
+
+    public StrategyPredicate setAutoWhitelistStrategy(final StrategyPredicate strategy) {
+        final StrategyPredicate previousStrategy = getStrategyPredicate();
+        plugin.getConfig().set(AUTO_WL_STRATEGY_PATH, strategy.getName());
+        plugin.saveConfig();
+        return previousStrategy;
     }
 }

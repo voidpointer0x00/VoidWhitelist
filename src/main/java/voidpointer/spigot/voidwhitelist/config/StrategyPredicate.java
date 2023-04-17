@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -14,12 +15,16 @@ public enum StrategyPredicate implements Predicate<UUID> {
 
     public static final StrategyPredicate DEFAULT_STRATEGY = ALL;
 
-    static StrategyPredicate of(final String strategyName) {
+    public static Optional<StrategyPredicate> of(final String strategyName) {
         try {
-            return StrategyPredicate.valueOf(strategyName.toLowerCase());
+            return Optional.of(StrategyPredicate.valueOf(strategyName.toUpperCase()));
         } catch (final IllegalArgumentException unknownStrategy) {
-            return DEFAULT_STRATEGY;
+            return Optional.empty();
         }
+    }
+
+    static StrategyPredicate getOrDefault(final String strategyName) {
+        return of(strategyName).orElse(DEFAULT_STRATEGY);
     }
 
     @NotNull private final Predicate<UUID> uuidStrategyPredicate;

@@ -24,15 +24,24 @@ public final class AutoWhitelistCommand extends Command {
         super.setPermission("voidwhitelist.auto-whitelist");
         super.setRequiredArgsNumber(1);
 
-        autoWhitelistCommands.addCommand(new DisableCommand());
-        autoWhitelistCommands.addCommand(new EnableCommand());
         autoWhitelistCommands.addCommand(new HelpCommand());
-        autoWhitelistCommands.addCommand(new InfoCommand());
+        /* general commands */
+        autoWhitelistCommands.addCommand(new EnableCommand());
+        autoWhitelistCommands.addCommand(new DisableCommand());
         autoWhitelistCommands.addCommand(new IsOnCommand());
+        /* configuration related commands */
+        autoWhitelistCommands.addCommand(new GetDurationCommand());
+        autoWhitelistCommands.addCommand(new SetDurationCommand());
+        autoWhitelistCommands.addCommand(new GetLimitCommand());
+        autoWhitelistCommands.addCommand(new SetLimitCommand());
+        autoWhitelistCommands.addCommand(new GetStrategyCommand());
+        autoWhitelistCommands.addCommand(new SetStrategyCommand());
+        /* player related commands */
+        autoWhitelistCommands.addCommand(new InfoCommand());
         autoWhitelistCommands.addCommand(new ResetCommand());
         autoWhitelistCommands.addCommand(new SetCommand());
-
-        autoWhitelistCommands.getCommands().values() /* set appropriate permissions for sub commands */
+        /* set appropriate permissions for sub commands */
+        autoWhitelistCommands.getCommands().values()
                 .forEach(cmd -> cmd.setPermission(getPermission() + '.' + cmd.getName()));
     }
 
