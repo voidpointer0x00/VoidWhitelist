@@ -11,6 +11,9 @@ commands:
   whitelist:
     description: Main command which includes all the rest - add, remove etc.
     permission: 'voidwhitelist.whitelist' # this is new
+  auto-whitelist:
+    description: This command controls automatic whitelisting
+    permission: voidwhitelist.auto-whitelist
 
 permissions:
   voidwhitelist.whitelist:
@@ -56,4 +59,46 @@ permissions:
       voidwhitelist.whitelist.info: true
       voidwhitelist.whitelist.status: true
 
+  voidwhitelist.auto-whitelist.set:
+    description: Allows to use /auto-whitelist set
+  voidwhitelist.auto-whitelist.set-limit:
+    description: Allows to use /auto-whitelist set-limit
+  voidwhitelist.auto-whitelist.set-duration:
+    description: Allows to use /auto-whitelist set-duration
+  voidwhitelist.auto-whitelist.get-duration:
+    description: Allows to use /auto-whitelist get-duration
+  voidwhitelist.auto-whitelist.off:
+    description: Allows to use /auto-whitelist off
+  voidwhitelist.auto-whitelist.help:
+    description: Allows to use /auto-whitelist help
+  voidwhitelist.auto-whitelist.get-strategy:
+    description: Allows to use /auto-whitelist get-strategy
+  voidwhitelist.auto-whitelist.set-strategy:
+    description: Allows to use /auto-whitelist set-strategy
+  voidwhitelist.auto-whitelist.reset:
+    description: Allows to use /auto-whitelist reset
+  voidwhitelist.auto-whitelist.get-limit:
+    description: Allows to use /auto-whitelist get-limit
+  voidwhitelist.auto-whitelist.is-on:
+    description: Allows to use /auto-whitelist is-on
+  voidwhitelist.auto-whitelist.on:
+    description: Allows to use /auto-whitelist on
+  voidwhitelist.auto-whitelist.info:
+    description: Allows to use /auto-whitelist info
 
+  voidwhitelist.auto-whitelist.*:
+    description: 'Wildcard permission for all /auto-whitelist children'
+    children:
+      voidwhitelist.auto-whitelist.set: true
+      voidwhitelist.auto-whitelist.set-limit: true
+      voidwhitelist.auto-whitelist.set-duration: true
+      voidwhitelist.auto-whitelist.get-duration: true
+      voidwhitelist.auto-whitelist.off: true
+      voidwhitelist.auto-whitelist.help: true
+      voidwhitelist.auto-whitelist.get-strategy: true
+      voidwhitelist.auto-whitelist.set-strategy: true
+      voidwhitelist.auto-whitelist.reset: true
+      voidwhitelist.auto-whitelist.get-limit: true
+      voidwhitelist.auto-whitelist.is-on: true
+      voidwhitelist.auto-whitelist.on: true
+      voidwhitelist.auto-whitelist.info: true
