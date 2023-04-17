@@ -54,6 +54,7 @@ public final class ReloadCommand extends Command {
 
     private void reloadConfig(final Args args) {
         config.reload();
+        config.runMigrations();
         UUIDFetchers.updateMode(config.isUUIDModeOnline());
         locale.localize(CONFIG_RELOADED).send(args.getSender());
     }
