@@ -14,6 +14,6 @@ final class HelpCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        locale.localize(WhitelistMessage.AUTO_WHITELIST_HELP);
+        locale.localize(WhitelistMessage.AUTO_WHITELIST_HELP).send(args.getSender());
     }
 }
