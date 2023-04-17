@@ -104,7 +104,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
                 TimesAutoWhitelistedNumberModel model = (timesAutoWhitelisted instanceof TimesAutoWhitelistedNumberModel)
                         ? (TimesAutoWhitelistedNumberModel) timesAutoWhitelisted
                         : TimesAutoWhitelistedNumberModel.copyOf(timesAutoWhitelisted);
-                ormliteDatabase.getAutoWhitelistDao().update(model);
+                ormliteDatabase.getAutoWhitelistDao().createOrUpdate(model);
                 return true;
             } catch (final SQLException sqlException) {
                 log.warn("Unable to update times auto whitelisted for {0}: {1}", timesAutoWhitelisted.getUniqueId(),
