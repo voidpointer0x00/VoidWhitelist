@@ -12,7 +12,7 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -21,10 +21,11 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.Message;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
-import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
+import voidpointer.spigot.voidwhitelist.date.Duration;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistAddedEvent;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
@@ -40,51 +41,57 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static org.bukkit.Bukkit.getOfflinePlayers;
-import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
 import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class AddCommand extends Command {
     public static final String NAME = "add";
-    public static final String PERMISSION = "whitelist.add";
     public static final int MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
 
     public AddCommand() {
         super(NAME);
         super.setRequiredArgsNumber(MIN_ARGS);
-        super.setPermission(PERMISSION);
         super.addOptions(UuidOptions.values());
     }
 
     @Override public void execute(final Args args) {
-        final Optional<Date> expiresAt = parseExpiresAtAndWarnIfWrong(args);
-        if (expiresAt == null)
-            return;
+        final Date whitelistTimeDuration;
+        if (hasExpiresAtArgument(args)) {
+            final Optional<Date> optionalWhitelistTimeDuration = Duration.ofEssentialsDate(args.get(1));
+            if (!optionalWhitelistTimeDuration.isPresent()) {/* TODO java upgrade #isEmpty() */
+                locale.localize(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
+                return;
+            }
+            whitelistTimeDuration = optionalWhitelistTimeDuration.get();
+        } else {
+            whitelistTimeDuration = null;
+        }
 
         UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
             if (!uuidOptional.isPresent()) {
                 locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", args.get(0))
-                        .set("date", expiresAt.orElse(null))
+                        .set("date", whitelistTimeDuration)
                         .send(args.getSender());
                 return;
             }
-            whitelistService.add(uuidOptional.get(), args.get(0), expiresAt.orElse(NEVER_EXPIRES))
+            whitelistService.add(uuidOptional.get(), args.get(0), whitelistTimeDuration)
                     .whenCompleteAsync((res, th) -> {
                         if (th != null) {
                             locale.warn("Couldn't add a player to the whitelist", th);
                             return;
                         }
-                        if (!res.isPresent())
+                        if (!res.isPresent()) {
                             notifyFail(args, uuidOptional.get());
-                        else if (expiresAt.isPresent())
-                            notifyAdded(args, expiresAt.get(), uuidOptional.get(), WhitelistMessage.ADDED_TEMP);
-                        else
-                            notifyAdded(args, null, uuidOptional.get(), WhitelistMessage.ADDED);
+                        } else {
+                            notifyAdded(args, whitelistTimeDuration, uuidOptional.get(),
+                                    whitelistTimeDuration == null ? WhitelistMessage.ADDED : WhitelistMessage.ADDED_TEMP);
+                        }
                         res.ifPresent(this::callWhitelistAddedEvent);
                     });
         }).whenCompleteAsync((res, th) -> {
@@ -93,20 +100,8 @@ public final class AddCommand extends Command {
         });
     }
 
-    private Optional<Date> parseExpiresAtAndWarnIfWrong(final Args args) {
-        if (hasExpiresAtArgument(args.size())) {
-            final long whitelistTimePeriod = EssentialsDateParser.parseDate(args.get(1));
-            if (EssentialsDateParser.WRONG_DATE_FORMAT == whitelistTimePeriod) {
-                locale.localize(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
-                return null;
-            }
-            return Optional.of(new Date(whitelistTimePeriod));
-        }
-        return Optional.empty();
-    }
-
-    private boolean hasExpiresAtArgument(int argsNumber) {
-        return MIN_ARGS < argsNumber;
+    private boolean hasExpiresAtArgument(final Args args) {
+        return MIN_ARGS < args.size();
     }
 
     private void notifyFail(final Args args, final UUID uuid) {

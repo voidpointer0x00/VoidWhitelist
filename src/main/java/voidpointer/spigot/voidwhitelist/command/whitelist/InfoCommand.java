@@ -12,7 +12,7 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import org.bukkit.OfflinePlayer;
 import voidpointer.spigot.framework.di.Autowired;
@@ -20,6 +20,7 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.LocalizedMessage;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
@@ -40,14 +41,13 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class InfoCommand extends Command {
     public static final String NAME = "info";
-    public static final String PERMISSION = "whitelist.info";
 
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
 
     public InfoCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
         super.addOptions(UuidOptions.values());
     }
 

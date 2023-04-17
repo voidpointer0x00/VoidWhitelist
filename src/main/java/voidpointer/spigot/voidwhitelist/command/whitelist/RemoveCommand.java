@@ -12,7 +12,7 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -20,6 +20,7 @@ import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Arg;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.UuidOptions;
@@ -43,16 +44,15 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 public class RemoveCommand extends Command {
     public static final String NAME = "remove";
     public static final List<String> ALIASES = singletonList("rem");
-    public static final String PERMISSION = "whitelist.remove";
     public static final Integer MIN_ARGS = 1;
 
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static EventManager eventManager;
 
     public RemoveCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
         super.setRequiredArgsNumber(MIN_ARGS);
         super.addOptions(UuidOptions.values());
     }
@@ -78,7 +78,7 @@ public class RemoveCommand extends Command {
                         .send(args.getSender());
                 return;
             }
-            boolean isRemoved = whitelistService.remove(whitelistable.get()).join().booleanValue();
+            boolean isRemoved = whitelistService.remove(whitelistable.get()).join();
             if (isRemoved) {
                 notifyRemoved(args.getSender(), uuidOptional.get(), name);
                 eventManager.callEvent(new WhitelistRemovedEvent(whitelistable.get()));

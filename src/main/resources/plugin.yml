@@ -10,3 +10,95 @@ softdepend: [ floodgate, PlaceholderAPI ]
 commands:
   whitelist:
     description: Main command which includes all the rest - add, remove etc.
+    permission: 'voidwhitelist.whitelist' # this is new
+  auto-whitelist:
+    description: This command controls automatic whitelisting
+    permission: voidwhitelist.auto-whitelist
+
+permissions:
+  voidwhitelist.whitelist:
+    description: 'Allows to use the /whitelist command'
+  voidwhitelist.whitelist.add:
+    description: 'Allows to add players to whitelist'
+  voidwhitelist.whitelist.remove:
+    description: 'Allows to remove players from whitelist'
+  voidwhitelist.whitelist.off:
+    description: 'Allows to turn-off the whitelist'
+  voidwhitelist.whitelist.help:
+    description: 'Allows to get list of whitelist commands and their description'
+  voidwhitelist.whitelist.reload:
+    description: 'Allows to reload configuration'
+  voidwhitelist.whitelist.reconnect:
+    description: 'Allows to forcefully reconnect to database'
+  voidwhitelist.whitelist.gui:
+    description: 'Allows to use GUI'
+  voidwhitelist.whitelist.import-json:
+    description: 'Allows to import whitelist from JSON format to database'
+  voidwhitelist.whitelist.export-db:
+    description: 'Allows to export database into JSON format files'
+  voidwhitelist.whitelist.on:
+    description: 'Allows to turn-on the whitelist'
+  voidwhitelist.whitelist.info:
+    description: 'Allows to get whitelist information of a player'
+  voidwhitelist.whitelist.status:
+    description: 'Allows to check whether the whitelist is on or off'
+
+  voidwhitelist.whitelist.*:
+    description: 'Wildcard permission for all /whitelist children'
+    children:
+      voidwhitelist.whitelist.add: true
+      voidwhitelist.whitelist.remove: true
+      voidwhitelist.whitelist.off: true
+      voidwhitelist.whitelist.help: true
+      voidwhitelist.whitelist.reload: true
+      voidwhitelist.whitelist.reconnect: true
+      voidwhitelist.whitelist.gui: true
+      voidwhitelist.whitelist.import-json: true
+      voidwhitelist.whitelist.export-db: true
+      voidwhitelist.whitelist.on: true
+      voidwhitelist.whitelist.info: true
+      voidwhitelist.whitelist.status: true
+
+  voidwhitelist.auto-whitelist.set:
+    description: Allows to use /auto-whitelist set
+  voidwhitelist.auto-whitelist.set-limit:
+    description: Allows to use /auto-whitelist set-limit
+  voidwhitelist.auto-whitelist.set-duration:
+    description: Allows to use /auto-whitelist set-duration
+  voidwhitelist.auto-whitelist.get-duration:
+    description: Allows to use /auto-whitelist get-duration
+  voidwhitelist.auto-whitelist.off:
+    description: Allows to use /auto-whitelist off
+  voidwhitelist.auto-whitelist.help:
+    description: Allows to use /auto-whitelist help
+  voidwhitelist.auto-whitelist.get-strategy:
+    description: Allows to use /auto-whitelist get-strategy
+  voidwhitelist.auto-whitelist.set-strategy:
+    description: Allows to use /auto-whitelist set-strategy
+  voidwhitelist.auto-whitelist.reset:
+    description: Allows to use /auto-whitelist reset
+  voidwhitelist.auto-whitelist.get-limit:
+    description: Allows to use /auto-whitelist get-limit
+  voidwhitelist.auto-whitelist.is-on:
+    description: Allows to use /auto-whitelist is-on
+  voidwhitelist.auto-whitelist.on:
+    description: Allows to use /auto-whitelist on
+  voidwhitelist.auto-whitelist.info:
+    description: Allows to use /auto-whitelist info
+
+  voidwhitelist.auto-whitelist.*:
+    description: 'Wildcard permission for all /auto-whitelist children'
+    children:
+      voidwhitelist.auto-whitelist.set: true
+      voidwhitelist.auto-whitelist.set-limit: true
+      voidwhitelist.auto-whitelist.set-duration: true
+      voidwhitelist.auto-whitelist.get-duration: true
+      voidwhitelist.auto-whitelist.off: true
+      voidwhitelist.auto-whitelist.help: true
+      voidwhitelist.auto-whitelist.get-strategy: true
+      voidwhitelist.auto-whitelist.set-strategy: true
+      voidwhitelist.auto-whitelist.reset: true
+      voidwhitelist.auto-whitelist.get-limit: true
+      voidwhitelist.auto-whitelist.is-on: true
+      voidwhitelist.auto-whitelist.on: true
+      voidwhitelist.auto-whitelist.info: true

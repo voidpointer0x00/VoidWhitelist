@@ -3,36 +3,26 @@
 #   Out-of-the-box translations:
 #   en — ENGLISH
 #   ru — RUSSIAN (Русский)
-#   Also it is possible to change the language to whatever language you need as long
-#       as you create an alternative locale-{language}.yml file with the translation
-#       inside.
+#
+#     It is also possible to change the language to whatever language you need as long
+#   as you create an alternative locale-{language}.yml file with the translation inside.
 language: en
 
 # storage-method:
 #   Changes the method of storing your whitelist.
-#   Possible values:
+#   Supported methods:
 #   json — Simple JSON-based whitelist file. All whitelistable players are
 #       once loaded and then cached. Saves on each update.
 #   database — connects to database with database.yml configuration.
 storage-method: json
 
-# Adds a player to the whitelist if the player has never played on this server
-#   before. Notice: this feature uses OfflinePlayer#hasPlayedBefore() method, so
-#   if your server does not save player information (players.disable-saving: true
-#   in spigot.yml) it will constantly add every player to the whitelist.
-#
-# It won't work if the whitelist is disabled. (whitelist.enable: false)
-auto-whitelist-new-players: false
-# Any value less than 1 will add the player to the whitelist forever.
-auto-whitelist-time: 1mon
-
 whitelist:
   enabled: false
   # uuid-mode:
   #   Changes the algorithm of fetching user's UUID in a several commands.
-  #       If you need to add, remove etc. a specific UUID you'll find a special
-  #       version of each command for this purpose.
-  #   Possible values:
+  #   If you need to add, remove etc. a specific UUID you'll find a special
+  #     version of each command for this purpose.
+  #   Supported modes:
   #   auto — RECOMMENDED checks whether the server is in online or offline mode
   #       and automatically chooses between online and offline uuid-mode's
   #   online — requests Mojang for player's UUID
@@ -43,3 +33,35 @@ whitelist:
   # WARNING: the plugin DOES NOT convert your offline UUIDs to online and vice-versa.
   #           You should either stick to one or another, or alternatively .
   uuid-mode: auto
+
+#   When both whitelist and auto-whitelist are enabled, the plugin will automatically
+# add a joining player of selected group to the whitelist for the specified duration.
+#
+#   A single player can only get automatically whitelisted "max-repeats" times.
+# So if it's set to 2, after the first period they will be able to get extra time.
+# * It won't work the second time IF they do not meet current strategy requirements.
+#
+#   Strategies select a group of players who will be automatically whitelisted
+# upon joining the server.
+auto-whitelist:
+  enabled: true
+  #   Any value in range (-∞;0] will be treated as permanent whitelisting,
+  # WHICH SHOULD NOT BE USED (because then what's the point in using a whitelist?)
+  #
+  #   Any value that can not be parsed will result in disabling the automatic
+  # whitelisting feature until the configuration is fixed and reloaded.
+  duration: 7d
+  #   This property controls the limit for the number of automatic whitelisting.
+  #
+  #   A value of zero will disable the auto whitelisting. Any negative number will
+  # disable this property and players will be able to infinitely join the server
+  # and get whitelisted every time.
+  limit: 1
+  # all — simply every joining player if the number that they've been "freely" whitelisted
+  #       have yet to exceed the limiting "max-repeats" property.
+  #
+  # newcomers — only those players who have never player on this server before.
+  #       This strategy makes use of Bukkit's #hasPlayerBefore() method that checks
+  #       whether the server has any data on the given player. This will always
+  #       be true if you disable the property «players.disable-saving» in spigot.yml
+  strategy: all

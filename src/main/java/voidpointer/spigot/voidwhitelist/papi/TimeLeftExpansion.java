@@ -19,7 +19,8 @@ import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.NOT_WHITELISTED;
 public class TimeLeftExpansion extends PlaceholderExpansion {
     @Autowired(mapId="plugin")
     private static Plugin plugin;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static PapiLocale papiLocale;
 
     @Override public @NotNull String getIdentifier() {

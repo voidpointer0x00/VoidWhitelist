@@ -14,21 +14,12 @@
  */
 package voidpointer.spigot.voidwhitelist.config;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
-import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.storage.db.WhitelistableModel;
 
 import java.io.File;
-import java.net.ConnectException;
-import java.sql.SQLException;
-import java.util.UUID;
 
 import static java.lang.Integer.parseInt;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -54,7 +45,6 @@ public final class OrmliteConfig {
     private final Plugin plugin;
     private final File configFile;
     private YamlConfiguration config;
-    @Getter private ConnectionSource connectionSource;
 
     public OrmliteConfig(final Plugin plugin) {
         this.plugin = plugin;
@@ -80,26 +70,11 @@ public final class OrmliteConfig {
         return MINUTES.toSeconds(config.getLong(SYNC_PATH, DEFAULT_SYNC)) * 20L;
     }
 
-    public Dao<WhitelistableModel, UUID> getWhitelistableDao() {
-        try {
-            Dao<WhitelistableModel, UUID> dao = DaoManager.createDao(connectionSource, WhitelistableModel.class);
-            TableUtils.createTableIfNotExists(connectionSource, WhitelistableModel.class);
-            return dao;
-        } catch (final SQLException sqlException) {
-            Throwable rootCause = sqlException;
-            while ((rootCause.getCause() != null) && (rootCause != rootCause.getCause()))
-                rootCause = rootCause.getCause();
-            Throwable reportableCause = (rootCause instanceof ConnectException) ? rootCause : sqlException;
-            log.warn("Unable to establish connection: {0}", reportableCause.getMessage());
-            return null;
-        }
-    }
-
-    String getHost() {
+    public String getHost() {
         return config.getString(HOST_PATH, DEFAULT_HOST);
     }
 
-    int getPort() {
+    public int getPort() {
         try {
             return parseInt(config.getString(PORT_PATH, "-1"));
         } catch (final NumberFormatException numberFormatException) {
@@ -108,32 +83,25 @@ public final class OrmliteConfig {
         }
     }
 
-    String getDatabase() {
+    public String getDatabase() {
         return config.getString(DATABASE_PATH, DEFAULT_DATABASE);
     }
 
-    String getUser() {
+    public String getUser() {
         return config.getString(USER_PATH, DEFAULT_USER);
     }
 
-    String getPassword() {
+    public String getPassword() {
         return config.getString(PASSWORD_PATH, DEFAULT_PASSWORD);
+    }
+
+    public String getDbms() {
+        return config.getString(DBMS_PATH, DEFAULT_DBMS);
     }
 
     private void load() {
         if (!configFile.exists())
             plugin.saveResource(FILENAME, true);
         config = YamlConfiguration.loadConfiguration(configFile);
-        createConnectionSource();
-    }
-
-    private void createConnectionSource() {
-        DbmsFactory dbmsFactory = new DbmsFactory(plugin);
-        Dbms dbms = dbmsFactory.matchingOrDefault(getDbms());
-        connectionSource = dbms.newConnectionSource(this);
-    }
-
-    private String getDbms() {
-        return config.getString(DBMS_PATH, DEFAULT_DBMS);
     }
 }

@@ -23,14 +23,14 @@ import java.util.Optional;
 public final class JsonUpdateFactory {
     @AutowiredLocale private static LocaleLog log;
 
-    public static Optional<JsonUpdate> from(final StorageVersion storageVersion) {
-        switch (storageVersion) {
-            case V1_BETA:
+    public static Optional<JsonUpdate> from(final StorageVersion oldStorageVersion) {
+        switch (oldStorageVersion) {
+            case V1_BETA: /* this version will never be seen again (early GitHub releases only) */
                 return Optional.of(new JsonV1BetaUpdate());
             case V2_BETA: /* current version */
             case UNDEFINED: /* cannot update from unknown version */
         }
-        log.warn("Cannot update JSON from {0} version", storageVersion);
+        log.warn("Cannot update JSON from {0} version", oldStorageVersion);
         return Optional.empty();
     }
 }

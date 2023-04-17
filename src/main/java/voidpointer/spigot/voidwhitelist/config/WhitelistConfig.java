@@ -19,24 +19,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
-import voidpointer.spigot.voidwhitelist.date.EssentialsDateParser;
+import voidpointer.spigot.voidwhitelist.config.migration.WhitelistConfigMigrationRepository;
+import voidpointer.spigot.voidwhitelist.date.Duration;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 
 import java.io.File;
 import java.util.Date;
-
-import static voidpointer.spigot.voidwhitelist.Whitelistable.NEVER_EXPIRES;
-import static voidpointer.spigot.voidwhitelist.date.EssentialsDateParser.WRONG_DATE_FORMAT;
+import java.util.Optional;
 
 public final class WhitelistConfig {
     public static final String DEFAULT_LANGUAGE = "en";
     public static final StorageMethod DEFAULT_STORAGE_METHOD = StorageMethod.JSON;
-    private static final String DEFAULT_AUTO_WHITELIST_TIME = "1mon";
+    public static final String AUTO_WL_PATH = "auto-whitelist";
+    public static final String AUTO_WL_ENABLED_PATH = "auto-whitelist.enabled";
+    public static final String AUTO_WL_DURATION_PATH = "auto-whitelist.duration";
+    public static final String AUTO_WL_LIMIT_PATH = "auto-whitelist.limit";
+    public static final String AUTO_WL_STRATEGY_PATH = "auto-whitelist.strategy";
     private static final String WHITELIST_ENABLED_PATH = "whitelist.enabled";
     private static final String UUID_MODE_PATH = "whitelist.uuid-mode";
     private static final String STORAGE_METHOD_PATH = "storage-method";
-    private static final String AUTO_WHITELIST_NEW_PLAYERS = "auto-whitelist-new-players";
-    private static final String AUTO_WHITELIST_TIME = "auto-whitelist-time";
 
     @AutowiredLocale private static LocaleLog log;
     private final JavaPlugin plugin;
@@ -46,36 +47,32 @@ public final class WhitelistConfig {
         saveIfNotExists();
     }
 
+    /**
+     * Detects if newly-featured configuration properties are missing
+     *  and runs an appropriate migration for them.
+     */
+    public void runMigrations() {
+        WhitelistConfigMigrationRepository.getAllMigrations().forEach(migration -> {
+            if (!migration.isUpToDate(plugin.getConfig())) {
+                /* this method is called at plugin load stage, in which LocaleLog is not
+                 *  initialized yet, so we have report any information this way. */
+                plugin.getLogger().info("Running config migration " + migration.getMigrationName());
+                migration.run(plugin.getConfig());
+                plugin.saveConfig();
+            }
+        });
+    }
+
     public void reload() {
         plugin.reloadConfig();
     }
 
-    // TODO: a planned feature
-    public boolean autoWhitelistNewPlayers() {
-        if (!plugin.getConfig().isSet(AUTO_WHITELIST_NEW_PLAYERS)) {
-            plugin.getConfig().set(AUTO_WHITELIST_NEW_PLAYERS, false);
-            plugin.getConfig().addDefault(AUTO_WHITELIST_TIME, "1mon");
-            plugin.saveConfig();
-        }
-        return plugin.getConfig().getBoolean(AUTO_WHITELIST_NEW_PLAYERS);
-    }
-
-    // TODO: a planned feature
-    public Date getAutoWhitelistTime() {
-        if (!plugin.getConfig().isSet(AUTO_WHITELIST_TIME)) {
-            plugin.getConfig().set(AUTO_WHITELIST_TIME, DEFAULT_AUTO_WHITELIST_TIME);
-            plugin.saveConfig();
-        }
-        final String autoWhitelistTime = plugin.getConfig().getString(AUTO_WHITELIST_TIME);
-        long autoWhitelistTimestamp = EssentialsDateParser.parseDate(autoWhitelistTime);
-        if ((autoWhitelistTimestamp == WRONG_DATE_FORMAT) || (autoWhitelistTimestamp == 0)) {
-            return NEVER_EXPIRES;
-        }
-        return new Date(autoWhitelistTimestamp);
-    }
-
     public boolean isWhitelistEnabled() {
         return plugin.getConfig().getBoolean(WHITELIST_ENABLED_PATH, false);
+    }
+
+    public boolean isAutoWhitelistEnabled() {
+        return plugin.getConfig().getBoolean(AUTO_WL_ENABLED_PATH, false);
     }
 
     public boolean isUUIDModeOnline() {
@@ -113,6 +110,38 @@ public final class WhitelistConfig {
         return plugin.getConfig().getString("language", DEFAULT_LANGUAGE);
     }
 
+    public StrategyPredicate getStrategyPredicate() {
+        return StrategyPredicate.getOrDefault(plugin.getConfig().getString(AUTO_WL_STRATEGY_PATH, "all"));
+    }
+
+    public int getAutoLimit() {
+        return plugin.getConfig().getInt(AUTO_WL_LIMIT_PATH, 0);
+    }
+
+    /** @return previous limit. */
+    public int setAutoLimit(final int newLimit) {
+        final int previousLimit = plugin.getConfig().getInt(AUTO_WL_LIMIT_PATH);
+        plugin.getConfig().set(AUTO_WL_LIMIT_PATH, newLimit);
+        plugin.saveConfig();
+        return previousLimit;
+    }
+
+    public Optional<Date> getAutoDuration() {
+        return Duration.ofEssentialsDate(getRawAutoDuration());
+    }
+
+    /** @return previous duration. */
+    public String setAutoDuration(final String newDuration) {
+        final String previousDuration = getRawAutoDuration();
+        plugin.getConfig().set(AUTO_WL_DURATION_PATH, newDuration);
+        plugin.saveConfig();
+        return previousDuration;
+    }
+
+    public String getRawAutoDuration() {
+        return plugin.getConfig().getString(AUTO_WL_DURATION_PATH, "7d");
+    }
+
     public void enableWhitelist() {
         plugin.getConfig().set(WHITELIST_ENABLED_PATH, true);
         plugin.saveConfig();
@@ -120,6 +149,16 @@ public final class WhitelistConfig {
 
     public void disableWhitelist() {
         plugin.getConfig().set(WHITELIST_ENABLED_PATH, false);
+        plugin.saveConfig();
+    }
+
+    public void enableAutoWhitelist() {
+        plugin.getConfig().set(AUTO_WL_ENABLED_PATH, true);
+        plugin.saveConfig();
+    }
+
+    public void disableAutoWhitelist() {
+        plugin.getConfig().set(AUTO_WL_ENABLED_PATH, false);
         plugin.saveConfig();
     }
 
@@ -142,5 +181,12 @@ public final class WhitelistConfig {
 
     private void reportUnknown(final String property, final String defaultValue) {
         log.warn("Property «{0}» is not set; using default value «{1}» instead", property, defaultValue);
+    }
+
+    public StrategyPredicate setAutoWhitelistStrategy(final StrategyPredicate strategy) {
+        final StrategyPredicate previousStrategy = getStrategyPredicate();
+        plugin.getConfig().set(AUTO_WL_STRATEGY_PATH, strategy.getName());
+        plugin.saveConfig();
+        return previousStrategy;
     }
 }

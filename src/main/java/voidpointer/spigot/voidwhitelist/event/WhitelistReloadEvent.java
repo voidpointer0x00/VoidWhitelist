@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import voidpointer.spigot.voidwhitelist.command.ReloadCommand;
+import voidpointer.spigot.voidwhitelist.command.whitelist.ReloadCommand;
 
 /**
  * <p>Called asynchronously after reloading plugin.</p>

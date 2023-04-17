@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 public final class EssentialsDateParser {
     public static final long WRONG_DATE_FORMAT = -1;
+    static final boolean EXACT_MILLIS = true;
 
     private static final Pattern DATE_PATTERN = Pattern.compile(
             "(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?"
@@ -33,7 +34,13 @@ public final class EssentialsDateParser {
             Pattern.CASE_INSENSITIVE
     );
 
+    /** @deprecated consider using {@link Duration#ofEssentialsDate(String)} instead */
+    @Deprecated
     public static long parseDate(final String date) {
+        return parseDate(date, false);
+    }
+
+    static long parseDate(final String date, final boolean exactMillis) {
         /*
          * Just formatted copy-paste from Essentials DateUtil class
          *
@@ -80,6 +87,8 @@ public final class EssentialsDateParser {
         if (!found)
             return WRONG_DATE_FORMAT;
         Calendar c = new GregorianCalendar();
+        if (exactMillis)
+            c.setTimeInMillis(0);
         if (years > 0)
             c.add(Calendar.YEAR, years);
         if (months > 0)
@@ -94,10 +103,6 @@ public final class EssentialsDateParser {
             c.add(Calendar.MINUTE, minutes);
         if (seconds > 0)
             c.add(Calendar.SECOND, seconds);
-        Calendar max = new GregorianCalendar();
-        max.add(Calendar.YEAR, 10);
-        if (c.after(max))
-            return max.getTimeInMillis();
         return c.getTimeInMillis();
     }
 }

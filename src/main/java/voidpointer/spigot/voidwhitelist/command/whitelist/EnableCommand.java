@@ -12,29 +12,32 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
+import voidpointer.spigot.voidwhitelist.event.EventManager;
+import voidpointer.spigot.voidwhitelist.event.WhitelistEnabledEvent;
+import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
-import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
-
-public final class StatusCommand extends Command {
-    public static final String NAME = "status";
-    public static final String PERMISSION = "whitelist.status";
+public final class EnableCommand extends Command {
+    public static final String NAME = "on";
 
     @AutowiredLocale private static Locale locale;
-    @Autowired private static WhitelistConfig config;
+    @Autowired private static WhitelistConfig whitelistConfig;
+    @Autowired private static EventManager eventManager;
 
-    public StatusCommand() {
+    public EnableCommand() {
         super(NAME);
-        setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {
-        locale.localize(config.isWhitelistEnabled() ? ENABLED : DISABLED).send(args.getSender());
+        whitelistConfig.enableWhitelist();
+        locale.localize(WhitelistMessage.ENABLED).send(args.getSender());
+        eventManager.callAsyncEvent(new WhitelistEnabledEvent());
     }
 }

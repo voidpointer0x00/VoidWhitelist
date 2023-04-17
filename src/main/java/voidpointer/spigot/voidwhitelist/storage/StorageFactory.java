@@ -24,7 +24,7 @@ import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 public final class StorageFactory {
     @NonNull private final Plugin plugin;
 
-    public WhitelistService loadStorage(final StorageMethod storageMethod) {
+    public AutoWhitelistService loadStorage(final StorageMethod storageMethod) {
         switch (storageMethod) {
             case JSON:
                 return new JsonWhitelistService(plugin.getDataFolder());

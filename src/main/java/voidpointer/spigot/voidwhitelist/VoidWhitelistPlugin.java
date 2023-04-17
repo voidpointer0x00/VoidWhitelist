@@ -25,7 +25,8 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.LocaleAnnotationResolver;
 import voidpointer.spigot.framework.localemodule.annotation.PluginLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
-import voidpointer.spigot.voidwhitelist.command.WhitelistCommand;
+import voidpointer.spigot.voidwhitelist.command.autowhitelist.AutoWhitelistCommand;
+import voidpointer.spigot.voidwhitelist.command.whitelist.WhitelistCommand;
 import voidpointer.spigot.voidwhitelist.config.GuiConfig;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
@@ -41,6 +42,7 @@ import voidpointer.spigot.voidwhitelist.listener.WhitelistRemovedListener;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 import voidpointer.spigot.voidwhitelist.papi.PapiLocale;
 import voidpointer.spigot.voidwhitelist.papi.TimeLeftExpansion;
+import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.task.KickTaskScheduler;
@@ -54,7 +56,8 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     private static TranslatedLocaleFile locale;
     @Dependency private static WhitelistConfig whitelistConfig;
     @Dependency private static LocaleLog guiLocale;
-    @Dependency private static WhitelistService whitelistService;
+    @Dependency(id="whitelistService")
+    private static AutoWhitelistService whitelistService;
     @Dependency private static EventManager eventManager;
     @Dependency private static StorageFactory storageFactory;
     @Dependency private static KickTaskScheduler kickTaskScheduler;
@@ -70,6 +73,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     @Override public void onLoad() {
         instance = this;
         whitelistConfig = new WhitelistConfig(this);
+        whitelistConfig.runMigrations();
         guiLocale = new GuiConfig(this, whitelistConfig).getLocaleLog();
         papiLocale = new PapiLocale(this);
         eventManager = new EventManager(this);
@@ -86,6 +90,7 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
         kickTaskScheduler = new KickTaskScheduler();
         Injector.inject(this);
         new WhitelistCommand().register(this);
+        new AutoWhitelistCommand().register(this);
         registerListeners();
         hookPapi();
 
@@ -95,11 +100,12 @@ public final class VoidWhitelistPlugin extends JavaPlugin {
     }
 
     @Override public void onDisable() {
-        whitelistService.shutdown();
+        if (whitelistService != null)
+            whitelistService.shutdown();
     }
 
     /** Changes the {@link WhitelistService}, but doesn't inject it. */
-    public void changeWhitelistService(final @NonNull WhitelistService whitelistService) {
+    public void changeWhitelistService(final @NonNull AutoWhitelistService whitelistService) {
         VoidWhitelistPlugin.whitelistService = whitelistService;
     }
 

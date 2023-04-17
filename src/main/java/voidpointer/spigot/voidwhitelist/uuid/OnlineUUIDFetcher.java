@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -58,13 +59,16 @@ final class OnlineUUIDFetcher {
             String id = requestApiUrl(name);
             String uuid = idToUuid(id);
             return UUID.fromString(uuid);
-        } catch (IOException ioException) {
+        } catch (final FileNotFoundException userNotFound) {
+            log.warn("Requested unknown players UUID: {0}", userNotFound.getMessage());
+            return null;
+        } catch (final IOException ioException) {
             log.warn("Unable to request Mojang API", ioException);
             return null;
-        } catch (IllegalArgumentException illegalArgumentException) {
+        } catch (final IllegalArgumentException illegalArgumentException) {
             log.warn("Invalid UUID format", illegalArgumentException);
             return null;
-        } catch (NullPointerException nullPointerException) {
+        } catch (final NullPointerException nullPointerException) {
             /* 204 No Content API response, meaning no associated player profile found */
             return null;
         }

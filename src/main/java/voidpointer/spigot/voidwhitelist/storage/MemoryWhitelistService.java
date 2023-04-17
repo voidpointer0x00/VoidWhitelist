@@ -18,12 +18,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -43,10 +45,16 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  *  {@link #saveWhitelist()} methods. It will be invoked upon any modification
  *  ({@link #add(UUID, String, Date)}, {@link #remove(Whitelistable)} to the cached whitelist.
  */
-public abstract class MemoryWhitelistService implements WhitelistService {
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
+@Getter(AccessLevel.PUBLIC)
+@Setter(AccessLevel.PROTECTED)
+public abstract class MemoryWhitelistService implements AutoWhitelistService {
     private Set<Whitelistable> whitelist = ConcurrentHashMap.newKeySet();
+    /* possibly we could join the two structures, but I prefer keeping things simple KISS */
+    private Map<UUID, TimesAutoWhitelisted> autoWhitelist = new ConcurrentHashMap<>();
+
+    @Override public CompletableFuture<Optional<TimesAutoWhitelisted>> getTimesAutoWhitelisted(final UUID uniqueId) {
+        return supplyAsync(() -> Optional.ofNullable(autoWhitelist.get(uniqueId)));
+    }
 
     @Override public void shutdown() {
         saveWhitelist();
@@ -68,6 +76,7 @@ public abstract class MemoryWhitelistService implements WhitelistService {
         return supplyAsync(() -> Collections.unmodifiableSet(findAll0(offset, limit)));
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     private Set<Whitelistable> findAll0(final int offset, final int limit) {
         Set<Whitelistable> subset = new HashSet<>();
         Iterator<Whitelistable> iterator = whitelist.iterator();
@@ -89,15 +98,31 @@ public abstract class MemoryWhitelistService implements WhitelistService {
         });
     }
 
-    @Override public CompletableFuture<Optional<Whitelistable>> add(final UUID uuid, final String name, final Date expiresAt) {
+    @Override public CompletableFuture<Optional<Whitelistable>> add(
+            final UUID uuid, final String name, final Date expiresAt) {
+        return add(uuid, name, expiresAt, 0);
+    }
+
+    @Override public CompletableFuture<Optional<Whitelistable>> add(
+            final UUID uuid, final String name, final Date expiresAt, final int timesAutoWhitelisted) {
         return supplyAsync(() -> {
-            Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt);
+            final Whitelistable whitelistable = new SimpleWhitelistable(uuid, name, expiresAt);
             if (!whitelist.add(whitelistable)) {
                 whitelist.remove(whitelistable);
                 whitelist.add(whitelistable);
             }
             saveWhitelist();
+            autoWhitelist.put(uuid, TimesAutoWhitelisted.of(uuid, timesAutoWhitelisted));
+            saveAutoWhitelist();
             return Optional.of(whitelistable);
+        });
+    }
+
+    @Override public CompletableFuture<Boolean> update(final TimesAutoWhitelisted timesAutoWhitelisted) {
+        return CompletableFuture.supplyAsync(() -> {
+            getAutoWhitelist().put(timesAutoWhitelisted.getUniqueId(), timesAutoWhitelisted);
+            saveAutoWhitelist();
+            return true;
         });
     }
 
@@ -105,6 +130,7 @@ public abstract class MemoryWhitelistService implements WhitelistService {
         return supplyAsync(() -> {
             whitelist.remove(whitelistable);
             whitelist.add(whitelistable);
+            saveWhitelist();
             return Optional.of(whitelistable);
         });
     }
@@ -118,4 +144,6 @@ public abstract class MemoryWhitelistService implements WhitelistService {
     }
 
     protected abstract void saveWhitelist();
+
+    protected abstract void saveAutoWhitelist();
 }

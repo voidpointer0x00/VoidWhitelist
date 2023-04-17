@@ -12,11 +12,13 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.command.Command;
+import voidpointer.spigot.voidwhitelist.command.CommandManager;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 
 import java.util.List;
@@ -33,6 +35,9 @@ public final class WhitelistCommand extends Command {
     public WhitelistCommand() {
         super(NAME);
 
+        super.setPermission("voidwhitelist." + NAME);
+        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
+
         whitelistCommands.addCommand(new AddCommand());
         whitelistCommands.addCommand(new RemoveCommand());
         whitelistCommands.addCommand(new EnableCommand());
@@ -45,7 +50,9 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new HelpCommand());
         whitelistCommands.addCommand(new ReloadCommand());
         whitelistCommands.addCommand(new ReconnectCommand());
-        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
+
+        whitelistCommands.getCommands().values()
+                .forEach(cmd -> cmd.setPermission(getPermission() + "." + cmd.getName()));
     }
 
     @Override public void execute(final Args args) {

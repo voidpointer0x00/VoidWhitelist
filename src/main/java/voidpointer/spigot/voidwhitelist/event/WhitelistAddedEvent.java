@@ -19,7 +19,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
-import voidpointer.spigot.voidwhitelist.command.AddCommand;
+import voidpointer.spigot.voidwhitelist.command.whitelist.AddCommand;
 
 /**
  * <p>Called asynchronously when someone adds a {@link Whitelistable} entity.</p>
@@ -27,7 +27,6 @@ import voidpointer.spigot.voidwhitelist.command.AddCommand;
  * <p><b>Notice:</b> this event doesn't get called if someone imported the whitelist.</p>
  *
  * @see AddCommand
- * @see WhitelistImportEvent
  */
 public final class WhitelistAddedEvent extends Event {
     private static final HandlerList handlers = new HandlerList();

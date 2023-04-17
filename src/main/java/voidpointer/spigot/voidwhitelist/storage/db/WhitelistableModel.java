@@ -36,12 +36,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public final class WhitelistableModel extends AbstractWhitelistable {
-    @DatabaseField(id=true, dataType=DataType.UUID)
+    @DatabaseField(columnName="unique_id", id=true, dataType=DataType.UUID)
     @EqualsAndHashCode.Include
     private UUID uniqueId;
-    @DatabaseField
+    @DatabaseField(columnName="name")
     private String name;
-    @DatabaseField(dataType=DataType.DATE)
+    @DatabaseField(columnName="expires_at", dataType=DataType.DATE)
     private Date expiresAt;
 
     @Override public boolean isAssociatedWith(final Player player) {
@@ -49,6 +49,7 @@ public final class WhitelistableModel extends AbstractWhitelistable {
     }
 
     public static WhitelistableModel copyOf(final Whitelistable whitelistable) {
-        return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(), whitelistable.getExpiresAt());
+        return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(),
+                whitelistable.getExpiresAt());
     }
 }
