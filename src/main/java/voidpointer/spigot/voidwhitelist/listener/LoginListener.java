@@ -52,7 +52,7 @@ public final class LoginListener implements Listener {
     @Autowired private static WhitelistConfig whitelistConfig;
     @Autowired private static KickTaskScheduler kickTaskScheduler;
 
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
     public void onAsyncPreLogin(final AsyncPlayerPreLoginEvent event) {
         /*  This listener disallows login if the connecting user is not on the whitelist,
          * and due to either configuration or exceeding auto-whitelist.max-repeats limit
@@ -109,7 +109,7 @@ public final class LoginListener implements Listener {
         event.disallow(KICK_WHITELIST, locale.localize(WhitelistMessage.of(reason)).getRawMessage());
     }
 
-    @EventHandler(priority=EventPriority.MONITOR)
+    @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
     public void scheduleKickOnJoin(final PlayerJoinEvent event) {
         if (!whitelistConfig.isWhitelistEnabled())
             return;
