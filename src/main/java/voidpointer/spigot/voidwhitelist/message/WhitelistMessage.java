@@ -44,9 +44,10 @@ public enum WhitelistMessage implements Message {
 
     IMPORT_LOADED("&eЗагружено &6{loaded}&e записей из &6{storage}&e, импорт начат."),
     IMPORT_ONLY_TO_DATABASE("&eИмпорт работает только из JSON в базу данных."),
-    WHITELIST_IMPORT_RESULT("&eИмпортировано игроков: &6{imported}&e из &6{loaded}&e;\n" +
-            "&eДанных об автоматическом добавлении в белый список: &6{auto-imported}&e из &6{auto-loaded}&e.\n" +
-            "&eОбщее время импорта: &d{ms-spent}ms&e."),
+    WHITELIST_IMPORT_RESULT("""
+        &eИмпортировано игроков: &6{imported}&e из &6{loaded}&e;
+        &eДанных об автоматическом добавлении в белый список: &6{auto-imported}&e из &6{auto-loaded}&e.
+        &eОбщее время импорта: &d{ms-spent}ms&e."""),
 
     INFO_NOT_WHITELISTED("&eИгрок &6«&c{player-details}&6» &cотсутствует &eв whitelist."),
     INFO_WHITELISTED("&eИгрок &6«&c{player-details}&6» &aесть &eв whitelist."),
@@ -70,12 +71,13 @@ public enum WhitelistMessage implements Message {
     LOCALE_RELOADED("&aЛокаль перезагружена."),
     WHITELIST_NOT_ENOUGH_ARGS("&cНедостаточно аргументов. \\(&6/whitelist help) [click.run{/whitelist help}]"),
     WHITELIST_UNKNOWN_COMMAND("&cНеизвестная команда. \\(&6/whitelist help) [click.run{/whitelist help}]"),
-    WHITELIST_HELP("\\(&e/whitelist gui) [click.run{/whitelist gui}] &f— показть графический интерфейс\n"
-            + "\\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока\n"
-            + "\\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— исключить игрока\n"
-            + "\\(&e/whitelist info &6<player> &o[-online,-offline]) [click.suggest{/whitelist info }] &f— отобразить информацию об игроке\n"
-            + "\\(&e/whitelist status) [click.run{/whitelist status}] &f— узнать, включен ли whitelist\n"
-            + "\\(&e/whitelist on|off) [click.suggest{/whitelist o}] &f— включить/выключить whitelist"),
+    WHITELIST_HELP("""
+\\(&e/whitelist gui) [click.run{/whitelist gui}] &f— показть графический интерфейс
+\\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— добавить игрока
+\\(&e/whitelist remove &6<player> &o[-online,-offline]) [click.suggest{/whitelist rem }] &f— исключить игрока
+\\(&e/whitelist info &6<player> &o[-online,-offline]) [click.suggest{/whitelist info }] &f— отобразить информацию об игроке
+\\(&e/whitelist status) [click.run{/whitelist status}] &f— узнать, включен ли whitelist
+\\(&e/whitelist on|off) [click.suggest{/whitelist o}] &f— включить/выключить whitelist"""),
     WRONG_DATE_FORMAT("&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут &a1d15h45m"),
     YOU_WERE_REMOVED("&cВас исключили из whitelist."),
 
@@ -84,17 +86,19 @@ public enum WhitelistMessage implements Message {
             " [click.suggest{/auto-whitelist {cmd} -offline {player}}] "),
     AUTO_WHITELIST_NOT_ENOUGH_ARGS("&cНедостаточно аргументов. \\(&6/auto-whitelist help) [click.run{/auto-whitelist help}]"),
     AUTO_WHITELIST_UNKNOWN_COMMAND("&cНеизвестная команда. \\(&6/auto-whitelist help) [click.run{/auto-whitelist help}]"),
-    AUTO_WHITELIST_HELP("\\(&e/auto-whitelist on|off) [click.suggest{/auto-whitelist o}] &f— включить/выключить auto-whitelist\n" +
-            "\\(&e/auto-whitelist is-on) [click.run{/auto-whitelist status}] &f— узнать, включен ли auto-whitelist\n" +
-            "\\(&e/auto-whitelist info &6<player>) [click.suggest{/auto-whitelist info }] &f— узнать лимит игрока\n" +
-            "\\(&e/auto-whitelist set &6<player> <int>) [click.suggest{/auto-whitelist set }] &f— установить лимит для игрока\n" +
-            "\\(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— сбросить лимит для игрока\n"+
-            "\\(&e/auto-whitelist get-limit) [click.run{/auto-whitelist get-limit}] &f— узнать лимит авто. добавлений\n" +
-            "\\(&e/auto-whitelist set-limit &6<int>) [click.suggest{/auto-whitelist set-limit }] &f— установить лимит авто. добавлений\n" +
-            "\\(&e/auto-whitelist get-strategy) [click.run{/auto-whitelist get-strategy }] &f— узнать текущую стратегию фильтра игроков\n"+
-            "\\(&e/auto-whitelist set-strategy &6<strategy>) [click.suggest{/auto-whitelist set-strategy }] &f— установить стратегию фильтра игроков\n" +
-            "\\(&e/auto-whitelist get-duration) [click.run{/auto-whitelist get-duration}] &f— узнать текущую длительность добавления в whitelist\n" +
-            "\\(&e/auto-whitelist set-duration &6<time>) [click.suggest{/auto-whitelist set-duration }] &f— установить длительность добавления в whitelist\n"),
+    AUTO_WHITELIST_HELP("""
+\\(&e/auto-whitelist on|off) [click.suggest{/auto-whitelist o}] &f— включить/выключить auto-whitelist
+\\(&e/auto-whitelist is-on) [click.run{/auto-whitelist status}] &f— узнать, включен ли auto-whitelist
+\\(&e/auto-whitelist info &6<player>) [click.suggest{/auto-whitelist info }] &f— узнать лимит игрока
+\\(&e/auto-whitelist set &6<player> <int>) [click.suggest{/auto-whitelist set }] &f— установить лимит для игрока
+\\(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— сбросить лимит для игрока
+\\(&e/auto-whitelist get-limit) [click.run{/auto-whitelist get-limit}] &f— узнать лимит авто. добавлений
+\\(&e/auto-whitelist set-limit &6<int>) [click.suggest{/auto-whitelist set-limit }] &f— установить лимит авто. добавлений
+\\(&e/auto-whitelist get-strategy) [click.run{/auto-whitelist get-strategy }] &f— узнать текущую стратегию фильтра игроков
+\\(&e/auto-whitelist set-strategy &6<strategy>) [click.suggest{/auto-whitelist set-strategy }] &f— установить стратегию фильтра игроков
+\\(&e/auto-whitelist get-duration) [click.run{/auto-whitelist get-duration}] &f— узнать текущую длительность добавления в whitelist
+\\(&e/auto-whitelist set-duration &6<time>) [click.suggest{/auto-whitelist set-duration }] &f— установить длительность добавления в whitelist
+"""),
     AUTO_WHITELIST_ENABLED("&eАвтоматическое добавление в whitelist &aвключено&e."),
     AUTO_WHITELIST_DISABLED("&eАвтоматическое добавление в whitelist &cвыключено&e."),
 
