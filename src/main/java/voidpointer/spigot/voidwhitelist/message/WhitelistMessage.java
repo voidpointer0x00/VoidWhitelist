@@ -128,13 +128,7 @@ public enum WhitelistMessage implements Message {
     ;
 
     public static Message of(final KickReason kickReason) {
-        switch (kickReason) {
-            case EXPIRED:
-                return LOGIN_DISALLOWED_EXPIRED;
-            case NOT_ALLOWED:
-            default:
-                return LOGIN_DISALLOWED;
-        }
+        return (kickReason == KickReason.EXPIRED) ? LOGIN_DISALLOWED_EXPIRED : LOGIN_DISALLOWED;
     }
 
     @Getter private final String defaultMessage;
