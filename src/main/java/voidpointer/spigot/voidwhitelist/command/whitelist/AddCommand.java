@@ -63,7 +63,7 @@ public final class AddCommand extends Command {
         final Date whitelistTimeDuration;
         if (hasExpiresAtArgument(args)) {
             final Optional<Date> optionalWhitelistTimeDuration = Duration.ofEssentialsDate(args.get(1));
-            if (!optionalWhitelistTimeDuration.isPresent()) {/* TODO java upgrade #isEmpty() */
+            if (optionalWhitelistTimeDuration.isEmpty()) {
                 locale.localize(WhitelistMessage.WRONG_DATE_FORMAT).send(args.getSender());
                 return;
             }
@@ -72,30 +72,25 @@ public final class AddCommand extends Command {
             whitelistTimeDuration = null;
         }
 
-        UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(uuidOptional -> {
-            if (uuidOptional.isEmpty()) {
-                locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
-                        .set("cmd", getName())
-                        .set("player", args.get(0))
-                        .set("date", whitelistTimeDuration)
-                        .send(args.getSender());
-                return;
-            }
-            whitelistService.add(uuidOptional.get(), args.get(0), whitelistTimeDuration)
-                    .whenCompleteAsync((res, th) -> {
-                        if (th != null) {
-                            locale.warn("Couldn't add a player to the whitelist", th);
-                            return;
-                        }
-                        if (res.isEmpty()) {
-                            notifyFail(args, uuidOptional.get());
-                        } else {
-                            notifyAdded(args, whitelistTimeDuration, uuidOptional.get(),
-                                    whitelistTimeDuration == null ? WhitelistMessage.ADDED : WhitelistMessage.ADDED_TEMP);
-                        }
-                        res.ifPresent(this::callWhitelistAddedEvent);
-                    });
-        }).whenCompleteAsync((res, th) -> {
+        //noinspection CodeBlock2Expr
+        UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(uid -> uid.ifPresentOrElse(uuid -> {
+            whitelistService.add(uuid, args.get(0), whitelistTimeDuration).whenCompleteAsync((res, th) -> {
+                if (th != null) {
+                    locale.warn("Couldn't add a player to the whitelist", th);
+                    return;
+                }
+                res.ifPresentOrElse(whitelistable -> {
+                    notifyAdded(args, whitelistTimeDuration, uuid,
+                            whitelistTimeDuration == null ? WhitelistMessage.ADDED : WhitelistMessage.ADDED_TEMP);
+                    callWhitelistAddedEvent(whitelistable);
+                }, () -> notifyFail(args, uuid));
+            });
+        }, () -> locale.localize(WhitelistMessage.UUID_FAIL_TRY_OFFLINE)
+                .set("cmd", getName())
+                .set("player", args.get(0))
+                .set("date", whitelistTimeDuration)
+                .send(args.getSender())
+        )).whenCompleteAsync((res, th) -> {
             if (th != null)
                 locale.warn("Couldn't add a player to the whitelist", th);
         });

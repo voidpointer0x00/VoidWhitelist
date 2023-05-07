@@ -33,22 +33,21 @@ public class ExportCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        if (!(whitelistService instanceof OrmliteWhitelistService)) {
+        if (!(whitelistService instanceof OrmliteWhitelistService database)) {
             localeLog.localize(EXPORT_ONLY_FROM_DATABASE).send(args.getSender());
             return;
         }
-        OrmliteWhitelistService database = (OrmliteWhitelistService) whitelistService;
         localeLog.localize(EXPORT_GATHERING).send(args.getSender());
         /* whitelist export */
         database.getTotalCountOfWhitelist().thenAcceptAsync(optionalTotalWhitelist -> {
-            optionalTotalWhitelist.ifPresent(total -> /* TODO Java update ifPresentOrElse */
-                    localeLog.localize(WHITELIST_EXPORT_PROCESSING).set("total", total).send(args.getSender()));
+            final long total = optionalTotalWhitelist.orElse(0L);
+            localeLog.localize(WHITELIST_EXPORT_PROCESSING).set("total", total).send(args.getSender());
             database.findAll().thenAccept(allWhitelistable -> exportWhitelist(allWhitelistable, args.getSender()));
         });
         /* auto-whitelist export */
         database.getTotalCountOfAutoWhitelist().thenAcceptAsync(optionalTotalAutoWhitelist -> {
-            optionalTotalAutoWhitelist.ifPresent(total ->
-                    localeLog.localize(AUTO_WHITELIST_EXPORT_PROCESSING).set("total", total).send(args.getSender()));
+            final long total = optionalTotalAutoWhitelist.orElse(0L);
+            localeLog.localize(AUTO_WHITELIST_EXPORT_PROCESSING).set("total", total).send(args.getSender());
             database.findAllAuto().thenAccept(allAuto -> exportAuto(allAuto, args.getSender()));
         });
     }
@@ -57,9 +56,13 @@ public class ExportCommand extends Command {
                                  final CommandSender sender) {
         final long start = currentTimeMillis();
         final JsonWhitelist jsonWhitelist = new JsonWhitelist();
-        /* TODO try-with-resource reference Java 9 */
-        for (final Whitelistable whitelistable : allWhitelistable)
-            jsonWhitelist.add(whitelistable);
+        try (allWhitelistable) {
+            for (final Whitelistable whitelistable : allWhitelistable)
+                jsonWhitelist.add(whitelistable);
+        } catch (final Exception exception) {
+            localeLog.localize(WHITELIST_EXPORT_FAILURE).send(sender);
+            localeLog.warn("Unable to export whitelist: {0}", exception.getMessage());
+        }
 
         if (jsonWhitelist.save(new File(plugin.getDataFolder(), "whitelist-export-" + currentTimeMillis() + ".json"))) {
             localeLog.localize(WHITELIST_EXPORT_FINISHED)
@@ -74,9 +77,13 @@ public class ExportCommand extends Command {
                             final CommandSender sender) {
         final long start = currentTimeMillis();
         final JsonAutoWhitelist jsonAutoWhitelist = new JsonAutoWhitelist();
-        /* TODO try-with-resource reference Java 9 */
-        for (final TimesAutoWhitelistedModel timesAutoWhitelisted : allAuto)
-            jsonAutoWhitelist.add(timesAutoWhitelisted);
+        try (allAuto) {
+            for (final TimesAutoWhitelistedModel timesAutoWhitelisted : allAuto)
+                jsonAutoWhitelist.add(timesAutoWhitelisted);
+        } catch (final Exception exception) {
+            localeLog.localize(AUTO_WHITELIST_EXPORT_FAILURE).send(sender);
+            localeLog.warn("Unable to export auto-whitelist: {0}", exception.getMessage());
+        }
 
         if (jsonAutoWhitelist.save(new File(plugin.getDataFolder(),
                 "auto-whitelist-export-" + currentTimeMillis() + ".json"))) {

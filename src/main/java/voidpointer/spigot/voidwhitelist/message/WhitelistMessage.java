@@ -79,8 +79,6 @@ public enum WhitelistMessage implements Message {
     WRONG_DATE_FORMAT("&cНеверный формат времени. Пример на 1 день, 15 часов и 45 минут &a1d15h45m"),
     YOU_WERE_REMOVED("&cВас исключили из whitelist."),
 
-    // TODO add unique id display on hover effects
-
     AUTO_UUID_FAIL_TRY_OFFLINE("&cНе удалось запросить UUID, попробуйте " +
             "\\(&6-offline &8&o&n(клик)) [hover{&6/auto-whitelist {cmd} -offline {player}}]" +
             " [click.suggest{/auto-whitelist {cmd} -offline {player}}] "),

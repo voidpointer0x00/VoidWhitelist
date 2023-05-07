@@ -23,6 +23,7 @@ final class SetCommand extends Command {
         super.setRequiredArgsNumber(2);
     }
 
+    @SuppressWarnings("CodeBlock2Expr") /* expand to lambda */
     @Override public void execute(final Args args) {
         final int newTimesAutoWhitelisted;
         try {
@@ -33,20 +34,20 @@ final class SetCommand extends Command {
             return;
         }
         UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(optionalUuid -> {
-            if (!optionalUuid.isPresent()) { /* TODO: Java upgrade #isEmpty() */
+            optionalUuid.ifPresentOrElse(uuid -> {
+                autoWhitelistService.update(TimesAutoWhitelisted.of(uuid, newTimesAutoWhitelisted))
+                        .thenAccept(isUpdated -> {
+                            locale.localize(isUpdated ? AUTO_WHITELIST_SET : AUTO_WHITELIST_SET_FAIL)
+                                    .set("player-details", locale.localize(PLAYER_DETAILS))
+                                    .set("player", args.get(0))
+                                    .set("uuid", uuid)
+                                    .set("new", newTimesAutoWhitelisted)
+                                    .send(args.getSender());
+                        });
+            }, () -> {
                 locale.localize(AUTO_UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", args.get(0))
-                        .send(args.getSender());
-                return;
-            }
-            autoWhitelistService.update(TimesAutoWhitelisted.of(optionalUuid.get(), newTimesAutoWhitelisted))
-                    .thenAccept(isUpdated -> {
-                locale.localize(isUpdated ? AUTO_WHITELIST_SET : AUTO_WHITELIST_SET_FAIL)
-                        .set("player-details", locale.localize(PLAYER_DETAILS))
-                        .set("player", args.get(0))
-                        .set("uuid", optionalUuid.get())
-                        .set("new", newTimesAutoWhitelisted)
                         .send(args.getSender());
             });
         });

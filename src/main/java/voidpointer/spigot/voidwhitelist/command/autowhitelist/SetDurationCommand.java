@@ -24,7 +24,7 @@ final class SetDurationCommand extends Command {
     }
 
     @Override public void execute(final Args args) {
-        if (!Duration.exactMillis(args.get(0)).isPresent()) { /* TODO java upgrade #isEmpty() */
+        if (Duration.exactMillis(args.get(0)).isEmpty()) {
             locale.localize(AUTO_WHITELIST_SET_INVALID_DURATION).set("given", args.get(0)).send(args.getSender());
             return;
         }

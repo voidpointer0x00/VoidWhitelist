@@ -23,9 +23,10 @@ final class InfoCommand extends Command {
         super.setRequiredArgsNumber(1);
     }
 
+    @SuppressWarnings("CodeBlock2Expr") /* expand to lambda */
     @Override public void execute(final Args args) {
         UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(optionalUuid -> {
-            if (!optionalUuid.isPresent()) { /* TODO: Java upgrade #isEmpty() */
+            if (optionalUuid.isEmpty()) {
                 locale.localize(AUTO_UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", args.get(0))
@@ -33,20 +34,20 @@ final class InfoCommand extends Command {
                 return;
             }
             autoWhitelistService.getTimesAutoWhitelisted(optionalUuid.get()).thenAcceptAsync(optionalTimesAutoWhitelist -> {
-                if (!optionalTimesAutoWhitelist.isPresent()) { /* TODO: Java upgrade #isEmpty() */
+                optionalTimesAutoWhitelist.ifPresentOrElse(timesAutoWhitelisted -> {
+                    locale.localize(AUTO_WHITELIST_INFO)
+                            .set("player-details", locale.localize(PLAYER_DETAILS))
+                            .set("player", args.get(0))
+                            .set("uuid", optionalUuid.get())
+                            .set("times-auto-whitelisted", timesAutoWhitelisted.get())
+                            .send(args.getSender());
+                }, () -> {
                     locale.localize(AUTO_WHITELIST_INFO_NOT_FOUND)
                             .set("player-details", locale.localize(PLAYER_DETAILS))
                             .set("player", args.get(0))
                             .set("uuid", optionalUuid.get())
                             .send(args.getSender());
-                    return;
-                }
-                locale.localize(AUTO_WHITELIST_INFO)
-                        .set("player-details", locale.localize(PLAYER_DETAILS))
-                        .set("player", args.get(0))
-                        .set("uuid", optionalUuid.get())
-                        .set("times-auto-whitelisted", optionalTimesAutoWhitelist.get().get())
-                        .send(args.getSender());
+                });
             });
         });
     }

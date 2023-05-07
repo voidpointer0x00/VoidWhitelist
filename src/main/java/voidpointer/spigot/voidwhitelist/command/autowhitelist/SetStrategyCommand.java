@@ -30,7 +30,7 @@ final class SetStrategyCommand extends Command {
 
     @Override public void execute(final Args args) {
         Optional<StrategyPredicate> strategy = StrategyPredicate.of(args.get(0));
-        if (!strategy.isPresent()) { /* TODO java upgrade #isEmpty() */
+        if (strategy.isEmpty()) {
             locale.localize(AUTO_WHITELIST_SET_INVALID_STRATEGY)
                     .set("given", args.get(0)).set("strategies", Joiner.on(", ").join(StrategyPredicate.values()))
                     .send(args.getSender());
@@ -43,17 +43,16 @@ final class SetStrategyCommand extends Command {
     }
 
     @Override public List<String> tabComplete(final Args args) {
-        if (args.isEmpty()) { /* TODO java upgrade functional switch-case */
-            return Arrays.stream(StrategyPredicate.values())
+        return switch (args.size()) {
+            case 0 -> Arrays.stream(StrategyPredicate.values())
                     .map(StrategyPredicate::getName)
                     .collect(Collectors.toList());
-        } else if (args.size() == 1) {
-            return Arrays.stream(StrategyPredicate.values())
+            case 1 -> Arrays.stream(StrategyPredicate.values())
                     .map(StrategyPredicate::getName)
                     .filter(strategyName -> strategyName.startsWith(args.get(0)))
                     .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+            default -> Collections.emptyList();
+        };
     }
 
     @Override protected void onNotEnoughArgs(final CommandSender sender, final Args args) {

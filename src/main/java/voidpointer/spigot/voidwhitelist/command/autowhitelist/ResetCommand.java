@@ -28,7 +28,7 @@ final class ResetCommand extends Command {
 
     @Override public void execute(final Args args) {
         UUIDFetchers.of(args.getDefinedOptions()).getUUID(args.get(0)).thenAcceptAsync(optionalUuid -> {
-            if (!optionalUuid.isPresent()) { /* TODO: Java upgrade #isEmpty() */
+            if (optionalUuid.isEmpty()) {
                 locale.localize(AUTO_UUID_FAIL_TRY_OFFLINE)
                         .set("cmd", getName())
                         .set("player", args.get(0))

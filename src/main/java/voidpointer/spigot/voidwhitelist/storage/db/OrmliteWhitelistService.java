@@ -32,7 +32,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableSet;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -94,11 +93,10 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
         return supplyAsync(() -> {
             try {
                 requireConnection();
-                // TODO Java upgrade var
-                TimesAutoWhitelistedModel model = (timesAutoWhitelisted instanceof TimesAutoWhitelistedModel)
+                ormliteDatabase.getAutoWhitelistDao().createOrUpdate(
+                        (timesAutoWhitelisted instanceof TimesAutoWhitelistedModel)
                         ? (TimesAutoWhitelistedModel) timesAutoWhitelisted
-                        : TimesAutoWhitelistedModel.copyOf(timesAutoWhitelisted);
-                ormliteDatabase.getAutoWhitelistDao().createOrUpdate(model);
+                        : TimesAutoWhitelistedModel.copyOf(timesAutoWhitelisted));
                 return true;
             } catch (final SQLException sqlException) {
                 log.warn("Unable to update times auto whitelisted for {0}: {1}", timesAutoWhitelisted.getUniqueId(),
@@ -166,7 +164,7 @@ public final class OrmliteWhitelistService implements AutoWhitelistService {
                 .offset(offset)
                 .limit(limit)
                 .query();
-        return unmodifiableSet(new HashSet<>(result));
+        return Set.copyOf(result);
     }
 
     private Set<Whitelistable> findAllQuietly(final Long offset, final Long limit) {
