@@ -35,6 +35,7 @@ final class ResetCommand extends Command {
                         .send(args.getSender());
                 return;
             }
+            //noinspection CodeBlock2Expr
             autoWhitelistService.update(TimesAutoWhitelisted.zero(optionalUuid.get())).thenAccept(isUpdated -> {
                 locale.localize(isUpdated ? AUTO_WHITELIST_RESET : AUTO_WHITELIST_RESET_FAIL)
                         .set("player-details", locale.localize(PLAYER_DETAILS))
