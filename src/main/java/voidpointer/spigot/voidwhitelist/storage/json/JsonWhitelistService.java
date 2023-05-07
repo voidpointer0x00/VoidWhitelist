@@ -61,7 +61,7 @@ public final class JsonWhitelistService extends MemoryWhitelistService {
             return true;
         }
         Optional<Set<TimesAutoWhitelisted>> autoWhitelist = JsonAutoWhitelist.parseJsonFile(autoWhitelistFile);
-        if (!autoWhitelist.isPresent())
+        if (autoWhitelist.isEmpty())
             return false;
         getAutoWhitelist().putAll(autoWhitelist.get().stream()
                 .collect(Collectors.toMap(TimesAutoWhitelisted::getUniqueId, times -> times)));
