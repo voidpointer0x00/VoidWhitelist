@@ -34,6 +34,7 @@ public final class WhitelistAddedEvent extends Event {
     /** The added {@link Whitelistable} entity. */
     private @Getter @NonNull final Whitelistable whitelistable;
 
+    @SuppressWarnings("unused")
     public static HandlerList getHandlerList() {
         return handlers;
     }

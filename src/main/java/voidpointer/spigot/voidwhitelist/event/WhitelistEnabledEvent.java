@@ -16,10 +16,12 @@ package voidpointer.spigot.voidwhitelist.event;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public final class WhitelistEnabledEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
+    @SuppressWarnings("unused")
     public static HandlerList getHandlerList() {
         return handlers;
     }
@@ -28,7 +30,7 @@ public final class WhitelistEnabledEvent extends Event {
         super(true);
     }
 
-    @Override public HandlerList getHandlers() {
+    @Override public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }

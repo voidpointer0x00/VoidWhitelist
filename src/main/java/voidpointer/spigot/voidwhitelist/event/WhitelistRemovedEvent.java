@@ -17,6 +17,7 @@ package voidpointer.spigot.voidwhitelist.event;
 import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
 @Getter
@@ -25,6 +26,7 @@ public final class WhitelistRemovedEvent extends Event {
 
     private final Whitelistable whitelistable;
 
+    @SuppressWarnings("unused")
     public static HandlerList getHandlerList() {
         return handlers;
     }
@@ -33,7 +35,7 @@ public final class WhitelistRemovedEvent extends Event {
         this.whitelistable = whitelistable;
     }
 
-    @Override public HandlerList getHandlers() {
+    @Override public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }

@@ -17,6 +17,7 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService.ConnectionResul
 public final class WhitelistReconnectEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
+    @SuppressWarnings("unused")
     public static HandlerList getHandlerList() {
         return handlers;
     }

@@ -15,6 +15,7 @@ import voidpointer.spigot.voidwhitelist.command.whitelist.ReloadCommand;
 public final class WhitelistReloadEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
+    @SuppressWarnings("unused")
     public static HandlerList getHandlerList() {
         return handlers;
     }
