@@ -1,4 +1,61 @@
 messages:
+  auto-uuid-fail-try-offline: '&cCould not request online UUID. Please, try \(&6-offline
+    &8&o&n(клик)) [hover{&6/auto-whitelist {cmd} -offline {player}}] [click.suggest{/auto-whitelist
+    {cmd} -offline {player}}] '
+  auto-whitelist-not-enough-args: '&cNot enough arguments. \(&6/auto-whitelist
+    help) [click.run{/auto-whitelist help}]'
+  auto-whitelist-unknown-command: '&cUnknown command. \(&6/auto-whitelist help)
+    [click.run{/auto-whitelist help}]'
+  auto-whitelist-help: |
+    \(&e/auto-whitelist on|off) [click.suggest{/auto-whitelist o}] &f— enable/disable auto-whitelist
+    \(&e/auto-whitelist is-on) [click.run{/auto-whitelist status}] &f— check whether auto-whitelist feature is enabled
+    \(&e/auto-whitelist info &6<player>) [click.suggest{/auto-whitelist info }] &f— get the number of auto-whitelisting of a player
+    \(&e/auto-whitelist set &6<player> <int>) [click.suggest{/auto-whitelist set }] &f— set the number of auto-whitelisting of a player
+    \(&e/auto-whitelist reset &6<player>) [click.suggest{/auto-whitelist reset }] &f— reset the number of auto-whitelisting of a player
+    \(&e/auto-whitelist get-limit) [click.run{/auto-whitelist get-limit}] &f— get current limit for automatic whitelisting
+    \(&e/auto-whitelist set-limit &6<int>) [click.suggest{/auto-whitelist set-limit }] &f— set the limit for automatic whitelisting
+    \(&e/auto-whitelist get-strategy) [click.run{/auto-whitelist get-strategy }] &f— get current auto-whitelist strategy
+    \(&e/auto-whitelist set-strategy &6<strategy>) [click.suggest{/auto-whitelist set-strategy }] &f— set auto-whitelist strategy
+    \(&e/auto-whitelist get-duration) [click.run{/auto-whitelist get-duration}] &f— get current duration for auto-whitelist
+    \(&e/auto-whitelist set-duration &6<time>) [click.suggest{/auto-whitelist set-duration }] &f— set duration for auto-whitelist
+  auto-whitelist-enabled: '&eAutomatic whitelisting is &aenabled&e.'
+  auto-whitelist-disabled: '&eAutomatic whitelisting is  &cdisabled&e.'
+  auto-whitelist-reset: '&eThe number of auto-whitelisting of &6{player-details}&e reset.'
+  auto-whitelist-reset-fail: '&сUnable to reset the number of auto-whitelisting for &6{player-details}.'
+  auto-whitelist-reset-args: '&cYou did not specify the targeting player &6/auto-whitelist reset &n<player>&c.'
+  auto-whitelist-set: '&eThe number of auto-whitelisting of &6{player-details}&e changed
+    to &c{new}&e.'
+  auto-whitelist-set-fail: '&eUnable to update the number of auto-whitelisting of
+    &6{player-details}&e.'
+  auto-whitelist-set-args: '&cNot enough arguments &8({given}/{needed})
+    &6/auto-whitelist set &n<player>&r &6&n<int>&c.'
+  auto-whitelist-set-invalid-int: '&cYou need to specify an integer value &8({given})
+    &6/auto-whitelist set {player} &n<int>&c.'
+  auto-whitelist-info: '&eCurrent number of auto-whitelisting of &6{player-details}&e:
+    &c{times-auto-whitelisted}&e.'
+  auto-whitelist-info-args: '&cYou did not specify the targeting player &6/auto-whitelist info &n<player>&c.'
+  auto-whitelist-info-not-found: '&eInformation of &6{player-details} &eis missing.'
+  auto-whitelist-get-limit: '&eCurrent limit for auto-whitelist: &c{limit}&e.'
+  auto-whitelist-set-limit: '&eLimit for auto-whitelist changed: &c{old}&6->&c{new}&e.'
+  auto-whitelist-set-limit-args: '&cYou did not specifiy the limit &6/auto-whitelist set-limit
+    &n<limit>&c.'
+  auto-whitelist-set-limit-int: '&cYou need to specify an integer value &8({given})
+    &6/auto-whitelist set-limit &n<int>&c.'
+  auto-whitelist-get-strategy: '&eCurrent auto-whitelist strategy auto-whitelist:
+    &c{strategy}&e.'
+  auto-whitelist-set-strategy: '&eStrategy for auto-whitelist changed:
+    &c{old}&6->&c{new}&e.'
+  auto-whitelist-set-strategy-args: '&cYou did not specify the strategy &6/auto-whitelist set-strategy
+    &n<strategy>&c.'
+  auto-whitelist-set-invalid-strategy: '&cUnknown strategy &8({given})&c,
+    available strategies: &6{strategies}&c.'
+  auto-whitelist-get-duration: '&eCurrent duration for auto-whitelist: &6{duration} &8({exact}ms.)&e.'
+  auto-whitelist-set-duration: '&eDuration for auto-whitelist changed: &6{old}&e->&6{new}&e.'
+  auto-whitelist-set-invalid-duration: '&cInvalid date format &8({given})&c, correct example:
+    &61y1mo4w7d12h30m45s&c.'
+  auto-whitelist-set-duration-args: '&cYou did not specify the duration: &6/auto-whitelist
+    set-duration &n<duration>&c.'
+
   added: '&6«&c{player-details}&6» &eis now whitelisted.'
   added-temp: '&6«&c{player-details}&6» &eis now whitelisted until &d{date}&e.'
   add-help: '\(&e/whitelist add &6<player> &o[duration] [-online,-offline]) [click.suggest{/whitelist add }] &f— add a player'
@@ -7,17 +64,27 @@ messages:
   config-reloaded: '&aGeneral configuration reloaded.'
   disabled: '&eWhitelist &eis &cdisabled&e.'
   enabled: '&eWhitelist &eis &aenabled&e.'
+
   export-only-from-database: '&eYou can export only from database.'
   export-gathering: '&eGathering export data...'
-  export-processing: '&eExporting &6{gathered}&e gathered entries...'
-  export-finished: '&eExport is finished in &d{ms-spent}ms&e.'
-  export-failure: '&cExport failed.'
+  whitelist-export-processing: '&eExporting &6{gathered}&e gathered entries...'
+  whitelist-export-finished: '&eExport is finished in &d{ms-spent}ms&e.'
+  whitelist-export-failure: '&cExport failed.'
+  auto-whitelist-export-processing: '&eExporting data on automatic whitelisting of &6{total}&e players'
+  auto-whitelist-export-finished: '&eThe export of data on automatic whitelisting is completed in &d{ms-spent}ms&e.'
+  auto-whitelist-export-failure: '&cUnable to save data on automatic whitelisting.'
+
   gui-locale-doesnt-support-reload: '&cCurrent GUI locale does not support reload.'
   gui-locale-reloaded: '&aGUI locale reloaded.'
   gui-not-supported: '&cGUI is not supported on your MC version. (required major version: {major})'
-  import-loaded: '&eLoaded &6{loaded}&e entries from &6{storage}&gui-e, importing...'
+
+  import-loaded: '&eLoaded &6{loaded}&e entries from &6{storage}&e, importing...'
   import-only-to-database: '&eImport is only available from JSON to database.'
-  import-result: '&eImported &6{imported}&e of &6{loaded}&e entries in &d{ms-spent}ms&e.'
+  whitelist-import-result: |-
+    &eImported players: &6{imported}&e из &6{loaded}&e;
+    &eData on automatic whitelisting: &6{auto-imported}&e из &6{auto-loaded}&e.
+    &eTime spent importing &8(async)&e: &d{ms-spent}ms&e.
+
   info-not-whitelisted: '&6«{player-details}&6» &eis &cnot whitelisted&e.'
   info-whitelisted: '&6«{player-details}&6» &eis &awhitelisted&e.'
   info-whitelisted-temp: '&e&6«{player-details}&6» &eis &awhitelisted&e, expires on &d{date}&e.'
@@ -34,7 +101,7 @@ messages:
   reconnect-success: '&aПереподключение прошло успешно.'
   reconnect-fail: '&cПроизошла ошибка в ходе переподключения. Сервис не будет работать до следующего переподключения.'
   reconnect-fail-kick: '&cWe can no longer check whether you are on the whitelist or not.'
-  storage-method-changed: '&eStorage method was changed &6{old}&e->&6{new}&e.'
+  storage-method-changed: '&eStorage method changed &6{old}&e->&6{new}&e.'
   whitelist-not-enough-args: '&cNo command specified. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-unknown-command: '&cUnknown command. \(&6/whitelist help) [click.run{/whitelist help}]'
   whitelist-help: |-

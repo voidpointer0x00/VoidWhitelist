@@ -1,4 +1,4 @@
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.di.Injector;
@@ -7,11 +7,13 @@ import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.framework.localemodule.config.TranslatedLocaleFile;
 import voidpointer.spigot.voidwhitelist.VoidWhitelistPlugin;
+import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.config.WhitelistConfig;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
 import voidpointer.spigot.voidwhitelist.event.WhitelistReloadEvent;
 import voidpointer.spigot.voidwhitelist.papi.PapiLocale;
+import voidpointer.spigot.voidwhitelist.storage.AutoWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.StorageMethod;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
@@ -21,7 +23,6 @@ import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
 
 public final class ReloadCommand extends Command {
     public static final String NAME = "reload";
-    public static final String PERMISSION = "whitelist.reload";
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static LocaleLog guiLocale;
@@ -31,11 +32,11 @@ public final class ReloadCommand extends Command {
     @Autowired private static StorageFactory storageFactory;
     @Autowired private static WhitelistConfig config;
     @Autowired private static EventManager eventManager;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
 
     public ReloadCommand() {
         super(NAME);
-        setPermission(PERMISSION);
     }
 
     @Override public void execute(final Args args) {
@@ -53,6 +54,7 @@ public final class ReloadCommand extends Command {
 
     private void reloadConfig(final Args args) {
         config.reload();
+        config.runMigrations();
         UUIDFetchers.updateMode(config.isUUIDModeOnline());
         locale.localize(CONFIG_RELOADED).send(args.getSender());
     }
@@ -88,7 +90,7 @@ public final class ReloadCommand extends Command {
         if (oldMethod.equals(config.getStorageMethod()))
             return;
 
-        WhitelistService reloadedStorage = storageFactory.loadStorage(config.getStorageMethod());
+        AutoWhitelistService reloadedStorage = storageFactory.loadStorage(config.getStorageMethod());
         whitelistService.shutdown();
         plugin.changeWhitelistService(reloadedStorage);
         Injector.inject(plugin);

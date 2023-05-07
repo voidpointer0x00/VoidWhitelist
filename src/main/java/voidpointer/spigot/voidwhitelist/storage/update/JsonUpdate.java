@@ -20,5 +20,5 @@ import voidpointer.spigot.voidwhitelist.Whitelistable;
 import java.util.Collection;
 
 public interface JsonUpdate {
-    Collection<Whitelistable> performUpdate(final JsonElement root);
+    Collection<Whitelistable> performUpdate(final JsonElement whitelistFileRoot);
 }

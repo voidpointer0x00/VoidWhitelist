@@ -12,22 +12,24 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import org.bukkit.plugin.Plugin;
 import voidpointer.spigot.framework.di.Autowired;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.TimesAutoWhitelisted;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
+import voidpointer.spigot.voidwhitelist.command.Command;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 import voidpointer.spigot.voidwhitelist.command.arg.ImportOptions;
 import voidpointer.spigot.voidwhitelist.event.EventManager;
-import voidpointer.spigot.voidwhitelist.event.WhitelistImportEvent;
 import voidpointer.spigot.voidwhitelist.storage.StorageFactory;
 import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.db.OrmliteWhitelistService;
 import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -40,18 +42,17 @@ import static voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistService
 
 public class ImportJsonCommand extends Command {
     public static final String NAME = "import-json";
-    public static final String PERMISSION = "whitelist.import";
 
     @AutowiredLocale private static Locale locale;
     @Autowired private static EventManager eventManager;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static StorageFactory storageFactory;
     @Autowired(mapId="plugin")
     private static Plugin plugin;
 
     public ImportJsonCommand() {
         super(NAME);
-        super.setPermission(PERMISSION);
         super.addOptions(ImportOptions.values());
     }
 
@@ -60,29 +61,33 @@ public class ImportJsonCommand extends Command {
             locale.localize(IMPORT_ONLY_TO_DATABASE).send(args.getSender());
             return;
         }
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> execute0(args));
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> importJson(args));
     }
 
-    private void execute0(final Args args) {
+    private void importJson(final Args args) {
         final long start = currentTimeMillis();
         JsonWhitelistService json = (JsonWhitelistService) storageFactory.loadStorage(JSON);
         locale.localize(IMPORT_LOADED)
                 .set("loaded", json.getWhitelist().size())
                 .set("storage", WHITELIST_FILE_NAME)
                 .send(args.getSender());
-        OrmliteWhitelistService database = (OrmliteWhitelistService) ImportJsonCommand.whitelistService;
-        Set<Whitelistable> imported;
-        if (args.hasOption(REPLACE))
-            imported = database.addAllReplacing(json.getWhitelist()).join();
-        else
-            imported = database.addAllIfNotExists(json.getWhitelist()).join();
+        final OrmliteWhitelistService database = (OrmliteWhitelistService) whitelistService;
+        final Set<Whitelistable> whitelist = json.getWhitelist();
+        final Collection<TimesAutoWhitelisted> autoWhitelist = json.getAutoWhitelist().values();
+        final int whitelistImportedInTotal, autoWhitelistImportedInTotal;
+        if (args.hasOption(REPLACE)) {
+            whitelistImportedInTotal = database.addAllReplacing(whitelist).join();
+            autoWhitelistImportedInTotal = database.addAllAutoReplacing(autoWhitelist).join();
+        } else {
+            whitelistImportedInTotal = database.addAllIfNotExists(whitelist).join();
+            autoWhitelistImportedInTotal = database.addAllAutoIfNotExists(autoWhitelist).join();
+        }
         final long end = currentTimeMillis();
-        locale.localize(IMPORT_RESULT)
-                .set("imported", imported.size())
-                .set("loaded", json.getWhitelist().size())
+        locale.localize(WHITELIST_IMPORT_RESULT)
+                .set("imported", whitelistImportedInTotal).set("loaded", whitelist.size())
+                .set("auto-imported", autoWhitelistImportedInTotal).set("auto-loaded", autoWhitelist.size())
                 .set("ms-spent", end - start)
                 .send(args.getSender());
-        eventManager.callAsyncEvent(new WhitelistImportEvent(imported));
     }
 
     @Override public List<String> tabComplete(final Args args) {

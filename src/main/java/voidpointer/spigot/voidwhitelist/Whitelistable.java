@@ -48,8 +48,10 @@ public interface Whitelistable {
      */
     boolean isAssociatedWith(final Player player);
 
-    /** @return {@code true} if the entity has an "expires at" date
-     * and {@code false} otherwise. */
+    /**
+     * @return {@code true} if the given {@link Date} can expire.
+     * @see #NEVER_EXPIRES
+     */
     static boolean isDateExpirable(final Date date) {
         return NEVER_EXPIRES != date;
     }

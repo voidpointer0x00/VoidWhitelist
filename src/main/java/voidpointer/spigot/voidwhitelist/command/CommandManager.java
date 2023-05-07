@@ -14,6 +14,8 @@
  */
 package voidpointer.spigot.voidwhitelist.command;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import voidpointer.spigot.framework.localemodule.LocaleLog;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
@@ -28,6 +30,8 @@ import static java.util.Collections.emptyList;
 
 public final class CommandManager {
     @AutowiredLocale private static LocaleLog log;
+
+    @Getter(AccessLevel.PUBLIC)
     private final Map<String, Command> commands = new HashMap<>();
 
     public void addCommand(final Command command) {

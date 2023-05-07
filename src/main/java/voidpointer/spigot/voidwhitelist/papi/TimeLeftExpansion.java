@@ -12,14 +12,13 @@ import voidpointer.spigot.voidwhitelist.storage.WhitelistService;
 import java.time.Duration;
 import java.util.Optional;
 
-import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.EXPIRED;
-import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.NEVER;
-import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.NOT_WHITELISTED;
+import static voidpointer.spigot.voidwhitelist.papi.PapiMessage.*;
 
 public class TimeLeftExpansion extends PlaceholderExpansion {
     @Autowired(mapId="plugin")
     private static Plugin plugin;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     @Autowired private static PapiLocale papiLocale;
 
     @Override public @NotNull String getIdentifier() {

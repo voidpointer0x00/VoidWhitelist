@@ -23,13 +23,11 @@ import voidpointer.spigot.voidwhitelist.storage.json.JsonWhitelistablePojo;
 import java.util.Date;
 import java.util.UUID;
 
-import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.EXPIRES_AT_FIELD;
-import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.NAME_FIELD;
-import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.UNIQUE_ID_FIELD;
+import static voidpointer.spigot.voidwhitelist.storage.json.WhitelistableJsonSerializer.*;
 
 final class JsonV1BetaUpdate extends AbstractJsonUpdate {
-    @Override protected Whitelistable update(final JsonElement jsonElement) {
-        JsonObject whitelistableObject = jsonElement.getAsJsonObject();
+    @Override protected Whitelistable update(final JsonElement whitelistableRoot) {
+        JsonObject whitelistableObject = whitelistableRoot.getAsJsonObject();
         UUID uniqueId = UUID.fromString(whitelistableObject.get(UNIQUE_ID_FIELD).getAsString());
         JsonElement expiresAtElement = whitelistableObject.get(EXPIRES_AT_FIELD);
         String name;

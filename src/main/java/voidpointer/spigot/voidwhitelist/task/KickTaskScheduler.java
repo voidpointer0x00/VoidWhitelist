@@ -20,8 +20,10 @@ import static voidpointer.spigot.voidwhitelist.message.KickReason.NOT_ALLOWED;
 
 public final class KickTaskScheduler {
     @AutowiredLocale private static LocaleLog locale;
-    @Autowired(mapId="plugin") private static Plugin plugin;
-    @Autowired private static WhitelistService whitelistService;
+    @Autowired(mapId="plugin")
+    private static Plugin plugin;
+    @Autowired(mapId="whitelistService")
+    private static WhitelistService whitelistService;
     private final Map<Player, KickTask> tasks = new ConcurrentHashMap<>();
 
     public Optional<KickTask> getTask(final Player player) {

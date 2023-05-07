@@ -21,7 +21,7 @@
 
     <groupId>voidpointer.spigot</groupId>
     <artifactId>voidwhitelist</artifactId>
-    <version>0.9.3</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>VoidWhitelist</name>
@@ -48,8 +48,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>11</source>
+                    <target>11</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -306,7 +306,7 @@
         <dependency>
             <groupId>com.github.stefvanschie.inventoryframework</groupId>
             <artifactId>IF</artifactId>
-            <version>0.10.9</version>
+            <version>0.10.5</version>
         </dependency>
         <dependency>
             <groupId>com.j256.ormlite</groupId>

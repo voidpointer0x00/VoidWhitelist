@@ -17,11 +17,7 @@ package voidpointer.spigot.voidwhitelist.storage.db;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.bukkit.entity.Player;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 import voidpointer.spigot.voidwhitelist.storage.AbstractWhitelistable;
@@ -36,12 +32,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public final class WhitelistableModel extends AbstractWhitelistable {
-    @DatabaseField(id=true, dataType=DataType.UUID)
+    @DatabaseField(columnName="unique_id", id=true, dataType=DataType.UUID)
     @EqualsAndHashCode.Include
     private UUID uniqueId;
-    @DatabaseField
+    @DatabaseField(columnName="name")
     private String name;
-    @DatabaseField(dataType=DataType.DATE)
+    @DatabaseField(columnName="expires_at", dataType=DataType.DATE)
     private Date expiresAt;
 
     @Override public boolean isAssociatedWith(final Player player) {
@@ -49,6 +45,7 @@ public final class WhitelistableModel extends AbstractWhitelistable {
     }
 
     public static WhitelistableModel copyOf(final Whitelistable whitelistable) {
-        return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(), whitelistable.getExpiresAt());
+        return new WhitelistableModel(whitelistable.getUniqueId(), whitelistable.getName(),
+                whitelistable.getExpiresAt());
     }
 }

@@ -12,11 +12,12 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.config;
+package voidpointer.spigot.voidwhitelist.storage.db;
 
 import com.j256.ormlite.support.ConnectionSource;
+import voidpointer.spigot.voidwhitelist.config.OrmliteConfig;
 
 @FunctionalInterface
-interface Dbms {
+public interface Dbms {
     ConnectionSource newConnectionSource(final OrmliteConfig ormliteConfig);
 }

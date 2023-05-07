@@ -12,16 +12,19 @@
  *
  *   0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package voidpointer.spigot.voidwhitelist.command;
+package voidpointer.spigot.voidwhitelist.command.whitelist;
 
 import org.bukkit.command.CommandSender;
 import voidpointer.spigot.framework.localemodule.Locale;
 import voidpointer.spigot.framework.localemodule.annotation.AutowiredLocale;
+import voidpointer.spigot.voidwhitelist.command.Command;
+import voidpointer.spigot.voidwhitelist.command.CommandManager;
 import voidpointer.spigot.voidwhitelist.command.arg.Args;
 
 import java.util.List;
 
-import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.*;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.WHITELIST_NOT_ENOUGH_ARGS;
+import static voidpointer.spigot.voidwhitelist.message.WhitelistMessage.WHITELIST_UNKNOWN_COMMAND;
 
 public final class WhitelistCommand extends Command {
     public static final String NAME = "whitelist";
@@ -32,6 +35,9 @@ public final class WhitelistCommand extends Command {
 
     public WhitelistCommand() {
         super(NAME);
+
+        super.setPermission("voidwhitelist." + NAME);
+        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
 
         whitelistCommands.addCommand(new AddCommand());
         whitelistCommands.addCommand(new RemoveCommand());
@@ -45,7 +51,9 @@ public final class WhitelistCommand extends Command {
         whitelistCommands.addCommand(new HelpCommand());
         whitelistCommands.addCommand(new ReloadCommand());
         whitelistCommands.addCommand(new ReconnectCommand());
-        super.setRequiredArgsNumber(MIN_REQUIRED_ARGS);
+
+        whitelistCommands.getCommands().values()
+                .forEach(cmd -> cmd.setPermission(getPermission() + "." + cmd.getName()));
     }
 
     @Override public void execute(final Args args) {

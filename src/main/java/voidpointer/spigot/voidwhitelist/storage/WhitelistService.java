@@ -17,24 +17,20 @@ package voidpointer.spigot.voidwhitelist.storage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import voidpointer.spigot.voidwhitelist.Whitelistable;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public interface WhitelistService {
     StorageMethod getStorageMethod();
 
-    enum ReconnectResult {
+    enum ConnectionResult {
         SUCCESS, FAIL;
         public boolean isSuccess() {
             return this == SUCCESS;
         }
     }
 
-    ReconnectResult reconnect();
+    ConnectionResult reconnect();
 
     void shutdown();
 
