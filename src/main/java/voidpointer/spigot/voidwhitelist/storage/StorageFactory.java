@@ -25,13 +25,9 @@ public final class StorageFactory {
     @NonNull private final Plugin plugin;
 
     public AutoWhitelistService loadStorage(final StorageMethod storageMethod) {
-        switch (storageMethod) {
-            case JSON:
-                return new JsonWhitelistService(plugin.getDataFolder());
-            case DATABASE:
-                return new OrmliteWhitelistService(plugin);
-            default:
-                throw new UnsupportedOperationException("Unknown storage method: " + storageMethod);
-        }
+        return switch (storageMethod) {
+            case JSON -> new JsonWhitelistService(plugin.getDataFolder());
+            case DATABASE -> new OrmliteWhitelistService(plugin);
+        };
     }
 }

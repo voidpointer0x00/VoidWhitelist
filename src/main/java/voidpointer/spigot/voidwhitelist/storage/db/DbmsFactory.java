@@ -36,17 +36,11 @@ public final class DbmsFactory {
     private final File dataFolder;
 
     public Dbms matchingOrDefault(final String dbmsName) {
-        switch (dbmsName.toLowerCase()) {
-            case "h2":
-                return this::h2;
-            case "mysql":
-                return this::mysql;
-            case "psql":
-                return this::psql;
-            default:
-                log.info("Unknown DBMS named {0}, using default H2", dbmsName);
-                return this::h2;
-        }
+        return switch (dbmsName.toLowerCase()) {
+            case "mysql" -> this::mysql;
+            case "psql" -> this::psql;
+            default -> this::h2;
+        };
     }
 
     private ConnectionSource h2(final OrmliteConfig ormliteConfig) {

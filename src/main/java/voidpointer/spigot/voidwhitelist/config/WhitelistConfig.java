@@ -168,15 +168,11 @@ public final class WhitelistConfig {
     }
 
     private boolean isOnline(UUIDMode uuidMode) {
-        switch (uuidMode) {
-            case ONLINE:
-                return true;
-            case OFFLINE:
-                return false;
-            case AUTO:
-            default:
-                return Bukkit.getOnlineMode();
-        }
+        return switch (uuidMode) {
+            case ONLINE -> true;
+            case OFFLINE -> false;
+            default -> Bukkit.getOnlineMode();
+        };
     }
 
     private void reportUnknown(final String property, final String defaultValue) {
