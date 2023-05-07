@@ -31,7 +31,6 @@ import voidpointer.spigot.voidwhitelist.command.arg.DefinedOption;
 import voidpointer.spigot.voidwhitelist.message.WhitelistMessage;
 
 import java.util.*;
-import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
 import static lombok.AccessLevel.PROTECTED;
@@ -127,13 +126,6 @@ public abstract class Command implements CommandExecutor, TabCompleter {
 
     protected final void addOptions(DefinedOption[] options) {
         Collections.addAll(this.options, options);
-    }
-
-    protected final List<String> completeOptionOrElse(final String optionStart,
-                                                      final Function<String, List<String>> noPrefixAction) {
-        if (!optionStart.startsWith("-"))
-            return noPrefixAction.apply(optionStart);
-        return completeOption0(optionStart);
     }
 
     /** @throws IllegalArgumentException if the given optionStart argument is not an option
