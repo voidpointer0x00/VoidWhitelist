@@ -29,7 +29,6 @@ public final class SimpleWhitelistable extends AbstractWhitelistable {
     private UUID uniqueId;
     @NonNull
     private String name;
-    @NonNull
     private Date expiresAt;
 
     @Override public boolean isAssociatedWith(final Player player) {
