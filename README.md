@@ -29,7 +29,7 @@ selected storage is _DATABASE_ or reloads `whitelist.json` file it it's _JSON_. 
 - `/whitelist import-json` — imports whitelist from `whitelist.json` file into the connected database. Requires `whitelist.import` permission.
 
 ## Feedback
-<img src="https://user-images.githubusercontent.com/43143315/164715837-cd7b8fbd-0962-48c9-afca-acec792f39fe.png"/> VoidPointer#6184
+<img src="https://user-images.githubusercontent.com/43143315/164715837-cd7b8fbd-0962-48c9-afca-acec792f39fe.png"/> _voidpointer
 
 [TestsBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/tests.yml/badge.svg
 [CodeQLBadge]: https://github.com/NyanGuyMF/VoidWhitelist/actions/workflows/codeql-analysis.yml/badge.svg
